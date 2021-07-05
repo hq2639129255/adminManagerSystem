@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+       
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+    <div class="right_content">
+     <!--查询条件 begin-->
+         <div id="search_btn"class="content_search_group">
+      <div class="row">
+      <div class="col-xs-10">
+       <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon2">设备编号</span>
+                    <input type="text" class="form-control content_search_text" placeholder="输入设备编号" aria-describedby="basic-addon2">
+         </div>
+
+         <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon3">设备名称</span>
+                    <input type="text" class="form-control" placeholder="输入设备名称" aria-describedby="basic-addon2">
+         </div>
+
+        
+    </div> 
+       <div class="col-xs-2">
+         <div class="three_two">
+         <a href="#" class="btn btn-primary content_marright">查询</a>
+         <a href="#" class="btn btn-primary">重置</a></div> 
+         </div>           
+    </div>
+    <div class="row">
+    <div class="col-xs-10">
+   <a href="#" class="btn btn-primary content_marright content_btn_add" data-toggle="modal" data-target="#add1" data-backdrop="static">新增</a>
+    </div> 
+    </div>
+         </div>
+        <!--查询条件 end-->
+
+         <!--数据列表 begin-->
+         <table id="table_list" class="table table-hover table-bordered table-condensed">
+      <thead>
+         <tr>
+			  <th>设备编号</th>
+          <th>设备器材名称</th>
+                      <th>购买时间</th>
+                        <th>备注</th>
+                      <th class="w110">操作</th>
+         </tr>
+      </thead>
+      <tbody id="datalist">
+
+      </tbody>
+   </table>
+        <!--数据列表 end-->
+
+        <!--分页 begin-->
+        <div class="pages content_right" >
+            <div class="pages_record">
+                共&nbsp;<b id="pagesun">3</b>&nbsp;页 &nbsp;第&nbsp;<b id="curentpage">1</b>&nbsp;页&nbsp; <b id="rowcount">10</b>&nbsp;条/页&nbsp; &nbsp;共&nbsp;<b id="rowsun">27</b>&nbsp;条记录
+            </div>
+
+            <ul class="pagination">
+                    <li id="firstPage"><a href="#" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>
+                    <li  id="upPage"><a href="#">上一页<span class="sr-only">(current)</span></a></li>
+                    <li id="downpage"><a href="#">下一页</a></li>
+                <li id="endpage"><a href="#" aria-label="Next"><span aria-hidden="true">尾页</span></a></li>
+                <li>显示条数<select name="pagecount">
+                    <option   value="5">5</option>
+                    <option selected="selected" value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select></li>
+
+                    <li><input type="text" placeholder="输入页数" class="form-control w80"></li>
+                    <a href="#">跳转</a>
+                <input type="hidden" name="type" value="Facility"/>
+
+            </ul>
+            
+        </div>
+        <!--分页 end-->
+    </div> 
+
+
+                  <!-- Modal begin -->
+              <!--添加-->
+              <div class="modal fade" id="add1" tabindex="-1" role="dialog" aria-labelledby="add11">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="add11">新增</h4>
+                                    </div>
+                                    <div class="modal-body p_bottom35">
+                                         <ul>
+                                            <li>
+                                                <label><span>器材名称： </span></label>
+                                                <input name="Facilityname" type="text" maxlength="40">
+
+                                            </li>
+                                             <li></li>
+                                            <li>
+                                                <label><span>购买时间： </span></label>
+                                                <input  name="buyFacilitytime" type="date"/>
+
+                                            </li>
+                                             <li></li>
+                                            <li>
+                                                <label><span>备注： </span></label>
+                                                <textarea  name="Facilitrmark" class="form-control" rows="3" maxlength="200"></textarea>
+                                            </li>
+                                             <li></li>
+                                        </ul>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                                        <button id="save" type="button" class="btn btn-primary btn-sm">保存</button>
+                                    </div>
+                                </div>
+                            </div>
+              </div>
+<!--编辑-->
+              <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel1">编辑</h4>
+                                    </div>
+                                    <div class="modal-body p_bottom35">
+                                        <ul>
+                                            <li>
+                                                <label><span>编号： </span></label>
+                                                <input disabled="disabled" type="text" maxlength="40">
+                                            </li>
+                                            <li></li>
+                                            <li>
+                                                <label><span>名称： </span></label>
+                                                <input type="text" maxlength="40">
+                                            </li>
+                                            <li></li>
+                                            <li>
+                                                <label><span>购买时间： </span></label>
+                                                <input type="date" maxlength="40">
+                                            </li>
+                                            <li></li>
+                                            <li>
+                                                <label><span>备注： </span></label>
+                                                <textarea class="form-control" rows="3" maxlength="200"></textarea>
+                                            </li>
+                                            <li></li>
+                                        </ul>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                                        <button type="button" class="btn btn-primary btn-sm">保存</button>
+                                    </div>
+                                </div>
+                            </div>
+              </div>
+              <!--Modal end-->
+
+    <script>
+        //    添加编辑模态框
+        $('#add').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            modal.find('.modal-title').text('' + recipient)
+            modal.find('.modal-body input').val(recipient)
+        });
+
+        //
+        // $firstPage.toggle(function () {
+        //     $firstPage.addClass("active");
+        // });
+        let $firstPage=$("#firstPage");
+        let $upPage=$("#upPage");
+        let $downpage=$("#downpage");
+        let $endpage=$("#endpage");
+        $firstPage.hover(activeStyle,notactiveStyle);
+        $firstPage.hover(activeStyle,notactiveStyle);
+        $upPage.hover(activeStyle,notactiveStyle);
+        $downpage.hover(activeStyle,notactiveStyle);
+        $endpage.hover(activeStyle,notactiveStyle);
+
+        function activeStyle() {
+            $(this).addClass("active");
+
+        }
+        function notactiveStyle() {
+            $(this).removeClass("active");
+
+        }
+        $(function(){init();
+            $downpage.click(clickdownpage);
+            $firstPage.click(clickFirstPage);
+            $upPage.click(clickuppage);
+            $endpage.click(endPage);
+        })
+        function clickFirstPage() {
+            if($("#curentpage").text()=="1"){
+                $firstPage.addClass("disabled");
+                return false;
+            }else {
+                $endpage.removeClass("disabled");
+                $downpage.removeClass("disabled");
+               $.ajax({
+                    type: "GET",
+                    datatype: "JSON",
+                    url: "/admin/findPageData.do",
+                   data:{rowconut:$("[name=pagecount]>option:selected").val(),
+                       curentpage:1,
+                       datatype:$("[name=type]").val()},
+                   success: function (data) {
+                       $("#datalist").html("");
+                       initdata(data);
+
+                   }
+                })
+            }
+            
+        }
+        function clickuppage() {
+            if($("#curentpage").text()=="1"){
+                $upPage.addClass("disabled");
+                return false;
+            }else {
+                $downpage.removeClass("disabled");
+                $endpage.removeClass("disabled");
+                $.ajax({
+                    type: "GET",
+                    datatype: "JSON",
+                    url: "/admin/findPageData.do",
+                    data:{rowconut:$("[name=pagecount]>option:selected").val(),
+                        curentpage:parseInt($("#curentpage").text())-1,
+                        datatype:$("[name=type]").val()},
+                    success: function (data) {
+                        $("#datalist").html("");
+                        initdata(data);
+
+                    }
+                })
+            }
+        }
+
+        function  clickdownpage() {
+            if($("#curentpage").text()==$("#pagesun").text()){
+                $downpage.addClass("disabled");
+
+
+            }else {
+                $firstPage.removeClass("disabled");
+                $upPage.removeClass("disabled");
+                $.ajax({
+                type: "GET",
+                datatype: "JSON",
+                url: "/admin/findPageData.do",
+                data:{rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:parseInt($("#curentpage").text())+1,
+                    datatype:$("[name=type]").val()},
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+
+            })}
+
+
+        }
+
+        function endPage() {
+            if($("#curentpage").text()==$("#pagesun").text()){
+                $downpage.addClass("disabled");
+                $endpage.addClass("disabled");
+                return false;
+
+            }else {
+                $firstPage.removeClass("disabled");
+                $upPage.removeClass("disabled");
+                $.ajax({
+                    type: "GET",
+                    datatype: "JSON",
+                    url: "/admin/findPageData.do",
+                    data:{rowconut:$("[name=pagecount]>option:selected").val(),
+                        curentpage:$("#pagesun").text(),
+                        datatype:$("[name=type]").val()},
+                    success: function (data) {
+                        $("#datalist").html("");
+                        initdata(data);
+
+                    }
+
+                })}
+        }
+
+        function init() {
+            $.ajax({
+                type: "GET",
+                datatype: "JSON",
+                url: "/admin/findPageData.do",
+                success: function (data) {
+                    initdata(data);
+
+                }
+
+            })
+
+        }
+
+        function  initdata(data) {
+            let $pagesun=$("#pagesun");
+            let $curentpage=$("#curentpage");
+            let $rowcount=$("#rowcount");
+            let $rowsun=$("#rowsun");
+
+
+            let datalist= JSON.parse(data)
+            $pagesun.text(datalist.sunPage);
+            $curentpage.text(datalist.curentPage);
+            $rowcount.text(datalist.curentrow);
+            $rowsun.text(datalist.sunrow);
+
+            for(let key in datalist.pageData ){
+
+                let  $datatr=$("<tr>"+
+                    "<td>"+datalist.pageData[key].id+"</td>"+
+                    "<td>"+datalist.pageData[key].f_name+"</td>"+
+                    "<td>"+datalist.pageData[key].remark+"</td>"+
+                    "<td>"+datalist.pageData[key].buyTime+"</td>"+
+                    "<td>" +
+                    "<a href='' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a>" +
+                    "<a href='' class='btn btn-primary btn-sm'>删除</a>" +
+                    "</td>" +
+                    "</tr>");
+                $("#datalist").append($datatr);
+            }
+        }
+
+        //新增器材
+        $("input[name=Facilityname]").focus(function () {
+            $("input[name=Facilityname]").parent().next().text("");
+        })
+        $("input[name=Facilityname]").blur(checkNamewrap);
+        function  checkName(target) {
+
+            let flag=true;
+            if(target.val()==""){
+                target.parent().next().text("器材名称不能为空").css("color","#f00");
+                flag=false;
+            }
+            return flag;
+        }
+        function  checkNamewrap() {
+          return  checkName($("input[name=Facilityname]"));
+        }
+        $("[name=buyFacilitytime]").focus(function () {
+            $("[name=buyFacilitytime]").parent().next().text("");
+        })
+        $("[name=buyFacilitytime]").blur(checkbuyFacilitytimewrap);
+
+        function  checkbuyFacilitytime(target) {
+            let flag=true;
+            if(target.val()==""){
+                target.parent().next().text("购买时间不能为空").css("color","#f00");
+                flag=false;
+            }
+            return flag;
+        }
+      function checkbuyFacilitytimewrap() {
+     return     checkbuyFacilitytime($("[name=buyFacilitytime]"));
+      }
+//编辑
+
+
+
+        $("#save").click(function () {
+            debugger;
+            let nameok=checkNamewrap();
+            let time=checkbuyFacilitytimewrap();
+            if(nameok&&time){
+                $.ajax({
+                    type:"POST",
+                    dataType:"JSON",
+                    url:"addFacility.do",
+                    data:{Facilityname:$("input[name=Facilityname]").val(),
+                        buyFacilitytime:$("[name=buyFacilitytime]").val(),
+                        Facilitrmark:$("[name=Facilitrmark]").val()
+                    },
+                    success:function (data) {
+                        if(data.Flag){
+                            alert(data.info);
+                        }else {
+                            alert(data.info);
+                        }
+                    }
+
+                })
+
+            }
+
+        })
+    </script>
+</body>
+</html>

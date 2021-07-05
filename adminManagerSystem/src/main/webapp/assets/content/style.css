@@ -1,0 +1,60 @@
+﻿body{
+    background:#fff;
+}
+/*后台任务详情表高度*/
+.table_top{
+    padding:20px 20px 0 20px;
+}
+#table_list tbody>tr{  
+    height:40px;
+}
+/*角色管理-编辑*/
+#h_top
+{
+    height:40px;
+}
+#h_top1
+{
+    padding-top:5px;
+}
+.small_table
+{
+    width:200px;
+    margin:20px;
+}
+/*权限表样式*/
+#table_li{
+    display:block;
+    overflow:hidden;
+    clear:both;
+}
+#table_li ul{
+    margin:0;
+}
+#table_li li{
+    list-style:none;
+    float:left;
+    width:200px;
+    padding:20px 0 20px 20px;
+}
+/*头部查询重置按钮样式*/
+#SandN_btn
+{
+    display:inline-block;
+    float:right;
+
+}
+#SandN_btn .SandN_a
+{
+    margin-right:10px;
+    margin-bottom: 6px;
+}
+#search_btn .top_input
+{
+float:right;
+}
+.bottom_btn
+{
+    text-align:center;
+    padding-bottom:20px;
+}
