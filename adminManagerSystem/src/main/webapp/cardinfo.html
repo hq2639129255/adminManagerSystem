@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+       
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+    <div class="right_content">
+     <!--查询条件 begin-->
+         <div id="search_btn"class="content_search_group">
+      <div class="row">
+      <div class="col-xs-10">
+       <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon2">卡号</span>
+                    <input type="text" class="form-control content_search_text" placeholder="输入卡号" aria-describedby="basic-addon2">
+         </div>
+
+         <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon3">所属会员</span>
+                    <input type="text" class="form-control" placeholder="输入会员名称" aria-describedby="basic-addon2">
+         </div>
+
+         <div class="input-group content_line content_left">
+         <span class="input-group-addon" id="Span1">卡类型</span>
+         <select class="form-control line left">
+                    <option>请选择卡类型</option>
+                    <option>PC001</option>
+                    <option>PC002</option>
+                    <option>PC003</option>
+                    <option>PC004</option>
+                </select>
+         </div>
+    </div> 
+       <div class="col-xs-2">
+         <div class="three_two">
+         <a href="#" class="btn btn-primary content_marright">查询</a>
+         <a href="#" class="btn btn-primary">重置</a></div> 
+         </div>           
+    </div>
+    <div class="row">
+    <div class="col-xs-10">
+   <a href="#" class="btn btn-primary content_marright content_btn_add" data-toggle="modal" data-target="#add1" data-backdrop="static">新增</a>
+    </div> 
+    </div>
+         </div>
+        <!--查询条件 end-->
+
+         <!--数据列表 begin-->
+         <table id="table_list" class="table table-hover table-bordered table-condensed">
+      <thead>
+         <tr>
+          <th>卡号</th>
+                      <th>卡类型</th>
+                      <th>持卡会员</th>
+          			 <th>到期时间</th>
+                      <th class="w158">操作</th>
+         </tr>
+      </thead>
+      <tbody id="datalist">
+
+      </tbody>
+   </table>
+        <!--数据列表 end-->
+
+
+        <!--分页 begin-->
+        <div class="pages content_right" >
+            <div class="pages_record">
+                共&nbsp;<b id="pagesun">3</b>&nbsp;页 &nbsp;第&nbsp;<b id="curentpage">1</b>&nbsp;页&nbsp; <b id="rowcount">10</b>&nbsp;条/页&nbsp; &nbsp;共&nbsp;<b id="rowsun">27</b>&nbsp;条记录
+            </div>
+
+            <ul class="pagination">
+                <li id="firstPage"><a href="#" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>
+                <li  id="upPage"><a href="#">上一页<span class="sr-only">(current)</span></a></li>
+                <li id="downpage"><a href="#">下一页</a></li>
+                <li id="endpage"><a href="#" aria-label="Next"><span aria-hidden="true">尾页</span></a></li>
+                <li>
+
+
+                    <select  class="form-control w80 line left"  name="pagecount">
+                        <option   value="5">5</option>
+                        <option selected="selected" value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+
+                </li>
+
+                <li><input type="text" placeholder="输入页数" class="form-control w80"></li>
+                <a href="#">跳转</a>
+                <input type="hidden" name="type" value="VipCardView"/>
+
+            </ul>
+
+        </div>
+        <!--分页 end-->
+
+    </div> 
+
+
+                  <!-- Modal begin -->
+              <!--添加-->
+              <div class="modal fade" id="add1" tabindex="-1" role="dialog" aria-labelledby="add11">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="addCard">新增</h4>
+                                    </div>
+                                    <div class="modal-body p_bottom35">
+                                         <ul>
+                                            <li>
+                                                <label><span>姓名： </span></label>
+                                                <input type="text" name="addvipname" maxlength="40">
+                                            </li>
+                                            <li>
+                                             <label><span>性别： </span></label>
+                                                <select class="h26 line left" name="addsex">
+                                                    <option selected="selected">男</option>
+                                                    <option>女</option>
+                                                </select>
+                                         </li>
+                                             <li>
+                                                 <label><span>手机号码： </span></label>
+                                                 <input type="text" maxlength="40" name="addphone">
+                                             </li>
+                                             <li>
+                                                 <label><span>邮箱： </span></label>
+                                                 <input type="text" maxlength="40" name="addemil">
+                                             </li>
+                                            <li>
+                                                <label><span>卡类型： </span></label>
+                                                <select id="cardType"  class="h26 line left" name="addcardtype">
+                                                    <option value="请选择">请选择</option>
+                                                </select>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                                        <button type="button" id="saveCard" class="btn btn-primary btn-sm">保存</button>
+                                    </div>
+                                </div>
+                            </div>
+              </div>
+
+              <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel1">编辑</h4>
+                                    </div>
+                                    <div class="modal-body p_bottom35">
+                                        <ul>
+                                            <li>
+                                                <label><span>卡号： </span></label>
+                                                <input type="text" disabled="disabled" name="enditvipcard" maxlength="40">
+                                            </li>
+                                            <li></li>
+                                            <li>
+                                                <label><span>所属会员： </span></label>
+                                                <input type="text" name="editname" maxlength="40">
+                                            </li>
+                                            <li></li>
+                                            <li>
+                                                <label><span>卡类型： </span></label>
+                                                <select class="h26 line left" id="updatecardtype" name="editcardtype">
+                                                    <option  value="请选择">请选择</option>
+
+                                                </select>
+                                            </li>
+
+                                            <li></li>
+                                        </ul>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                                        <button type="button" id="updatasave" class="btn btn-primary btn-sm">保存</button>
+                                    </div>
+                                </div>
+                            </div>
+              </div>
+              <!--Modal end-->
+
+    <script>
+        //    添加编辑模态框
+        $('#add').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            modal.find('.modal-title').text('' + recipient)
+            modal.find('.modal-body input').val(recipient)
+        });
+<!--分页begin-->
+        let $firstPage=$("#firstPage");
+        let $upPage=$("#upPage");
+        let $downpage=$("#downpage");
+        let $endpage=$("#endpage");
+        $firstPage.hover(activeStyle,notactiveStyle);
+        $firstPage.hover(activeStyle,notactiveStyle);
+        $upPage.hover(activeStyle,notactiveStyle);
+        $downpage.hover(activeStyle,notactiveStyle);
+        $endpage.hover(activeStyle,notactiveStyle);
+
+        function activeStyle() {
+            $(this).addClass("active");
+
+        }
+        function notactiveStyle() {
+            $(this).removeClass("active");
+
+        }
+        function clickFirstPage() {
+            if($("#curentpage").text()=="1"){
+                $firstPage.addClass("disabled");
+                return false;
+            }else {
+                $endpage.removeClass("disabled");
+                $downpage.removeClass("disabled");
+                $.ajax({
+
+                    type: "GET",
+                    url: "/admin/findPageData.do",
+                    data:{
+                        pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
+                        curentpage:1,
+                        datatype:$("[name=type]").val()},
+                    success: function (data) {
+                        $("#datalist").html("");
+                        initdata(data);
+
+                    }
+                })
+            }
+
+        }
+        function clickuppage() {
+            if($("#curentpage").text()=="1"){
+                $upPage.addClass("disabled");
+                $firstPage.addClass("disabled");
+                return false;
+            }else {
+                $downpage.removeClass("disabled");
+                $endpage.removeClass("disabled");
+                $.ajax({
+
+                    type: "GET",
+                    url: "/admin/findPageData.do",
+                    data:{
+                        pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
+                        curentpage:parseInt($("#curentpage").text())-1,
+                        datatype:$("[name=type]").val()},
+                    success: function (data) {
+                        $("#datalist").html("");
+                        initdata(data);
+
+                    }
+                })
+            }
+        }
+
+        function  clickdownpage() {
+            if($("#curentpage").text()==$("#pagesun").text()){
+                $downpage.addClass("disabled");
+                $endpage.addClass("disabled");
+
+            }else {
+                $firstPage.removeClass("disabled");
+                $upPage.removeClass("disabled");
+                $.ajax({
+
+                    type: "GET",
+                    url: "/admin/findPageData.do",
+                    data:{
+                        pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
+                        curentpage:parseInt($("#curentpage").text())+1,
+                        datatype:$("[name=type]").val()},
+                    success: function (data) {
+                        $("#datalist").html("");
+                        initdata(data);
+
+                    }
+
+                })}
+
+
+        }
+
+        function endPage() {
+            if($("#curentpage").text()==$("#pagesun").text()){
+                $downpage.addClass("disabled");
+                $endpage.addClass("disabled");
+                return false;
+
+            }else {
+                $firstPage.removeClass("disabled");
+                $upPage.removeClass("disabled");
+                $.ajax({
+
+                    type: "GET",
+                    url: "/admin/findPageData.do",
+                    data:{
+                        pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
+                        curentpage:$("#pagesun").text(),
+                        datatype:$("[name=type]").val()},
+                    success: function (data) {
+                        $("#datalist").html("");
+                        initdata(data);
+
+                    }
+
+                })}
+        }
+
+        <!--分页end-->
+
+
+<!--初始化页面数据begin-->
+        var  curentDataPostion;//点击位置
+        $(function () {
+            init();
+            $downpage.click(clickdownpage);
+            $firstPage.click(clickFirstPage);
+            $upPage.click(clickuppage);
+            $endpage.click(endPage);
+        })
+        function init() {
+            $.ajax({
+                dataType:"JSON",
+                type: "GET",
+                url: "/admin/initCardType.do",
+                success: function (data) {
+                 $(data).each(function (index,obj) {
+                     let $option=$("<option>"+obj.t_name +"</option>");
+                     $option.attr({value:obj.t_id});
+                     $("#cardType").append($option);
+                     $("#updatecardtype").append($option);
+
+                 })
+
+                }
+
+            })
+
+            $.ajax({
+                data:{pagetype:$("[name=type]").val()},
+                type: "GET",
+                url: "/admin/findPageData.do",
+                success: function (data) {
+                   initdata(data);
+
+                }
+
+            })
+
+        }
+
+     function  initdata(data) {
+         let $pagesun=$("#pagesun");
+         let $curentpage=$("#curentpage");
+         let $rowcount=$("#rowcount");
+         let $rowsun=$("#rowsun");
+
+            let datalist= JSON.parse(data);
+
+         $pagesun.text(datalist.sunPage);
+         $curentpage.text(datalist.curentPage);
+         $rowcount.text(datalist.curentrow);
+         $rowsun.text(datalist.sunrow);
+
+            for(let key in datalist.pageData ){
+                let  $datatr=$("<tr>"+
+                    "<td>"+datalist.pageData[key].cid+"</td>"+
+                    "<td>"+datalist.pageData[key].t_name+"</td>"+
+                    "<td>"+datalist.pageData[key].e_name+"</td>"+
+                    "<td>"+datalist.pageData[key].serviceendtime+"</td>"+
+                    "</tr>");
+                let $tdupdate="<td><a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a>"+
+                    "<a href='#' class='btn btn-primary btn-sm'>删除</a>" +
+                    "<a href='#' class='btn btn-primary btn-sm'>续费</a></td>";
+                $datatr.append($tdupdate);
+                $datatr.find("a:first").on("click",function () {
+                    curentDataPostion=$(this).parent().parent();
+                    $("[name=enditvipcard]").val(curentDataPostion.find("td:first").text());
+                   $("[name=editname]").val(curentDataPostion.find("td:eq(2)").text());
+                })
+                $("#datalist").append($datatr);
+                }
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+        // function  initdata(data) {
+        //     let $pagesun=$("#pagesun");
+        //     let $curentpage=$("#curentpage");
+        //     let $rowcount=$("#rowcount");
+        //     let $rowsun=$("#rowsun");
+        //
+        //
+        //     let datalist= JSON.parse(data)
+        //     $pagesun.text(datalist.sunPage);
+        //     $curentpage.text(datalist.curentPage);
+        //     $rowcount.text(datalist.curentrow);
+        //     $rowsun.text(datalist.sunrow);
+        //
+        //     for(let key in datalist.pageData ){
+        //
+        //         let  $datatr=$("<tr>"+
+        //             "<td>"+datalist.pageData[key].id+"</td>"+
+        //             "<td>"+datalist.pageData[key].f_name+"</td>"+
+        //             "<td>"+datalist.pageData[key].buyTime+"</td>"+
+        //             "<td>"+datalist.pageData[key].remark+"</td>"+
+        //             "</tr>");
+        //         let $tdupdate= $("<td>" +
+        //             "<a href='' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a>" +
+        //             "<a href='' name='deleteFacilityByid.do?id="+datalist.pageData[key].id+"' class='btn btn-primary btn-sm'>删除</a>" +
+        //             "</td>");
+        //         $datatr.append($tdupdate);
+        //         $("#datalist").append($datatr);
+        //         $tdupdate.find("a:first").on("click",function () {
+        //             $("input[name=id]").val($(this).parent().parent().find("td:first").text());
+        //             $("input[name=fname]").val($(this).parent().parent().find("td:eq(1)").text());
+        //             let $time=  $(this).parent().parent().find("td:eq(2)");
+        //             $("input[name=buytime]").val($time.text().substring(0,$time.text().lastIndexOf(" ")));
+        //             $("textarea[name=remark]").val($(this).parent().parent().find("td:eq(3)").text());
+        //             curentDataPostion=$(this);
+        //         })
+        //         $tdupdate.find("a:last").on("click",function () {
+        //             let $trdata=$(this).parent().parent();
+        //             $.ajax({
+        //                 type: "GET",
+        //                 dataType:"JSON",
+        //                 url:$(this).attr("name"),
+        //                 success: function (data) {
+        //                     if(data.flag){
+        //                         alert(data.info);
+        //                         $trdata.remove();
+        //                     }else {
+        //                         alert(data.info);
+        //                     }
+        //
+        //                 }
+        //
+        //             })
+        //
+        //             return false;
+        //         })
+        //
+        //     }
+        // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--初始化页面数据end-->
+<!--新增begin -->
+        $("#saveCard").click(function () {
+            $.ajax({
+                type:"POST",
+                url:"insertCard.do",
+                data:{addvipname:$("input[name=addvipname]").val(),
+                    addsex:$("[name=addsex]>option:selected").val(),
+                    addphone:$("[name=addphone]").val(),
+                    addemil:$("[name=addemil]").val(),
+                    addcardtype:$("[name=addcardtype]>option:selected").val()
+                },
+                dataType:"JSON",
+                success:function (data) {
+                        alert(data.info);
+                }
+
+
+
+            })
+
+        });
+
+<!--新增end-->
+<!-- 修改begin-->
+  $("#updatasave").click(function () {
+      $.ajax({
+            type:"POST",
+            url:"upadatevipcard.do",
+            data:{name:$("[name=editname]").val(),
+                  type:$("[id=cardType]>option:selected").val()
+            },
+          success:function (data) {
+
+          }
+
+
+      })
+      alert("ok");
+      });
+<!-- 修改end -->
+</script>
+</body>
+</html>

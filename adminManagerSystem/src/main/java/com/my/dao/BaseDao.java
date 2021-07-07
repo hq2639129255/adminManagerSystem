@@ -136,5 +136,20 @@ public abstract class BaseDao<T> {
 		return value;
 
 	}
+	//返回多个对象的通用查询操作
+
+	public ResultSet  getListResultSet(Connection   con,String sql,Object...args) throws SQLException, InstantiationException, IllegalAccessException, NoSuchFieldException, SecurityException{
+
+		PreparedStatement	pre=null;
+		ResultSet re=null;
+		pre=con.prepareStatement(sql);
+		for(int i=0;args!=null&& i<args.length;i++){
+			pre.setObject(i+1, args[i]);
+		}
+		re=	pre.executeQuery();
+
+
+		return re;
+	}
 
 }

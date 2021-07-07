@@ -2,6 +2,7 @@ package com.my.service.imple;
 
 import com.my.bean.Facility;
 import com.my.bean.Page;
+import com.my.bean.QueryObj;
 import com.my.dao.FacilityDao;
 import com.my.dao.imple.FacilityDaoImple;
 import com.my.service.FacilityService;
@@ -9,6 +10,7 @@ import com.my.utils.JDBCutil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class FacilityServiceImple implements FacilityService {
    private  FacilityDao dao=new FacilityDaoImple();
@@ -51,5 +53,68 @@ public class FacilityServiceImple implements FacilityService {
             }
         }
         return b;
+    }
+
+    @Override
+    public boolean updateFacility(Facility f) {
+        Connection con=null;
+        boolean b = false;
+        try {
+            con=JDBCutil.getConnection();
+            b = dao.updateFacilityByid(con, f);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return b;
+    }
+
+    @Override
+    public boolean deleteFacilityByid(int id) {
+        boolean b = false;
+        Connection con=null;
+        try {
+            con=JDBCutil.getConnection();
+            b = dao.deleteFacilityByit(con, id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return b;
+    }
+
+    @Override
+    public List<Facility> showFacilityByParameter(QueryObj queryObj) {
+        Connection con=null;
+        List<Facility> datalist = null;
+        try {
+            con=JDBCutil.getConnection();
+            datalist = dao.findFacilityByParameter(con,queryObj);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return datalist;
     }
 }

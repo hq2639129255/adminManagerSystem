@@ -18,19 +18,22 @@
       <div class="col-xs-10">
        <div class="input-group content_line content_left">
                     <span class="input-group-addon" id="basic-addon2">设备编号</span>
-                    <input type="text" class="form-control content_search_text" placeholder="输入设备编号" aria-describedby="basic-addon2">
+                    <input type="text" name="qid" class="form-control content_search_text" placeholder="输入设备编号" aria-describedby="basic-addon2">
          </div>
 
          <div class="input-group content_line content_left">
                     <span class="input-group-addon" id="basic-addon3">设备名称</span>
-                    <input type="text" class="form-control" placeholder="输入设备名称" aria-describedby="basic-addon2">
+                    <input type="text"  name="qname" class="form-control" placeholder="输入设备名称" aria-describedby="basic-addon2">
          </div>
-
+          <div class="input-group content_line content_left">
+              <span class="input-group-addon" id="basic-addon4">购买日期</span>
+              <input type="date" name="qdate" class="form-control"  aria-describedby="basic-addon2">
+          </div>
         
     </div> 
        <div class="col-xs-2">
          <div class="three_two">
-         <a href="#" class="btn btn-primary content_marright">查询</a>
+         <a href="#" id="queryOK" class="btn btn-primary content_marright">查询</a>
          <a href="#" class="btn btn-primary">重置</a></div> 
          </div>           
     </div>
@@ -70,12 +73,17 @@
                     <li  id="upPage"><a href="#">上一页<span class="sr-only">(current)</span></a></li>
                     <li id="downpage"><a href="#">下一页</a></li>
                 <li id="endpage"><a href="#" aria-label="Next"><span aria-hidden="true">尾页</span></a></li>
-                <li>显示条数<select name="pagecount">
-                    <option   value="5">5</option>
-                    <option selected="selected" value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select></li>
+                <li>
+
+
+                        <select  class="form-control w80 line left"  name="pagecount">
+                            <option   value="5">5</option>
+                            <option selected="selected" value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+
+                </li>
 
                     <li><input type="text" placeholder="输入页数" class="form-control w80"></li>
                     <a href="#">跳转</a>
@@ -137,29 +145,29 @@
                                         <ul>
                                             <li>
                                                 <label><span>编号： </span></label>
-                                                <input disabled="disabled" type="text" maxlength="40">
+                                                <input disabled="disabled" name="id" type="text" maxlength="40">
                                             </li>
                                             <li></li>
                                             <li>
                                                 <label><span>名称： </span></label>
-                                                <input type="text" maxlength="40">
+                                                <input type="text" name="fname" maxlength="40">
                                             </li>
                                             <li></li>
                                             <li>
                                                 <label><span>购买时间： </span></label>
-                                                <input type="date" maxlength="40">
+                                                <input type="date" name="buytime" maxlength="40">
                                             </li>
                                             <li></li>
                                             <li>
                                                 <label><span>备注： </span></label>
-                                                <textarea class="form-control" rows="3" maxlength="200"></textarea>
+                                                <textarea class="form-control" name="remark" rows="3" maxlength="200"></textarea>
                                             </li>
                                             <li></li>
                                         </ul>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
-                                        <button type="button" class="btn btn-primary btn-sm">保存</button>
+                                        <button type="button" id="updateinfo"  class="btn btn-primary btn-sm">保存</button>
                                     </div>
                                 </div>
                             </div>
@@ -182,6 +190,9 @@
         // $firstPage.toggle(function () {
         //     $firstPage.addClass("active");
         // });
+        var  curentDataPostion;//点击位置
+        <!-- -------------分页jQuery beigin---------------- -->
+
         let $firstPage=$("#firstPage");
         let $upPage=$("#upPage");
         let $downpage=$("#downpage");
@@ -214,10 +225,11 @@
                 $endpage.removeClass("disabled");
                 $downpage.removeClass("disabled");
                $.ajax({
+
                     type: "GET",
-                    datatype: "JSON",
                     url: "/admin/findPageData.do",
-                   data:{rowconut:$("[name=pagecount]>option:selected").val(),
+                   data:{pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
                        curentpage:1,
                        datatype:$("[name=type]").val()},
                    success: function (data) {
@@ -230,17 +242,21 @@
             
         }
         function clickuppage() {
+
             if($("#curentpage").text()=="1"){
                 $upPage.addClass("disabled");
+                $firstPage.addClass("disabled");
                 return false;
             }else {
                 $downpage.removeClass("disabled");
                 $endpage.removeClass("disabled");
                 $.ajax({
+
                     type: "GET",
-                    datatype: "JSON",
                     url: "/admin/findPageData.do",
-                    data:{rowconut:$("[name=pagecount]>option:selected").val(),
+                    data:{
+                        pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:parseInt($("#curentpage").text())-1,
                         datatype:$("[name=type]").val()},
                     success: function (data) {
@@ -255,16 +271,18 @@
         function  clickdownpage() {
             if($("#curentpage").text()==$("#pagesun").text()){
                 $downpage.addClass("disabled");
-
+                $endpage.addClass("disabled");
 
             }else {
                 $firstPage.removeClass("disabled");
                 $upPage.removeClass("disabled");
                 $.ajax({
+
                 type: "GET",
-                datatype: "JSON",
                 url: "/admin/findPageData.do",
-                data:{rowconut:$("[name=pagecount]>option:selected").val(),
+                data:{
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
                     curentpage:parseInt($("#curentpage").text())+1,
                     datatype:$("[name=type]").val()},
                 success: function (data) {
@@ -288,10 +306,12 @@
                 $firstPage.removeClass("disabled");
                 $upPage.removeClass("disabled");
                 $.ajax({
+
                     type: "GET",
-                    datatype: "JSON",
                     url: "/admin/findPageData.do",
-                    data:{rowconut:$("[name=pagecount]>option:selected").val(),
+                    data:{
+                        pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:$("#pagesun").text(),
                         datatype:$("[name=type]").val()},
                     success: function (data) {
@@ -302,11 +322,12 @@
 
                 })}
         }
-
+        <!-- -------------分页jQuery end---------------- -->
+        <!-- -------------初始化页面数据begin---------------- -->
         function init() {
             $.ajax({
+                data:{pagetype:$("[name=type]").val()},
                 type: "GET",
-                datatype: "JSON",
                 url: "/admin/findPageData.do",
                 success: function (data) {
                     initdata(data);
@@ -335,17 +356,48 @@
                 let  $datatr=$("<tr>"+
                     "<td>"+datalist.pageData[key].id+"</td>"+
                     "<td>"+datalist.pageData[key].f_name+"</td>"+
-                    "<td>"+datalist.pageData[key].remark+"</td>"+
                     "<td>"+datalist.pageData[key].buyTime+"</td>"+
-                    "<td>" +
-                    "<a href='' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a>" +
-                    "<a href='' class='btn btn-primary btn-sm'>删除</a>" +
-                    "</td>" +
+                    "<td>"+datalist.pageData[key].remark+"</td>"+
                     "</tr>");
+            let $tdupdate= $("<td>" +
+                "<a href='' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a>" +
+                "<a href='' name='deleteFacilityByid.do?id="+datalist.pageData[key].id+"' class='btn btn-primary btn-sm'>删除</a>" +
+                "</td>");
+                $datatr.append($tdupdate);
                 $("#datalist").append($datatr);
+                $tdupdate.find("a:first").on("click",function () {
+                    $("input[name=id]").val($(this).parent().parent().find("td:first").text());
+                    $("input[name=fname]").val($(this).parent().parent().find("td:eq(1)").text());
+                  let $time=  $(this).parent().parent().find("td:eq(2)");
+                    $("input[name=buytime]").val($time.text().substring(0,$time.text().lastIndexOf(" ")));
+                    $("textarea[name=remark]").val($(this).parent().parent().find("td:eq(3)").text());
+                    curentDataPostion=$(this);
+                })
+                $tdupdate.find("a:last").on("click",function () {
+                  let $trdata=$(this).parent().parent();
+                    $.ajax({
+                        type: "GET",
+                        dataType:"JSON",
+                        url:$(this).attr("name"),
+                        success: function (data) {
+                            if(data.flag){
+                                alert(data.info);
+                                $trdata.remove();
+                            }else {
+                                alert(data.info);
+                            }
+
+                        }
+
+                    })
+
+                    return false;
+                })
+
             }
         }
-
+        <!-- -------------初始化页面数据end---------------- -->
+        <!-- -------------新增数据begin---------------- -->
         //新增器材
         $("input[name=Facilityname]").focus(function () {
             $("input[name=Facilityname]").parent().next().text("");
@@ -379,12 +431,38 @@
       function checkbuyFacilitytimewrap() {
      return     checkbuyFacilitytime($("[name=buyFacilitytime]"));
       }
+        <!-- -------------新增数据end---------------- -->
+        <!-- -------------编辑数据begin---------------- -->
 //编辑
+        function clickInputRemoveText () {
+            $(this).parent().next().text("");
+        }
+        $("input[name=fname]").focus(clickInputRemoveText)
+        $("input[name=fname]").blur(checkfname);
 
+        function  checkfname() {
+            let flag=true;
+            if($("input[name=fname]").val()==""){
+                $("input[name=fname]").parent().next().text("名称不能为空").css("color","#f00");
+                flag=false;
+            }
+            return flag;
 
+        }
+        $("input[name=buytime]").focus(clickInputRemoveText)
+        $("input[name=buytime]").blur(checkbuytime);
+        function  checkbuytime() {
+            let flag=true;
+            if( $("input[name=buytime]").val()==""){
+                $("input[name=buytime]").parent().next().text("购买时间不能为空").css("color","#f00");
+                flag=false;
+            }
+            return flag;
 
+        }
+        <!-- -------------编辑数据end---------------- -->
+//新增发送ajax
         $("#save").click(function () {
-            debugger;
             let nameok=checkNamewrap();
             let time=checkbuyFacilitytimewrap();
             if(nameok&&time){
@@ -397,8 +475,9 @@
                         Facilitrmark:$("[name=Facilitrmark]").val()
                     },
                     success:function (data) {
-                        if(data.Flag){
+                        if(data.flag){
                             alert(data.info);
+
                         }else {
                             alert(data.info);
                         }
@@ -408,7 +487,109 @@
 
             }
 
+        });
+        //修改发送Ajax
+        $("#updateinfo").click(function () {
+            let $trdata=curentDataPostion.parent().parent();
+            let nameok=checkfname();
+            let time=checkbuytime();
+            if(nameok&&time){
+                $.ajax({
+                    type:"POST",
+                    dataType:"JSON",
+                    url:"updateFacility.do",
+                    data:{id:$("input[name=id]").val(),
+                        name:$("input[name=fname]").val(),
+                        buytime:$("input[name=buytime]").val(),
+                        rmark:$("textarea[name=remark]").val()
+                    },
+                    success:function (data) {
+                        if(data.flag){
+                            alert(data.info);
+                           $trdata.find("td:eq(1)").text($("input[name=fname]").val());
+                            $trdata.find("td:eq(2)").text($("input[name=buytime]").val());
+                            $trdata.find("td:eq(3)").text($("textarea[name=remark]").val());
+                        }else {
+                            alert(data.info);
+
+                        }
+                        curentDataPostion=null;
+                    }
+
+                })
+
+            }
+
         })
+
+        //查询
+$("#queryOK").click(function () {
+   $.ajax({
+       type:"POST",
+       url:'showSelectFacility.do',
+       data:{qid:$("input[name=qid]").val(),
+           qname:$("input[name=qname]").val(),
+            qdate:$("input[name=qdate]").val()
+       },
+       success:function (data) {
+           $("#datalist").html("");
+           let datalist= JSON.parse(data)
+
+           if(datalist.flag){
+               for(let key in datalist.dataList){
+
+                   let  $datatr=$("<tr>"+
+                       "<td>"+datalist.dataList[key].id+"</td>"+
+                       "<td>"+datalist.dataList[key].f_name+"</td>"+
+                       "<td>"+datalist.dataList[key].buyTime+"</td>"+
+                       "<td>"+datalist.dataList[key].remark+"</td>"+
+                       "</tr>");
+                   let $tdupdate= $("<td>" +
+                       "<a href='' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a>" +
+                       "<a href='' name='deleteFacilityByid.do?id="+datalist.dataList[key].id+"' class='btn btn-primary btn-sm'>删除</a>" +
+                       "</td>");
+                   $datatr.append($tdupdate);
+                   $("#datalist").append($datatr);
+                   $tdupdate.find("a:first").on("click",function () {
+                       $("input[name=id]").val($(this).parent().parent().find("td:first").text());
+                       $("input[name=fname]").val($(this).parent().parent().find("td:eq(1)").text());
+                       let $time=  $(this).parent().parent().find("td:eq(2)");
+                       $("input[name=buytime]").val($time.text().substring(0,$time.text().lastIndexOf(" ")));
+                       $("textarea[name=remark]").val($(this).parent().parent().find("td:eq(3)").text());
+                       curentDataPostion=$(this);
+                   })
+                   $tdupdate.find("a:last").on("click",function () {
+                       let $trdata=$(this).parent().parent();
+                       $.ajax({
+                           type: "GET",
+                           dataType:"JSON",
+                           url:$(this).attr("name"),
+                           success: function (data) {
+                               if(data.flag){
+                                   alert(data.info);
+                                   $trdata.remove();
+                               }else {
+                                   alert(data.info);
+                               }
+
+                           }
+
+                       })
+
+                       return false;
+                   })
+
+               }
+           }else {
+               alert(datalist.info);
+           }
+
+       }
+
+
+   })
+})
+
     </script>
 </body>
 </html>

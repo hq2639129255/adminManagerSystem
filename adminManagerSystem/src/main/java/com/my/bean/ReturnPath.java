@@ -1,8 +1,19 @@
 package com.my.bean;
 
-public class ReturnPath {
+import java.util.List;
+
+public class ReturnPath <T> {
     private  boolean flag;
     private String info;
+    private List<T> dataList;
+
+    public List<T> getDataList() {
+        return dataList;
+    }
+
+    public void setDataList(List<T> dataList) {
+        this.dataList = dataList;
+    }
 
     public String getInfo() {
         return info;
