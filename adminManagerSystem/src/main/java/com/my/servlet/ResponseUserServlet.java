@@ -2,8 +2,6 @@ package com.my.servlet;
 
 import com.google.gson.Gson;
 import com.my.bean.*;
-import com.my.dao.VipCardViewDao;
-import com.my.dao.imple.VipCardViewDaoImple;
 import com.my.exception.UserIsLock;
 import com.my.exception.UserNameORpasswordException;
 import com.my.service.FacilityService;
@@ -15,12 +13,14 @@ import com.my.service.imple.VipCardViewServiceImple;
 import com.my.utils.MD5Util;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -257,16 +257,22 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
     response.getWriter().write(gson.toJson(data));
 
 }
+//初始化套餐类型
+
+    protected void initSetmeal(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        VipCardViewService service=new VipCardViewServiceImple();
+        List<Setmeal> data = service.initSetmeal();
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+
+    }
+
+
+
 //新增会员卡数据
 
     protected void  insertCard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        /*
-        * addvipname:$("input[name=addvipname]").val(),
-                    addsex:$("[name=addsex]:selected").val(),
-                    addphone:$("[name=addphone]").val(),
-                    addemil:$("[name=addemil]").val(),
-                    addcardtype:$("[name=addcardtype]:selected").val()
-        * */
+
         String name=request.getParameter("addvipname");
         String phone=request.getParameter("addphone");
         String emil=request.getParameter("addemil");
@@ -290,9 +296,85 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
     }
     //修改会员卡信息
     protected void upadatevipcard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       String  name=request.getParameter("name");
-       String type =request.getParameter("type");
-        System.out.println(name);
-        System.out.println(type);
+     String id=request.getParameter("id");
+     String  name=request.getParameter("name");
+     String type =request.getParameter("type");
+
+       VipCardView vipCardView=new VipCardView();
+     vipCardView.setCid(Integer.parseInt(id));
+       vipCardView.setE_name(name);
+       vipCardView.setT_name(type);
+        VipCardViewService service=new VipCardViewServiceImple();
+        boolean b = service.updatecardinfo(vipCardView);
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(b);
+        Gson gson=new Gson();
+        if(b){
+            returnPath.setInfo("修改成功");
+        }else {
+            returnPath.setInfo("修改失败");
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    //查询会员卡信息
+    protected void showSelectVipcard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String id=request.getParameter("qid");
+        if("".equals(id)||id==null){
+            id=Integer.toString(-1);
+        }
+        String name=request.getParameter("qname");
+        String type =request.getParameter("qtype");
+        if("".equals(name)||name==null){
+            name=null;
+        }
+        if("".equals(type)|| type ==null){
+            type =null;
+        };
+        VipCardView vipCardView=new VipCardView();
+        vipCardView.setCid(Integer.parseInt(id));
+        vipCardView.setE_name(name);
+        vipCardView.setT_name(type);
+        VipCardViewService service=new VipCardViewServiceImple ();
+        List<VipCardView> data = service.showFacilityByParameter(vipCardView);
+        Gson gson=new Gson();
+        ReturnPath<VipCardView> returnPath=new ReturnPath<VipCardView>();
+        if(data.size()==0){
+            returnPath.setFlag(false);
+            returnPath.setInfo("没有查询到符合条件的数据");
+        }else {
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    protected void buyservice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
+         SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        VipCardViewService service=new VipCardViewServiceImple();
+        String id =request.getParameter("vipcardid");
+        String buyserviceday=request.getParameter("service");
+        Boolean b=null;
+        String enddatetime=request.getParameter("servicedate");
+        Date date = simple.parse(enddatetime);
+        //判断服务是否过期
+      //true 未过期  false:过期
+
+           boolean flag=date.getTime()>System.currentTimeMillis();
+
+
+
+           b = service.buyservice(flag, Integer.parseInt(buyserviceday),Integer.parseInt(id));
+
+
+        Gson gson=new Gson();
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(b);
+        if(b){
+            returnPath.setInfo("续费成功");
+        }else {
+            returnPath.setInfo("操作失败");
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+
     }
 }

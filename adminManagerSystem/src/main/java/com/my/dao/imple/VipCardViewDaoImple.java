@@ -1,9 +1,6 @@
 package com.my.dao.imple;
 
-import com.my.bean.Facility;
-import com.my.bean.Page;
-import com.my.bean.VipCardView;
-import com.my.bean.Vipinfo;
+import com.my.bean.*;
 import com.my.dao.BaseDao;
 import com.my.dao.VipCardViewDao;
 import com.my.utils.JDBCutil;
@@ -115,6 +112,49 @@ String sql="SELECT  * FROM vipmanager_v ";
 
         System.out.println(page);
         return page;
+    }
+
+    @Override
+    public boolean updateCardType(Connection con,int type,int id) throws SQLException {
+        String sql="UPDATE `vipcard` SET `t_id`=? WHERE `card_id`=?";
+        int b = this.update(con,sql,type,id);
+        return b>0;
+    }
+
+    @Override
+    public List<VipCardView> findVipCardViewByParameter(Connection con, VipCardView vipCardView ) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        List<VipCardView> datalist = new ArrayList<VipCardView>();
+        if (vipCardView.getCid()== -1 && vipCardView.getE_name() == null && vipCardView.getT_name() == null) {
+            String sql = "SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v`";
+            ResultSet re = this.getListResultSet(con, sql);
+            datalist = this.parserResult(re);
+        } else if (vipCardView.getCid() != -1) {
+            String sql = " SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE cid=?";
+            ResultSet re = this.getListResultSet(con, sql, vipCardView.getCid());
+            datalist = this.parserResult(re);
+        }  else if (vipCardView.getCid() == -1 && vipCardView.getE_name() != null && vipCardView.getT_name() != null) {
+            String sql = "SELECT cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE t_name=? AND e_name=?";
+            ResultSet re = this.getListResultSet(con, sql, vipCardView.getT_name(), vipCardView.getE_name());
+            datalist = this.parserResult(re);
+        }else if (vipCardView.getCid() == -1 && vipCardView.getE_name() == null && vipCardView.getT_name() != null) {
+            String sql = "SELECT cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE t_name=?";
+            ResultSet re = this.getListResultSet(con, sql,vipCardView.getT_name());
+            datalist = this.parserResult(re);
+        }else {
+            String sql = "SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE e_name LIKE CONCAT('%',?,'%');";
+            ResultSet re = this.getListResultSet(con, sql, vipCardView.getE_name());
+            datalist = this.parserResult(re);
+        }
+
+
+        return datalist;
+
+
+
+
+
+
+
     }
 
     public List<VipCardView> parserResult(ResultSet re) {
