@@ -16,14 +16,10 @@ public class VipinfoDaoImple extends BaseDao<Vipinfo> implements VipinfoDao {
     }
 
     @Override
-    public int findvipIdbyCardid(Connection con, int id) {
-        String sql="SELECT  `v_id` FROM  `wipinfo` WHERE  `card_id`=1";
+    public int findvipIdbyCardid(Connection con, int id) throws SQLException {
+        String sql="SELECT  `v_id` FROM  `wipinfo` WHERE  `card_id`=?";
         int b = 0;
-        try {
             b = this.getValue(con,sql,id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return b;
     }
 }

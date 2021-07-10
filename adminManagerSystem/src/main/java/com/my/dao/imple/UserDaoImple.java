@@ -16,4 +16,13 @@ public class UserDaoImple extends BaseDao<User> implements UserDao {
 
         return obj;
     }
+
+    @Override
+    public boolean adduser(Connection con, User u) throws SQLException {
+        String sql="INSERT INTO  `user` (`username`,`a_id`,`sta_id`) VALUES(?,3,0);";
+        int b = this.update(con, sql, u.getUsername());
+        return b>0;
+    }
+
+
 }

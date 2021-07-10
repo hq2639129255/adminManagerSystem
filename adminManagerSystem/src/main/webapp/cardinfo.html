@@ -380,9 +380,16 @@
                  $(data).each(function (index,obj) {
                      let $option=$("<option>"+obj.t_name +"</option>");
                      $option.attr({value:obj.t_id});
+
+                     let $roption=$("<option>"+obj.t_name +"</option>");
+                     $roption.attr({value:obj.t_id});
+
+                     let $r1option=$("<option>"+obj.t_name +"</option>");
+                     $r1option.attr({value:obj.t_id});
+
                      $("#cardType").append($option);
-                     $("#updatecardtype").append($option);
-                     $("[name=qtype]").append($option);
+                     $("#updatecardtype").append($roption);
+                     $("[name=qtype]").append($r1option);
                  })
 
                 }
@@ -575,7 +582,6 @@
         })
 
         $("#xfsave").click(function () {
-            alert(curentDataPostion.find("td:eq(3)").text());
             $.ajax({
                 url:"buyservice.do",
                 dataType:"JSON",
@@ -585,7 +591,7 @@
                     servicedate:curentDataPostion.find("td:eq(3)").text()
                 },
                 success:function (data) {
-                    debugger;
+
                     //{"flag":true,"info":"续费成功"}
                     if(data.flag){
                      let olddate=new Date(curentDataPostion.find("td:eq(3)").text());

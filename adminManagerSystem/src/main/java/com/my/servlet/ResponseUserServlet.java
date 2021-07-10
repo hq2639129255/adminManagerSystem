@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 import com.my.bean.*;
 import com.my.exception.UserIsLock;
 import com.my.exception.UserNameORpasswordException;
+import com.my.service.EmployeeService;
 import com.my.service.FacilityService;
 import com.my.service.UserService;
 import com.my.service.VipCardViewService;
+import com.my.service.imple.EmployeeServiceImple;
 import com.my.service.imple.FacilityServiceImple;
 import com.my.service.imple.UserServiceImple;
 import com.my.service.imple.VipCardViewServiceImple;
@@ -128,7 +130,11 @@ response.addCookie(cookie);
             VipCardViewService service=new VipCardViewServiceImple();
             Page<VipCardView> data = service.showCurrentVipCardView(pageoffset, Integer.parseInt(rowconut));
             Gson gson=new Gson();
-            System.out.println(gson.toJson(data));
+            response.getWriter().write(gson.toJson(data));
+        }else if("Employee".equals(datatype)){
+            EmployeeService service=new EmployeeServiceImple();
+            Page<Employee> data = service.showCurrentEmployee(pageoffset, Integer.parseInt(rowconut));
+            Gson gson=new Gson();
             response.getWriter().write(gson.toJson(data));
         }
 
@@ -232,6 +238,7 @@ else{
         }
         response.getWriter().write(gson.toJson(returnPath));
     }
+
  /*==========================会员卡管理begin================================*/
  protected void showcardinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
      VipCardViewService service=new VipCardViewServiceImple();
@@ -377,4 +384,149 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
         response.getWriter().write(gson.toJson(returnPath));
 
     }
+
+    //初始化职位类型
+
+    protected void initJobtype(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        EmployeeService service=new EmployeeServiceImple();
+        List<Jobtype> data = service.initJobtypeList();
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+
+    }
+//新增工作人员
+    protected void addEmployee(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String  addname=request.getParameter("addname");
+        String  addsex=request.getParameter("addsex");
+        String  addjob=request.getParameter("addjob");
+        String  addAddrees=request.getParameter("addAddrees");
+        String  addphone=request.getParameter("addphone");
+        String  addemil=request.getParameter("addemil");
+        Employee e=new  Employee();
+        User user=new User();
+        user.setUsername(addphone);
+        user.setAu_id(3);
+        user.setStatus_id(0);
+
+        e.setE_name(addname);
+        e.setJ_id(Integer.parseInt(addjob));
+        e.setEmail(addemil);
+        e.setPhone(addphone);
+        e.setSex(addsex);
+        e.setAddress(addAddrees);
+        EmployeeService service=new EmployeeServiceImple();
+        boolean b = service.addEmployee(e,user);
+        Gson gson=new Gson();
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(b);
+        if(b){
+            returnPath.setInfo("新增成功");
+        }else {
+            returnPath.setInfo("新增失败");
+        }
+        response.getWriter().write(gson.toJson( returnPath));
+
+    }
+
+
+        protected void showEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            String id=request.getParameter("qid");
+            if("".equals(id)||id==null){
+                id=Integer.toString(-1);
+            }
+            String name=request.getParameter("qname");
+            String type =request.getParameter("qtype");
+            QueryEmployee qe=new QueryEmployee();
+            if("".equals(name)||name==null){
+                name=null;
+            }
+
+
+            qe.setEid(Integer.parseInt(id));
+            qe.setEname(name);
+            qe.setJobid(Integer.parseInt(type));
+
+
+            EmployeeService service=new EmployeeServiceImple ();
+            List<Employee> data = service.showEmployeeParameter(qe);
+            Gson gson=new Gson();
+            ReturnPath<Employee> returnPath=new ReturnPath<Employee>();
+            if(data==null){
+                returnPath.setFlag(false);
+                returnPath.setInfo("没有查询到符合条件的数据");
+            }else {
+                returnPath.setFlag(true);
+                returnPath.setDataList(data);
+
+            }
+            response.getWriter().write(gson.toJson(returnPath));
+        }
+    protected void  insertEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String name=request.getParameter("addvipname");
+        String phone=request.getParameter("addphone");
+        String emil=request.getParameter("addemil");
+        String sex=request.getParameter("addsex");
+        String cardtype=request.getParameter("addcardtype");
+
+        Vipinfo vipinfo=new Vipinfo();
+        vipinfo.setE_name(name);
+        vipinfo.setPhone(phone);
+        vipinfo.setEmail(emil);
+        vipinfo.setSex(sex);
+        VipCardViewService service=new VipCardViewServiceImple();
+        boolean b = service.addcard(Integer.parseInt(cardtype), vipinfo);
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(b);
+        if(b){
+            returnPath.setInfo("新增成功");
+        }
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+    //修改员工信息
+    protected void upadateEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+
+
+        String eid=request.getParameter("eid");
+        String  ename=request.getParameter("ename");
+        String sex=request.getParameter("sex");
+        String jobid=request.getParameter("jobid");
+        String  addres=request.getParameter("addres");
+        String  emil=request.getParameter("emil");
+
+
+        Employee emp=new Employee();
+        emp.setE_id(Integer.parseInt(eid));
+        emp.setE_name(ename);
+        emp.setSex(sex);
+        emp.setAddress(addres);
+        emp.setEmail(emil);
+        emp.setJ_id(Integer.parseInt(jobid));
+
+        EmployeeService service=new EmployeeServiceImple();
+        boolean b = service.updateEmployee(emp);
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(b);
+        Gson gson=new Gson();
+        if(b){
+            returnPath.setInfo("修改成功");
+        }else {
+            returnPath.setInfo("修改失败");
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    //选择教练信息
+
+    protected void initteach(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+       String id=request.getParameter("id");
+        EmployeeService service=new EmployeeServiceImple();
+        List<Employee> data = service.showSelectEmployeey(Integer.parseInt(id));
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+
+    }
+
 }

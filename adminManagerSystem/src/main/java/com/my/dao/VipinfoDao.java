@@ -7,5 +7,5 @@ import java.sql.SQLException;
 
 public interface VipinfoDao {
     boolean updateVipinfo(Connection con, String name,int  id) throws SQLException;
-    int findvipIdbyCardid(Connection con,int id);
+    int findvipIdbyCardid(Connection con,int id) throws SQLException;
 }

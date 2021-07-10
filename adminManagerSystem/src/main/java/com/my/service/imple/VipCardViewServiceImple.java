@@ -69,6 +69,7 @@ public class VipCardViewServiceImple implements VipCardViewService {
             con.commit();
         } catch (SQLException e) {
             try {
+                b=false;
                 con.rollback();
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -136,6 +137,7 @@ public class VipCardViewServiceImple implements VipCardViewService {
             e.printStackTrace();
         }finally {
             try {
+                con.setAutoCommit(true);
                 con.close();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -215,6 +217,7 @@ con.commit();
             e.printStackTrace();
         }finally {
             try {
+                con.setAutoCommit(true);
                 con.close();
             } catch (SQLException e) {
                 e.printStackTrace();

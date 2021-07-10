@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+    <!--查询条件 begin-->
+    <div id="search_btn"class="content_search_group">
+        <div class="row">
+            <div class="col-xs-10">
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon2">员工号</span>
+                    <input type="text" name="qid" class="form-control content_search_text" placeholder="输入员工号" aria-describedby="basic-addon2">
+                </div>
+
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon3">职务类型</span>
+                    <select id="qjoptype" class="form-control line left">
+                        <option value="0">请选择职务类型</option>
+                    </select>
+                </div>
+
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="Span1">员工姓名</span>
+                    <input type="text" name="qname" class="form-control" placeholder="输入员工姓名" aria-describedby="basic-addon2">
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="three_two">
+                    <a href="#" id="queryOK" class="btn btn-primary content_marright">查询</a>
+                    <a href="#" class="btn btn-primary">重置</a></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10">
+                <a href="#" class="btn btn-primary content_marright content_btn_add" data-toggle="modal" data-target="#add1" data-backdrop="static">新增</a>
+            </div>
+        </div>
+    </div>
+    <!--查询条件 end-->
+
+    <!--数据列表 begin-->
+    <table id="table_list" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>员工号</th>
+            <th>姓名</th>
+            <th>职务</th>
+            <th>住址</th>
+            <th class="w110">性别</th>
+            <th class="w158">联系方式</th>
+            <th class="w110">操作</th>
+        </tr>
+        </thead>
+        <tbody id="datalist">
+
+        </tbody>
+    </table>
+    <!--数据列表 end-->
+
+    <!--分页 begin-->
+    <div class="pages content_right" >
+        <div class="pages_record">
+            共&nbsp;<b id="pagesun">3</b>&nbsp;页 &nbsp;第&nbsp;<b id="curentpage">1</b>&nbsp;页&nbsp; <b id="rowcount">10</b>&nbsp;条/页&nbsp; &nbsp;共&nbsp;<b id="rowsun">27</b>&nbsp;条记录
+        </div>
+
+        <ul class="pagination">
+            <li id="firstPage"><a href="#" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>
+            <li  id="upPage"><a href="#">上一页<span class="sr-only">(current)</span></a></li>
+            <li id="downpage"><a href="#">下一页</a></li>
+            <li id="endpage"><a href="#" aria-label="Next"><span aria-hidden="true">尾页</span></a></li>
+            <li>
+
+
+                <select  class="form-control w80 line left"  name="pagecount">
+                    <option   value="5">5</option>
+                    <option selected="selected" value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+
+            </li>
+
+            <li><input type="text" placeholder="输入页数" class="form-control w80"></li>
+            <a href="#">跳转</a>
+            <input type="hidden" name="type" value="Employee"/>
+
+        </ul>
+
+    </div>
+    <!--分页 end-->
+</div>
+
+
+<!-- Modal begin -->
+<!--添加-->
+<div class="modal fade" id="add1" tabindex="-1" role="dialog" aria-labelledby="add11">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="add11">新增</h4>
+            </div>
+            <div class="modal-body p_bottom35">
+                <ul>
+                    <li>
+                        <label><span>姓名： </span></label>
+                        <input type="text" name="addname" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>性别： </span></label>
+                        <select id="addsex" class="h26 line left">
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>职务类型： </span></label>
+                        <select id="addjob" class="h26 line left">
+                            <option value="0">请选择</option>
+                        </select>
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>住址： </span></label>
+                        <input type="text" name="addAddrees" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>联系方式： </span></label>
+                        <input type="text" name="addphone" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>email： </span></label>
+                        <input type="text" name="addemil" maxlength="40">
+                    </li>
+                    <li></li>
+
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                <button type="button" id="addsave" class="btn btn-primary btn-sm">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--删除-->
+<div class="modal fade" id="del" tabindex="-1" role="dialog" aria-labelledby="add11">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="add12">删除</h4>
+            </div>
+            <div class="modal-body p_bottom35">
+                <ul>
+                    <li>请选择将该教练名下学员转移到其他教练名下</li>
+                    <li>
+                        <label><span>选择教练</span></label>
+                        <select id="seletTeach" class="h26 line left">
+                            <option value="0">请选择</option>
+                        </select>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                <button type="button" id="executesave" class="btn btn-primary btn-sm">执行</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel1">编辑</h4>
+            </div>
+            <div class="modal-body p_bottom35">
+                <ul>
+                    <li>
+                        <label><span>编号： </span></label>
+                        <input type="text" name="updateid" disabled="disabled" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>姓名： </span></label>
+                        <input type="text" name="updatename" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>性别： </span></label>
+                        <select id="updatsex" class="h26 line left">
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </li>
+
+                    <li></li>
+                    <li>
+                        <label><span>职务类型： </span></label>
+                        <select id="updatjob" class="h26 line left">
+                            <option value="0">请选择</option>
+                        </select>
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>住址： </span></label>
+                        <input type="text" name="updatAddrees" maxlength="40">
+                    </li>
+
+                    <li></li>
+                    <li>
+                        <label><span>联系方式： </span></label>
+                        <input type="text" disabled="disabled" name="updatphone" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>email： </span></label>
+                        <input type="text" name="updatemil" maxlength="40">
+                    </li>
+                    <li></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                <button type="button" id="updateemp" class="btn btn-primary btn-sm">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal end-->
+
+<script>
+    //    添加编辑模态框
+    $('#add').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var recipient = button.data('whatever') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-title').text('' + recipient)
+        modal.find('.modal-body input').val(recipient)
+    });
+    <!--分页begin-->
+    var  curentDataPostion;//点击位置
+    var joptypeMap=new Map();
+    <!--分页begin-->
+    let $firstPage=$("#firstPage");
+    let $upPage=$("#upPage");
+    let $downpage=$("#downpage");
+    let $endpage=$("#endpage");
+
+    $firstPage.hover(activeStyle,notactiveStyle);
+    $firstPage.hover(activeStyle,notactiveStyle);
+    $upPage.hover(activeStyle,notactiveStyle);
+    $downpage.hover(activeStyle,notactiveStyle);
+    $endpage.hover(activeStyle,notactiveStyle);
+
+    function activeStyle() {
+        $(this).addClass("active");
+
+    }
+    function notactiveStyle() {
+        $(this).removeClass("active");
+
+    }
+    function clickFirstPage() {
+        if($("#curentpage").text()=="1"){
+            $firstPage.addClass("disabled");
+            return false;
+        }else {
+            $endpage.removeClass("disabled");
+            $downpage.removeClass("disabled");
+            $.ajax({
+
+                type: "GET",
+                url: "/admin/findPageData.do",
+                data:{
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:1,
+                    datatype:$("[name=type]").val()},
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+            })
+        }
+
+    }
+    function clickuppage() {
+        if($("#curentpage").text()=="1"){
+            $upPage.addClass("disabled");
+            $firstPage.addClass("disabled");
+            return false;
+        }else {
+            $downpage.removeClass("disabled");
+            $endpage.removeClass("disabled");
+            $.ajax({
+
+                type: "GET",
+                url: "/admin/findPageData.do",
+                data:{
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:parseInt($("#curentpage").text())-1,
+                    datatype:$("[name=type]").val()},
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+            })
+        }
+    }
+
+    function  clickdownpage() {
+        if($("#curentpage").text()==$("#pagesun").text()){
+            $downpage.addClass("disabled");
+            $endpage.addClass("disabled");
+
+        }else {
+            $firstPage.removeClass("disabled");
+            $upPage.removeClass("disabled");
+            $.ajax({
+
+                type: "GET",
+                url: "/admin/findPageData.do",
+                data:{
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:parseInt($("#curentpage").text())+1,
+                    datatype:$("[name=type]").val()},
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+
+            })}
+
+
+    }
+
+    function endPage() {
+        if($("#curentpage").text()==$("#pagesun").text()){
+            $downpage.addClass("disabled");
+            $endpage.addClass("disabled");
+            return false;
+
+        }else {
+            $firstPage.removeClass("disabled");
+            $upPage.removeClass("disabled");
+            $.ajax({
+
+                type: "GET",
+                url: "/admin/findPageData.do",
+                data:{
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:$("#pagesun").text(),
+                    datatype:$("[name=type]").val()},
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+
+            })}
+    }
+
+    <!--分页end-->
+
+
+
+
+
+<!-- 初始化页面begin -->
+
+    $(function () {
+        init();
+        $downpage.click(clickdownpage);
+        $firstPage.click(clickFirstPage);
+        $upPage.click(clickuppage);
+        $endpage.click(endPage);
+
+    })
+    function init() {
+        $.ajax({
+            dataType:"JSON",
+            type: "GET",
+            url: "/admin/initJobtype.do",
+            success: function (data) {
+                $(data).each(function (index,obj) {
+                    let $option=$("<option>"+obj.jName+"</option>");
+                    $option.attr({value:obj.jId});
+                    let $uoption=$("<option>"+obj.jName+"</option>");
+                    $uoption.attr({value:obj.jId});
+                    let $roption=$("<option>"+obj.jName+"</option>");
+                    $roption.attr({value:obj.jId});
+                    joptypeMap.set(obj.jId,obj.jName);
+                    $("#addjob").append($option);
+                    $("#qjoptype").append($roption);
+                    $("#updatjob").append($uoption);
+                })
+
+            }
+
+        });
+
+        $.ajax({
+            data:{pagetype:$("[name=type]").val()},
+            type: "GET",
+            url: "/admin/findPageData.do",
+            success: function (data) {
+                initdata(data);
+
+            }
+
+        })
+
+    }
+    function  initdata(data) {
+        let $pagesun=$("#pagesun");
+        let $curentpage=$("#curentpage");
+        let $rowcount=$("#rowcount");
+        let $rowsun=$("#rowsun");
+
+        let datalist= JSON.parse(data);
+
+        $pagesun.text(datalist.sunPage);
+        $curentpage.text(datalist.curentPage);
+        $rowcount.text(datalist.curentrow);
+        $rowsun.text(datalist.sunrow);
+        for(let key in datalist.pageData ){
+            let  $datatr=$("<tr>"+
+                "<td>"+datalist.pageData[key].e_id+"</td>"+
+                "<td>"+datalist.pageData[key].e_name+"</td>"+
+                "<td>"+joptypeMap.get(datalist.pageData[key].j_id)+"</td>"+
+                "<td>"+datalist.pageData[key].address+"</td>"+
+                "<td>"+datalist.pageData[key].sex+"</td>"+
+                "<td>"+datalist.pageData[key].phone+"</td>"+
+                "</tr>");
+            let $tdupdate=$('<td> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">编辑</a> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#del" data-backdrop="static">删除</a> </td>');
+            $datatr.append($tdupdate);
+            $datatr.find("a:first").on("click",function () {
+                curentDataPostion=$(this).parent().parent();
+                $("[name=updateid]").val(curentDataPostion.find("td:first").text());
+                $("[name=updatename]").val(curentDataPostion.find("td:eq(1)").text());
+                $("[name=updatAddrees]").val(curentDataPostion.find("td:eq(3)").text());
+                $("[name=updatphone]").val(curentDataPostion.find("td:eq(5)").text());
+            })
+            $datatr.find("a:eq(1)").on("click",function () {
+                curentDataPostion=$(this).parent().parent();
+
+                $.ajax({
+                    dataType:"JSON",
+                    data:{id:curentDataPostion.find("td:first").text()},
+                    type: "GET",
+                    url: "/admin/initteach.do",
+                    success: function (data) {
+                        $(data).each(function (index,obj) {
+                            console.log(obj.e_name);
+                             let $option=$("<option>"+obj.e_id+"&nbsp;"+obj.e_name+"</option>");
+                             console.log($option);
+                             $option.attr({value:obj.jId});
+                             $("#seletTeach").append( $option);
+                        })
+
+
+
+
+                    }
+
+                })
+
+
+
+
+
+
+
+                // curentDataPostion=$(this).parent().parent();
+                // $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
+                // $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
+            })
+
+
+            $("#datalist").append($datatr);
+        }
+
+
+
+
+    }
+    <!--初始化页面end-->
+    <!--新增员工资料begin-->
+    $("#addsave").click(function () {
+        $.ajax({
+            type:"POST",
+            dataType:"JSON",
+            url:"addEmployee.do",
+            data:{addname:$("input[name=addname]").val(),
+                addsex:$("#addsex>option:selected").val(),
+                addjob:$("#addjob>option:selected").val(),
+                addAddrees:$("[name=addAddrees]").val(),
+                addphone:$("[name=addphone]").val(),
+                addemil:$("[ name=addemil]").val()
+
+            },
+            success:function (data) {
+                if(data.flag){
+                    alert(data.info);
+
+                }else {
+                    alert(data.info);
+                }
+            }
+
+        })
+
+    });
+    <!--新增员工资料end-->
+<!--查询-->
+
+
+    $("#queryOK").click(function () {
+        $.ajax({
+            type:"POST",
+            url:'showEmployee.do',
+            dataType:"JSON",
+            data:{qid:$("input[name=qid]").val(),
+                qname:$("input[name=qname]").val(),
+                qtype:$("#qjoptype>option:selected").val()
+            },
+            success:function (data) {
+                if(data.flag){
+                    $("#datalist").html("");
+                    $(data.dataList).each(function (index,obj) {
+                        let  $datatr=$("<tr>"+
+                            "<td>"+obj.e_id+"</td>"+
+                            "<td>"+obj.e_name+"</td>"+
+                            "<td>"+joptypeMap.get(obj.j_id)+"</td>"+
+                            "<td>"+obj.address+"</td>"+
+                            "<td>"+obj.sex+"</td>"+
+                            "<td>"+obj.phone+"</td>"+
+                            "</tr>");
+                        $tdupdate=$('<td> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">编辑</a> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#del" data-backdrop="static">删除</a> </td>');
+                        $datatr.append($tdupdate);
+                        $datatr.find("a:first").on("click",function () {
+                            curentDataPostion=$(this).parent().parent();
+                            $("[name=updateid]").val(curentDataPostion.find("td:first").text());
+                            $("[name=updatename]").val(curentDataPostion.find("td:eq(1)").text());
+                            $("[name=updatAddrees]").val(curentDataPostion.find("td:eq(3)").text());
+                            $("[name=updatphone]").val(curentDataPostion.find("td:eq(5)").text());
+                        })
+                        $datatr.find("a:eq(2)").on("click",function () {
+                            curentDataPostion=$(this).parent().parent();
+                            alert(curentDataPostion.html())
+                            $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
+                            $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
+                        })
+                        $("#datalist").append($datatr);
+
+
+
+
+
+
+                    })
+
+                }else {
+                    alert(data.info)
+                }
+
+
+            }
+
+
+        })
+    })
+    <!-- 修改begin-->
+    $("#updateemp").click(function () {
+        let $trdata=curentDataPostion;
+        $.ajax({
+            dataType:"JSON",
+            type:"POST",
+            url:"upadateEmployee.do",
+            data:{eid:$("[name=updateid]").val(),
+                ename:$("[name=updatename]").val(),
+                  sex:$("#updatsex>option:selected").val(),
+                jobid:$("#updatjob>option:selected").val(),
+                addres:$("[name=updatAddrees]").val(),
+                emil:$("[name=updatemil]").val()
+            },
+            success:function (data) {
+                if(data.flag){
+                    alert(data.info);
+                    $trdata.find("td:eq(1)").text($("[name=updatename]").val());
+                    $trdata.find("td:eq(2)").text(joptypeMap.get(parseInt($("#updatjob>option:selected").val())));
+                    $trdata.find("td:eq(3)").text($("[name=updatAddrees]").val());
+                    $trdata.find("td:eq(4)").text($("#updatsex>option:selected").val());
+                }else {
+                    alert(data.info);
+
+                }
+                curentDataPostion=null;
+            }
+
+
+        })
+    });
+$("#executesave").click(function () {
+    $.ajax({
+        dataType:"JSON",
+        type:"POST",
+        url:"upadateEmployee.do",
+        data:{eid:$("[name=updateid]").val(),
+            ename:$("[name=updatename]").val(),
+            sex:$("#updatsex>option:selected").val(),
+            jobid:$("#updatjob>option:selected").val(),
+            addres:$("[name=updatAddrees]").val(),
+            emil:$("[name=updatemil]").val()
+        },
+        success:function (data) {
+            if(data.flag){
+                alert(data.info);
+                $trdata.find("td:eq(1)").text($("[name=updatename]").val());
+                $trdata.find("td:eq(2)").text(joptypeMap.get(parseInt($("#updatjob>option:selected").val())));
+                $trdata.find("td:eq(3)").text($("[name=updatAddrees]").val());
+                $trdata.find("td:eq(4)").text($("#updatsex>option:selected").val());
+            }else {
+                alert(data.info);
+
+            }
+            curentDataPostion=null;
+        }
+
+
+    })
+
+})
+
+</script>
+</body>
+</html>
