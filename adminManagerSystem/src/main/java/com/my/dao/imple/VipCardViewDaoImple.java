@@ -103,8 +103,12 @@ String sql="SELECT  * FROM vipmanager_v ";
             page.setCurentPage((offset / rowcount) + 1);
             page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
             ResultSet re = this.getListResultSet(con, sql, offset, rowcount);
-           data= this.parserResult(re);
+            data= this.parserResult(re);
+            if(data!=null){
             page.setCurentrow(data.size());
+            }else {
+                page.setCurentrow(0);
+            }
             page.setPageData(data);
         } catch (SQLException e) {
             e.printStackTrace();

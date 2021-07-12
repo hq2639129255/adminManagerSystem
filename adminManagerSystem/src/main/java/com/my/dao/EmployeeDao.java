@@ -13,5 +13,7 @@ public interface EmployeeDao {
     List<Employee> findEmployeeByParameter(Connection con, QueryEmployee q) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 boolean updateEmployee(Connection con,Employee e) throws SQLException;
     List<Employee> findEmployeebyId(Connection con,int id) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+String findPhoneByid(Connection con,int id) throws SQLException;
+boolean deleteEmployeebyId(Connection con,int id) throws SQLException;
 
 }

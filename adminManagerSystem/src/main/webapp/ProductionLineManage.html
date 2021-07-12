@@ -491,11 +491,10 @@
                     type: "GET",
                     url: "/admin/initteach.do",
                     success: function (data) {
+                        $("#seletTeach>option:eq(0)").siblings().remove();
                         $(data).each(function (index,obj) {
-                            console.log(obj.e_name);
                              let $option=$("<option>"+obj.e_id+"&nbsp;"+obj.e_name+"</option>");
-                             console.log($option);
-                             $option.attr({value:obj.jId});
+                            $option.attr({value:obj.e_id});
                              $("#seletTeach").append( $option);
                         })
 
@@ -506,15 +505,6 @@
 
                 })
 
-
-
-
-
-
-
-                // curentDataPostion=$(this).parent().parent();
-                // $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
-                // $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
             })
 
 
@@ -586,12 +576,29 @@
                             $("[name=updatAddrees]").val(curentDataPostion.find("td:eq(3)").text());
                             $("[name=updatphone]").val(curentDataPostion.find("td:eq(5)").text());
                         })
-                        $datatr.find("a:eq(2)").on("click",function () {
+                        $datatr.find("a:eq(1)").on("click",function () {
                             curentDataPostion=$(this).parent().parent();
-                            alert(curentDataPostion.html())
-                            $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
-                            $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
+
+                            $.ajax({
+                                dataType:"JSON",
+                                data:{id:curentDataPostion.find("td:first").text()},
+                                type: "GET",
+                                url: "/admin/initteach.do",
+                                success: function (data) {
+                                    $("#seletTeach>option:eq(0)").siblings().remove();
+                                    $(data).each(function (index,obj) {
+                                        console.log(obj.e_name);
+                                        let $option=$("<option>"+obj.e_id+"&nbsp;"+obj.e_name+"</option>");
+                                        $option.attr({value:obj.e_id});
+                                        $("#seletTeach").append( $option);
+                                    })
+
+                                }
+
+                            })
+
                         })
+
                         $("#datalist").append($datatr);
 
 
@@ -644,27 +651,17 @@
     });
 $("#executesave").click(function () {
     $.ajax({
-        dataType:"JSON",
         type:"POST",
-        url:"upadateEmployee.do",
-        data:{eid:$("[name=updateid]").val(),
-            ename:$("[name=updatename]").val(),
-            sex:$("#updatsex>option:selected").val(),
-            jobid:$("#updatjob>option:selected").val(),
-            addres:$("[name=updatAddrees]").val(),
-            emil:$("[name=updatemil]").val()
+        dataType:"JSON",
+        url:"deleteEmployee.do",
+        data:{eid: curentDataPostion.find("td:first").text(),
+            selectid:$("#seletTeach>option:selected").val()
         },
         success:function (data) {
             if(data.flag){
-                alert(data.info);
-                $trdata.find("td:eq(1)").text($("[name=updatename]").val());
-                $trdata.find("td:eq(2)").text(joptypeMap.get(parseInt($("#updatjob>option:selected").val())));
-                $trdata.find("td:eq(3)").text($("[name=updatAddrees]").val());
-                $trdata.find("td:eq(4)").text($("#updatsex>option:selected").val());
-            }else {
-                alert(data.info);
-
+                curentDataPostion.remove();
             }
+                alert(data.info);
             curentDataPostion=null;
         }
 

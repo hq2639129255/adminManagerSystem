@@ -1,12 +1,8 @@
 package com.my.service.imple;
 
 import com.my.bean.*;
-import com.my.dao.EmployeeDao;
-import com.my.dao.JobtypeDao;
-import com.my.dao.UserDao;
-import com.my.dao.imple.EmployeeDaoImple;
-import com.my.dao.imple.JobtypeDaoImple;
-import com.my.dao.imple.UserDaoImple;
+import com.my.dao.*;
+import com.my.dao.imple.*;
 import com.my.service.EmployeeService;
 import com.my.utils.JDBCutil;
 
@@ -15,9 +11,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class EmployeeServiceImple implements EmployeeService {
-    EmployeeDao dao=new EmployeeDaoImple();
-    JobtypeDao jobdao=new JobtypeDaoImple();
-    UserDao  userDao=new UserDaoImple();
+   private EmployeeDao dao=new EmployeeDaoImple();
+    private JobtypeDao jobdao=new JobtypeDaoImple();
+    private  UserDao  userDao=new UserDaoImple();
+    private CoachDao cochdao=new CoachDaoImple();
+    private InstructorDao instructorDao=new InstructorDaoImple();
 
     @Override
     public List<Jobtype> initJobtypeList() {
@@ -170,6 +168,67 @@ public class EmployeeServiceImple implements EmployeeService {
                 e.printStackTrace();
             }
         }
+
+        return data;
+    }
+
+    @Override
+    public boolean deleteEmployeeByid(int eid, int sid) {
+        boolean flag=true;
+        Connection con=null;
+        try {
+            con=JDBCutil.getConnection();
+            con.setAutoCommit(false);
+            String phone=dao.findPhoneByid(con,eid);
+            cochdao.updateCoach(con,eid,sid);
+            userDao.deleteByuserName(con,phone);
+            dao.deleteEmployeebyId(con,eid);
+            con.commit();
+        } catch (SQLException e) {
+            flag=false;
+            try {
+                con.rollback();
+                con.setAutoCommit(true);
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+        }finally {
+
+            try {
+                con.close();
+            } catch (SQLException e) {
+
+            }
+        }
+
+        return flag;
+    }
+
+    @Override
+    public  Page<Instructor> showAllInstructorinfo(int offset, int rowcount)  {
+        Page<Instructor> data=null;
+        Connection con=null;
+
+        try {
+            con=JDBCutil.getConnection();
+            data=instructorDao.findInstructorByPagesize(con,offset,rowcount);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         return data;
     }

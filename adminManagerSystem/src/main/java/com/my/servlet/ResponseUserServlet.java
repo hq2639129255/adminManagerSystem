@@ -2,17 +2,13 @@ package com.my.servlet;
 
 import com.google.gson.Gson;
 import com.my.bean.*;
+import com.my.dao.imple.VipinfoviewDaoImple;
 import com.my.exception.UserIsLock;
 import com.my.exception.UserNameORpasswordException;
-import com.my.service.EmployeeService;
-import com.my.service.FacilityService;
-import com.my.service.UserService;
-import com.my.service.VipCardViewService;
-import com.my.service.imple.EmployeeServiceImple;
-import com.my.service.imple.FacilityServiceImple;
-import com.my.service.imple.UserServiceImple;
-import com.my.service.imple.VipCardViewServiceImple;
+import com.my.service.*;
+import com.my.service.imple.*;
 import com.my.utils.MD5Util;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -134,6 +130,16 @@ response.addCookie(cookie);
         }else if("Employee".equals(datatype)){
             EmployeeService service=new EmployeeServiceImple();
             Page<Employee> data = service.showCurrentEmployee(pageoffset, Integer.parseInt(rowconut));
+            Gson gson=new Gson();
+            response.getWriter().write(gson.toJson(data));
+        }else if("Vipinfoview".equals(datatype)){
+            VipinfoviewService service=new VipinfoviewServiceImple();
+            Page<Vipinfoview> data = service.showCurrentVipinfoview(pageoffset, Integer.parseInt(rowconut));
+            Gson gson=new Gson();
+            response.getWriter().write(gson.toJson(data));
+        }else if("Instructor".equals(datatype)){
+            EmployeeService service=new EmployeeServiceImple();
+            Page<Instructor> data = service.showAllInstructorinfo(pageoffset, Integer.parseInt(rowconut));
             Gson gson=new Gson();
             response.getWriter().write(gson.toJson(data));
         }
@@ -528,5 +534,134 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
         response.getWriter().write(gson.toJson(data));
 
     }
+
+    protected void deleteEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String eid=request.getParameter("eid");//查
+        String selectid=request.getParameter("selectid");
+        EmployeeService empservice=new EmployeeServiceImple();
+        boolean b = empservice.deleteEmployeeByid(Integer.parseInt(eid), Integer.parseInt(selectid));
+
+//        System.out.println("被删除id"+eid);
+//        System.out.println("选择id"+selectid);
+//        EmployeeService service=new EmployeeServiceImple();
+//        List<Employee> data = service.showSelectEmployeey(Integer.parseInt(id));
+        Gson gson=new Gson();
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(b);
+        if(b){
+            returnPath.setInfo("执行成功");
+        }else {
+            returnPath.setInfo("操作失败");
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+
+    }
+
+    protected void showSelectVipinfoview(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String phone=request.getParameter("phone");
+        if("".equals(phone)||phone==null){
+            phone=null;
+        }
+        String vipname=request.getParameter("vipname");
+        String cardtype=request.getParameter("cardtype");
+        if("".equals(vipname)||vipname==null){
+            vipname=null;
+        }
+        if("".equals(cardtype)||cardtype==null){
+            cardtype=null;
+        };
+        System.out.println( phone);
+        System.out.println( vipname);
+        System.out.println(cardtype);
+        VipinfoviewService service=new VipinfoviewServiceImple();
+        List<Vipinfoview> data = service.findVipinfoviewByParameter(phone,cardtype,vipname);
+        Gson gson=new Gson();
+        ReturnPath<Vipinfoview> returnPath=new ReturnPath<Vipinfoview>();
+        if(data.size()==0){
+            returnPath.setFlag(false);
+            returnPath.setInfo("没有查询到符合条件的数据");
+        }else {
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    protected void  insertVipinfoview(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name=request.getParameter("addname");
+        String phone=request.getParameter("addphone");
+        String emil=request.getParameter("addemil");
+        String sex=request.getParameter("addsex");
+        String cardtype=request.getParameter("addcardtype");
+        String Addrees=request.getParameter("addAddrees");
+        System.out.println("name:"+name);
+        System.out.println("phone:"+phone);
+        System.out.println("emil:"+emil);
+        System.out.println("sex:"+sex);
+        System.out.println("cardtype:"+cardtype);
+        System.out.println("Addrees:"+Addrees);
+
+
+
+        Vipinfo vipinfo=new Vipinfo();
+        vipinfo.setE_name(name);
+        vipinfo.setPhone(phone);
+        vipinfo.setEmail(emil);
+        vipinfo.setSex(sex);
+        vipinfo.setAddress(Addrees);
+        VipinfoviewService service=new VipinfoviewServiceImple();
+        boolean b = service.addviminfo(vipinfo,Integer.parseInt(cardtype));
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(b);
+        if(b){
+            returnPath.setInfo("新增成功");
+        }
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    protected void upadatevipinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String vid=request.getParameter("vid");
+        String  name=request.getParameter("name");
+        String sex=request.getParameter("updatesex");
+        String  addres=request.getParameter("uapdateAddrees");
+        String  emil=request.getParameter("uapdateemil");
+        Vipinfo  vip=new Vipinfo();
+        vip.setV_id(Integer.parseInt(vid));
+        vip.setAddress(addres);
+        vip.setSex(sex);
+        vip.setEmail(emil);
+        vip.setE_name(name);
+
+
+
+
+//        System.out.println("id:"+vid);
+//        System.out.println("name:"+name);
+//        System.out.println("sex:"+sex);
+//        System.out.println("addres:"+addres);
+//        System.out.println("emil:"+emil);
+
+
+
+
+        VipinfoviewService service=new VipinfoviewServiceImple();
+        boolean b = service.updatevipinfobyid(vip);
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(b);
+        Gson gson=new Gson();
+        if(b){
+            returnPath.setInfo("修改成功");
+        }else {
+            returnPath.setInfo("修改失败");
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+//@Test
+//    public void testemp(){
+//    EmployeeServiceImple serviceImple=new EmployeeServiceImple();
+//    List<Instructor> data = serviceImple.showAllInstructorinfo();
+//    Gson gson=new Gson();
+//    System.out.println( gson.toJson(data));
+//}
 
 }

@@ -22,4 +22,11 @@ public class VipinfoDaoImple extends BaseDao<Vipinfo> implements VipinfoDao {
             b = this.getValue(con,sql,id);
         return b;
     }
+
+    @Override
+    public boolean updatevipinfobyid(Connection con, Vipinfo vip) throws SQLException {
+        String sql=" UPDATE `wipinfo` SET `e_name`=?,`address`=?,`sex`=?,`email`=? where  `v_id`=?";
+        int row = this.update(con, sql, vip.getE_name(), vip.getAddress(), vip.getSex(), vip.getEmail(), vip.getV_id());
+        return row>0;
+    }
 }

@@ -24,5 +24,12 @@ public class UserDaoImple extends BaseDao<User> implements UserDao {
         return b>0;
     }
 
+    @Override
+    public boolean deleteByuserName(Connection con, String userName) throws SQLException {
+        String sql="DELETE  FROM `user`   WHERE `username`=?";
+        int row = this.update(con, sql, userName);
+        return row>0;
+    }
+
 
 }

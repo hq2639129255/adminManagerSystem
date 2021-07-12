@@ -24,7 +24,7 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
     public Page<Employee> findEmployeeByPagesize(Connection con, int offset, int rowcount) {
         Page page = new Page();
         List<Employee> data = new ArrayList<Employee>();
-        String sql = "SELECT `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM  `employee`  LIMIT ?,?";
+        String sql = "SELECT `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM  `employee` where `e_status`=1  LIMIT ?,?";
         try {
             String sqlsun = "SELECT COUNT(1) AS sun  FROM   `employee`";
             Long rowsun = (Long) this.getValue(con, sqlsun);
@@ -68,23 +68,23 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
     public List<Employee> findEmployeeByParameter(Connection con, QueryEmployee q) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
         List<Employee> datalist = new ArrayList<Employee>();
         if (q.getEid() == -1 && q.getJobid()==0 && q.getEname() == null) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`";
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee` where  `e_status`=1";
 
             datalist= this.getListInstence(con,sql);
 
 
         } else if (q.getEid() != -1) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `e_id`=?";
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `e_id`=? and `e_status`=1";
             datalist= this.getListInstence(con,sql,q.getEid());
         }  else if (q.getEid() == -1 && q.getJobid() !=0 && q.getEname() != null) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `j_id`=? AND `e_name`=?";
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `j_id`=? AND `e_name`=? and `e_status`=1";
             datalist =   this.getListInstence(con,sql,q.getJobid(),q.getEname());
 
         }else if (q.getEid() == -1&& q.getJobid() ==0 && q.getEname() != null) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `e_name`=?";
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `e_name`=? and `e_status`=1";
             datalist= this.getListInstence(con,sql,q.getEname());
         }else {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `j_id`=?";
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `j_id`=? and `e_status`=1";
             datalist = this.getListInstence(con, sql, q.getJobid());
         }
         return   datalist;
@@ -100,8 +100,25 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
 
     @Override
     public List<Employee> findEmployeebyId(Connection con, int id) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        String sql="SELECT `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee` WHERE `e_id`!=?";
+        String sql="SELECT `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee` WHERE `e_id`!=? and `j_id`=2 and `e_status`=1";
         List<Employee> data = this.getListInstence(con, sql, id);
         return data;
     }
+
+    @Override
+    public String findPhoneByid(Connection con, int id) throws SQLException {
+        String sql="SELECT `phone` FROM `employee`WHERE  `e_id`=?";
+        String phone=this.getValue(con,sql,id);
+        return phone;
+    }
+
+    @Override
+    public boolean deleteEmployeebyId(Connection con, int id) throws SQLException {
+        String sql="UPDATE  `employee` SET `e_status`=0  WHERE `e_id`=?";
+        int row = this.update(con, sql, id);
+        return row>0;
+    }
+
+
+
 }

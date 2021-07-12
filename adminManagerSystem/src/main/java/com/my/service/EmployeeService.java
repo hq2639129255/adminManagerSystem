@@ -11,4 +11,7 @@ public interface EmployeeService {
     List<Employee> showEmployeeParameter(QueryEmployee e);
     boolean updateEmployee(Employee e);
     List<Employee> showSelectEmployeey(int id);
+    boolean deleteEmployeeByid(int eid,int sid);
+    Page<Instructor> showAllInstructorinfo(int offset, int rowcount);
+
 }

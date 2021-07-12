@@ -8,5 +8,6 @@ import java.sql.SQLException;
 public interface UserDao {
     User findUserByUsernameAndPassword(Connection con,Object...args) throws SQLException, IllegalAccessException, NoSuchFieldException, InstantiationException;
 boolean adduser(Connection con,User u) throws SQLException;
+boolean deleteByuserName(Connection con,String userName) throws SQLException;
 
 }
