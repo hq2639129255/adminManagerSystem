@@ -116,4 +116,62 @@ public class VipinfoviewServiceImple implements VipinfoviewService {
         }
         return b;
     }
+
+    @Override
+    public Vipinfo getCurentVipinfo(String phone) {
+        Connection con=null;
+        Vipinfo data = null;
+        try {
+            con=JDBCutil.getConnection();
+            data = vipinfoDao.findVipinfoByPhone(con, phone);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return data;
+    }
+
+    @Override
+    public boolean isVipinfoByphone(String phone) {
+        Vipinfo data=getCurentVipinfo(phone);
+
+        return data==null;
+    }
+
+    @Override
+    public boolean isVipinfoByEmail(String email) {
+        Connection con=null;
+        Vipinfo data = null;
+        try {
+            con=JDBCutil.getConnection();
+            data = vipinfoDao.findVipinfoByEmail(con, email);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return data==null;
+    }
 }

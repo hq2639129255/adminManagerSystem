@@ -2,30 +2,35 @@ package com.my.servlet;
 
 import com.google.gson.Gson;
 import com.my.bean.*;
-import com.my.dao.imple.VipinfoviewDaoImple;
 import com.my.exception.UserIsLock;
 import com.my.exception.UserNameORpasswordException;
 import com.my.service.*;
 import com.my.service.imple.*;
 import com.my.utils.MD5Util;
-import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletException;
+import javax.servlet.SessionCookieConfig;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
 public class ResponseUserServlet extends HttpServlet {
 
+
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String   path= request.getRequestURI();
+
 
     response.setContentType("text/html;charset=utf-8");
         String methodName=request.getRequestURI().substring(path.lastIndexOf("/")+1,path.lastIndexOf("."));
@@ -49,7 +54,14 @@ public class ResponseUserServlet extends HttpServlet {
 doPost(request,response);
     }
     /*===============================用户管理begin=========================================*/
-    //登录
+
+    /**
+     * 登录
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
       response.setContentType("text/html;charset=utf-8");
         HttpSession session = request.getSession();
@@ -76,8 +88,14 @@ doPost(request,response);
      }else {
          User user=new User(usernaem,password,Integer.parseInt(role),0);
         session.setAttribute("user",user);
+         VipinfoviewService service=new VipinfoviewServiceImple();
+         Vipinfo v = service.getCurentVipinfo(usernaem);
+         session.setAttribute("userinfo",v);
         Cookie cookiejs=new Cookie("JSESSIONID",session.getId());
         response.addCookie(cookiejs);
+         Cookie cookieqxid=new Cookie("qxid",String.valueOf(user.getAu_id()));
+         cookieqxid.setMaxAge(60*60);
+         response.addCookie(cookieqxid);
 if("on".equals(request.getParameter("issave"))){
 
     Cookie cookie=new Cookie("AutoLogin",usernaem+"@"+MD5Util.md5(password)+"@"+role);
@@ -140,6 +158,11 @@ response.addCookie(cookie);
         }else if("Instructor".equals(datatype)){
             EmployeeService service=new EmployeeServiceImple();
             Page<Instructor> data = service.showAllInstructorinfo(pageoffset, Integer.parseInt(rowconut));
+            Gson gson=new Gson();
+            response.getWriter().write(gson.toJson(data));
+        }else if("Userinfo".equals(datatype)){
+          UserService service=new UserServiceImple();
+            Page<Userinfo> data = service.showCrentUserinfo(pageoffset, Integer.parseInt(rowconut));
             Gson gson=new Gson();
             response.getWriter().write(gson.toJson(data));
         }
@@ -408,6 +431,7 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
         String  addAddrees=request.getParameter("addAddrees");
         String  addphone=request.getParameter("addphone");
         String  addemil=request.getParameter("addemil");
+        String  workid=request.getParameter("addworkid");
         Employee e=new  Employee();
         User user=new User();
         user.setUsername(addphone);
@@ -420,6 +444,7 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
         e.setPhone(addphone);
         e.setSex(addsex);
         e.setAddress(addAddrees);
+        e.setWorkId(Integer.parseInt(workid));
         EmployeeService service=new EmployeeServiceImple();
         boolean b = service.addEmployee(e,user);
         Gson gson=new Gson();
@@ -493,15 +518,13 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
 
     //修改员工信息
     protected void upadateEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-
-
         String eid=request.getParameter("eid");
         String  ename=request.getParameter("ename");
         String sex=request.getParameter("sex");
         String jobid=request.getParameter("jobid");
         String  addres=request.getParameter("addres");
         String  emil=request.getParameter("emil");
+        String workid=request.getParameter("eworkid");
 
 
         Employee emp=new Employee();
@@ -511,6 +534,7 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
         emp.setAddress(addres);
         emp.setEmail(emil);
         emp.setJ_id(Integer.parseInt(jobid));
+        emp.setWorkId(Integer.parseInt(workid));
 
         EmployeeService service=new EmployeeServiceImple();
         boolean b = service.updateEmployee(emp);
@@ -663,5 +687,428 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
 //    Gson gson=new Gson();
 //    System.out.println( gson.toJson(data));
 //}
+protected void showSelectInstructor(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+     String e_name =request.getParameter("e_name");
+    if("".equals(e_name)|| e_name ==null){
+        e_name =null;
+    }
+    String e_id=request.getParameter("e_id");
+    String qsex=request.getParameter("qsex");
+    if("".equals(e_id)||e_id==null){
+        e_id=null;
+    }
+    if("".equals(qsex)||qsex==null){
+        qsex=null;
+    };
+    System.out.println("name:"+e_name);
+    System.out.println("id:"+ e_id);
+    System.out.println("qsex:"+qsex);
+    EmployeeService service=new EmployeeServiceImple();
+    List<Instructor> data = service.findInstructorByParameter(e_id,e_name,qsex);
+    Gson gson=new Gson();
+    ReturnPath<Instructor> returnPath=new ReturnPath<Instructor>();
+    if(data!=null){
+    if(data.size()!=0) {
+        returnPath.setFlag(true);
+        returnPath.setDataList(data);
+
+    }
+    }else {
+        returnPath.setFlag(false);
+        returnPath.setInfo("没有查询到符合条件的数据");
+    }
+    response.getWriter().write(gson.toJson(returnPath));
+}
+    protected void showSelectStudentinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String id =request.getParameter("id");
+        EmployeeService service=new EmployeeServiceImple();
+        List<Studentinfo> data = service.findStudentBye_id(Integer.parseInt(id));
+        Gson gson=new Gson();
+        ReturnPath<Studentinfo> returnPath=new ReturnPath<Studentinfo>();
+        if(data==null){
+            returnPath.setFlag(false);
+            returnPath.setInfo("该教练还没有分配学员");
+        }else {
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    protected void querySelectStudentinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        phone:$("input[neme=phone]").val(),
+//                vipname:$("input[name=vipname]").val(),
+//                vipsex:$("#vipsex>option:selected").val(),
+//                e_id:getCookie("id")
+        String e_id=request.getParameter("e_id");
+        String phone=request.getParameter("phone");
+        if("".equals(phone)||phone==null){
+            phone=null;
+        }
+        String vipname=request.getParameter("vipname");
+        String vipsex=request.getParameter("vipsex");
+        if("".equals(vipname)||vipname==null){
+            vipname=null;
+        }
+        if("".equals(vipsex)||vipsex==null){
+            vipsex=null;
+        };
+
+        System.out.println( phone);
+        System.out.println( vipname);
+        System.out.println(vipsex);
+        System.out.println(e_id);
+        EmployeeService service=new EmployeeServiceImple();
+        List<Studentinfo> data = service.selectStudentinfoByParameter(phone,vipname,vipsex,Integer.parseInt(e_id));
+        Gson gson=new Gson();
+        ReturnPath<Studentinfo> returnPath=new ReturnPath<Studentinfo>();
+        if(data==null){
+            returnPath.setFlag(false);
+            returnPath.setInfo("没有查询到符合条件的数据");
+        }else {
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+    protected void replaceCoach(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String newe_id=request.getParameter("newe_id");
+        String olde_id=request.getParameter("olde_id");
+        String v_id =request.getParameter("v_id");
+        System.out.println(newe_id);
+        System.out.println(olde_id);
+        System.out.println(v_id);
+        EmployeeService service =new EmployeeServiceImple();
+ReturnPath returnPath=new ReturnPath();
+        boolean   flag=service.replaceCoach(Integer.parseInt(newe_id),Integer.parseInt(olde_id),Integer.parseInt(v_id));
+
+        returnPath.setFlag(flag);
+        if(flag){
+            returnPath.setInfo("更换教练操作成功");
+        }else {
+            returnPath.setInfo("操作失败");
+        }
+
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+
+    protected void initUserAppointmentInfoDao(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        VipUserService service=new VipUserServiceImple();
+        List<UserAppointmentInfo> data = service.showAppointment();
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+    protected void  isAppointment(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+      String date=request.getParameter("date");
+        HttpSession session = request.getSession();
+        Vipinfo vipinfo=(Vipinfo) session.getAttribute("userinfo");
+
+        VipUserService service=new VipUserServiceImple();
+        Make_an_appointment data = service.isAppointment(date, vipinfo.getV_id());
+        Gson gson=new Gson();
+        ReturnPath<Make_an_appointment> returnPath=new ReturnPath<Make_an_appointment>();
+        returnPath.setFlag(data!=null);
+        if(data!=null){
+            returnPath.setInfo("你已经预约过了不能再预约");
+           returnPath.setData(data);
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+
+    protected void executeAppointment(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        VipUserService service=new VipUserServiceImple();
+        String timeid=request.getParameter("timeid");
+        HttpSession session = request.getSession();
+        Vipinfo vipinfo=(Vipinfo) session.getAttribute("userinfo");
+    boolean flag= service.executeAppointment(Integer.parseInt(timeid),vipinfo.getV_id());
+      ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(flag);
+        Gson gson=new Gson();
+        if(flag){
+            returnPath.setInfo("预约成功");
+        }else {
+            returnPath.setInfo("预约失败");
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+    /**
+     * 取消预约
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    protected void clearAppointment(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        VipUserService service=new VipUserServiceImple();
+        String crentdate=request.getParameter("crentdate");
+        HttpSession session = request.getSession();
+        Vipinfo vipinfo=(Vipinfo) session.getAttribute("userinfo");
+        boolean flag= service.clearAppointment(crentdate,vipinfo.getV_id());
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(flag);
+        Gson gson=new Gson();
+        if(flag){
+            returnPath.setInfo("取消预约成功");
+        }else {
+            returnPath.setInfo("取消预约失败");
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    protected void findCurentDateAppointment(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        VipUserService service=new VipUserServiceImple();
+        String Timeid=request.getParameter("Timeid");
+        List<AppointmentUserinfo> data = service.findAllAppointmentUserinfoByTimeID(Integer.parseInt(Timeid));
+        ReturnPath<AppointmentUserinfo> returnPath=new ReturnPath();
+       if(data==null){
+           returnPath.setFlag(false);
+           returnPath.setInfo("此时段还没有会员预约");
+       }else {
+           returnPath.setFlag(true);
+           returnPath.setDataList(data);
+
+       }
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    protected void mangerClearAppointment(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        VipUserService service=new VipUserServiceImple();
+        String crentdate=request.getParameter("crentdate");
+       String v_id=request.getParameter("vid");
+        boolean flag= service.clearAppointment(crentdate,Integer.parseInt(v_id));
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(flag);
+        Gson gson=new Gson();
+        if(flag){
+            returnPath.setInfo("取消预约成功");
+        }else {
+            returnPath.setInfo("取消预约失败");
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+
+    protected void ManagerUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        UserService service=new UserServiceImple();
+        List<Userinfo> data = service.showAllUserinfo();
+        Gson gson=new Gson();
+        ReturnPath<Userinfo> returnPath=new ReturnPath<>();
+        if(data!=null){
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+        }else {
+            returnPath.setFlag(false);
+            returnPath.setInfo("还没有账号信息");
+        }
+response.getWriter().write(gson.toJson(returnPath));
+    }
+
+    protected void initAuthority(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        UserService service=new UserServiceImple();
+        List<Authority> data = service.initAuthority();
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+
+    protected void initUserstatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        UserService service=new UserServiceImple();
+        List<Userstatus> data = service.initUserstatus();
+        Gson gson=new Gson();
+        HttpSession session = request.getSession();
+        User u= (User) session.getAttribute("user");
+        System.out.println(u.toString());
+
+        response.getWriter().write(gson.toJson(data));
+    }
+    protected void updateAuthorityByUserName(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        UserService service=new UserServiceImple();
+        String aid=request.getParameter("aid");
+        String userName=request.getParameter("userName");
+  boolean flag=  service.updateAuthorityByUserName(Integer.parseInt(aid),userName);
+        Gson gson=new Gson();
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(flag);
+        if(flag){
+            returnPath.setInfo("执行成功");
+        }else{
+            returnPath.setInfo("操作失败");        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+    protected void  resetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        UserService service=new UserServiceImple();
+        String userName=request.getParameter("userName");
+
+        boolean flag=  service.resetPassword(userName);
+        Gson gson=new Gson();
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(flag);
+        if(flag){
+            returnPath.setInfo("重置密码成功");
+        }else{
+            returnPath.setInfo("重置密码失败");        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+    protected void  lockUserCode(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        UserService service=new UserServiceImple();
+        String userName=request.getParameter("userName");
+
+        boolean flag=  service.lockUserCode(userName);
+        Gson gson=new Gson();
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(flag);
+        if(flag){
+            returnPath.setInfo("成功冻结账号");
+        }else{
+            returnPath.setInfo("操作失败");        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+    protected void  unLockUserCode(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        UserService service=new UserServiceImple();
+        String userName=request.getParameter("userName");
+
+        boolean flag=  service.unLockUserCode(userName);
+        Gson gson=new Gson();
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(flag);
+        if(flag){
+            returnPath.setInfo("解冻成功");
+        }else{
+            returnPath.setInfo("操作失败");        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+
+    protected void findUserinfoByParameter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String userName=request.getParameter("userName");
+        String vname=request.getParameter("vname");
+        String aid=request.getParameter("aid");
+        if("".equals(userName)||userName==null){
+            userName=null;
+        }
+
+        if("".equals(vname)||vname==null){
+            vname=null;
+        }
+        if("".equals(aid)||aid==null){
+            aid="0";
+        };
+
+        System.out.println("userName"+userName);
+
+        System.out.println("vname"+vname);
+        System.out.println("aid"+aid);
+
+        UserService service=new UserServiceImple();
+        List<Userinfo> data = service.findUserinfoByParameter(userName, Integer.parseInt(aid), vname);
+        Gson gson=new Gson();
+        ReturnPath<Userinfo> returnPath=new ReturnPath<Userinfo>();
+        if(data==null){
+            returnPath.setFlag(false);
+            returnPath.setInfo("没有查询到符合条件的数据");
+        }else {
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+
+
+
+    protected void  addUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        String  addname=request.getParameter("addname");
+        String  addsex=request.getParameter("addsex");
+        String  addjob=request.getParameter("addjob");
+        String  addAddrees=request.getParameter("addAddrees");
+        String  addphone=request.getParameter("addphone");
+        String  addemil=request.getParameter("addemil");
+        String addqx=request.getParameter("addqx");
+        Employee e=new  Employee();
+        User user=new User();
+        user.setUsername(addphone);
+        user.setAu_id(Integer.parseInt(addqx));
+        user.setStatus_id(0);
+
+        e.setE_name(addname);
+        e.setJ_id(Integer.parseInt(addjob));
+        e.setEmail(addemil);
+        e.setPhone(addphone);
+        e.setSex(addsex);
+        e.setAddress(addAddrees);
+       UserService service=new UserServiceImple();
+        boolean b = service.addUser(e,user);
+
+        Gson gson=new Gson();
+        ReturnPath returnPath=new ReturnPath();
+        returnPath.setFlag(b);
+        if(b){
+            returnPath.setInfo("新增成功");
+        }else {
+            returnPath.setInfo("新增失败");
+        }
+        response.getWriter().write(gson.toJson( returnPath));
+    }
+
+    /**
+     * 初始化页面班次下拉列表
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     * @throws SQLException
+     */
+    protected void initWorktime(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+       EmployeeService service=new EmployeeServiceImple();
+        List<Worktime> data = service.showAllWorktime();
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+
+    /**
+     * 验证手机号是否重复
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     * @throws SQLException
+     */
+    protected void isEmployeeByPhone(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        EmployeeService service=new EmployeeServiceImple();
+        String phone=request.getParameter("phone");
+      boolean  flag = service.isEmployeeByPhone(phone);
+
+        response.getWriter().write(new Boolean(flag).toString());
+    }
+
+
+
+    protected void isEmployeeByEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        EmployeeService service=new EmployeeServiceImple();
+        String email=request.getParameter("phone");
+        boolean  flag = service.isEmployeeByEmail(email);
+        response.getWriter().write(new Boolean(flag).toString());
+    }
+    protected void isVipinfoByphone(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        VipinfoviewService service=new VipinfoviewServiceImple();
+        String email=request.getParameter("phone");
+        boolean  flag = service.isVipinfoByphone(email);
+        response.getWriter().write(new Boolean(flag).toString());
+    }
+
+    protected void isVipinfoByEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        VipinfoviewService service=new VipinfoviewServiceImple();
+        String email=request.getParameter("Email");
+        boolean  flag = service.isVipinfoByEmail(email);
+        response.getWriter().write(new Boolean(flag).toString());
+    }
 
 }

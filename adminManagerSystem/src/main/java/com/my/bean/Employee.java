@@ -8,6 +8,16 @@ private String    address ;//'地址',
 private String    sex ;//'性别',
 private String     phone ;//'手机号码',
 private String    email ;//'邮箱号'
+private  int workId;//班次
+private int e_status;
+
+    public int getE_status() {
+        return e_status;
+    }
+
+    public void setE_status(int e_status) {
+        this.e_status = e_status;
+    }
 
     public Employee() {
     }
@@ -19,6 +29,14 @@ private String    email ;//'邮箱号'
         this.sex = sex;
         this.phone = phone;
         this.email = email;
+    }
+
+    public int getWorkId() {
+        return workId;
+    }
+
+    public void setWorkId(int workId) {
+        this.workId = workId;
     }
 
     public int getE_id() {

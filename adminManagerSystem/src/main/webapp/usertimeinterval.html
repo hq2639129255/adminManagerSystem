@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8"/>
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="assets/content/content.css" rel="stylesheet"/>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+
+
+<!--数据列表 begin-->
+<table id="table_list" class="table table-hover table-bordered table-condensed">
+    <thead>
+    <tr>
+        <th>时段ID</th>
+        <th>开始时间</th>
+        <th>结束时间</th>
+        <th>人数</th>
+        <th class="w110">操作</th>
+    </tr>
+    </thead>
+    <tbody id="datalist">
+
+    </tbody>
+</table>
+<!--数据列表 end-->
+<script src="js/Date.js"></script>
+<script>
+    //    添加编辑模态框
+    $('#add').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var recipient = button.data('whatever') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-title').text('' + recipient)
+        modal.find('.modal-body input').val(recipient)
+    });
+    <!-- -->
+    <!--初始化页面数据begin-->
+    var curentDataPostion;//点击位置
+
+    $(function () {
+        init();
+    })
+
+    function init() {
+        $.ajax({
+            type: "GET",
+            url: "/admin/initUserAppointmentInfoDao.do",
+            success: function (data) {
+                initdata(data);
+                isAppointment();
+            }
+
+        })
+
+    }
+
+    function initdata(data) {
+        let datalist = JSON.parse(data);
+        for (let key in datalist) {
+            let $datatr = $("<tr>" +
+                "<td name=" + datalist[key].id + ">" + datalist[key].timeName + "</td>" +
+                "<td>" + datalist[key].startTime + "</td>" +
+                "<td>" + datalist[key].endTime + "</td>" +
+                "<td>" + datalist[key].count + "</td>" +
+                "</tr>");
+            let $tdupdate = "<td><a href='#' class='btn btn-primary btn-sm'   data-backdrop='static'>预约</a></td>";
+            $datatr.append($tdupdate);
+            $datatr.find("a").on("click", execute);
+            $("#datalist").append($datatr);
+        }
+    }
+
+
+    function isAppointment() {
+        let flag = "";
+        $.ajax({
+            url: "isAppointment.do",
+            dataType: "JSON",
+            data: {
+                date: new Date().format("yyyy-MM-dd")
+            },
+            success: function (data) {
+                if (data.flag) {
+                    {
+                        $("#datalist>tr").each(function (i, o) {
+                            if (data['data'].time_id == $(o).find("td:first").attr("name")) {
+                                $(o).find("a").css({"background-color": "#f00"});
+                                $(o).find("a").html("取消");
+                            } else {
+                                $(o).find("a").off("click", execute);
+                                $(o).find("a").addClass("disabled");
+                            }
+                        })
+
+                    }
+
+                }
+            }
+
+        })
+    }
+
+    function execute() {
+        curentDataPostion = $(this);
+        let $curentTr= $(this).parent().parent();
+        if ($(this).text() == '取消') {
+            //{"flag":true,"info":"取消预约成功"}
+            $.ajax({
+                url: 'clearAppointment.do',
+                data: {crentdate: new Date().format("yyyy-MM-dd")},
+                dataType: "JSON",
+                success: function (data) {
+                    alert(data.info);
+                    if (data.flag) {
+
+                        curentDataPostion.html("预约");
+                        curentDataPostion.off("click", execute);
+                        curentDataPostion.css({"background-color": ""});
+                        $curentTr.find("td:eq(3)").text(parseInt( $curentTr.find("td:eq(3)").text())-1);
+                        $("#datalist").find("a").removeClass("disabled");
+                        $("#datalist").find("a").on("click", execute);
+
+                    }
+                }
+
+
+            })
+        } else if ($(this).text() == '预约') {
+
+            $.ajax({
+                url: 'executeAppointment.do',
+                dataType: "JSON",
+                data: {
+                    timeid:$curentTr.find("td:first").attr("name")
+                },
+                success: function (data) {
+                    //{"flag":true,"info":"预约成功"}
+                    alert(data.info)
+                    if (data.flag) {
+                        curentDataPostion.html("取消");
+                        curentDataPostion.css({"background-color": "#f00"});
+                        $curentTr.find("td:eq(3)").text(parseInt( $curentTr.find("td:eq(3)").text())+1);
+                        $("#datalist").find("a").off("click", execute);
+                        $("#datalist").find("a").addClass("disabled");
+                        curentDataPostion.on("click", execute);
+                        curentDataPostion.removeClass("disabled");
+                    }
+
+
+                }
+
+
+            })
+        }
+
+
+    }
+
+</script>
+</body>
+</html>

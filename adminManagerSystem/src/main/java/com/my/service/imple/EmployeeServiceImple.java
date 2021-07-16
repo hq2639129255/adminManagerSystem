@@ -6,6 +6,7 @@ import com.my.dao.imple.*;
 import com.my.service.EmployeeService;
 import com.my.utils.JDBCutil;
 
+import javax.sql.rowset.JdbcRowSet;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -16,6 +17,8 @@ public class EmployeeServiceImple implements EmployeeService {
     private  UserDao  userDao=new UserDaoImple();
     private CoachDao cochdao=new CoachDaoImple();
     private InstructorDao instructorDao=new InstructorDaoImple();
+    private  StudentinfoDao studentinfoDao=new StudentinfoDaoImple();
+    private  WorktimeDao worktimeDao=new WorktimeDaoImple();
 
     @Override
     public List<Jobtype> initJobtypeList() {
@@ -43,6 +46,12 @@ public class EmployeeServiceImple implements EmployeeService {
         return data;
     }
 
+    /**
+     *
+     * @param offset
+     * @param rowcount
+     * @return
+     */
     @Override
     public Page<Employee> showCurrentEmployee(int offset, int rowcount) {
         Connection con= null;
@@ -64,6 +73,14 @@ public class EmployeeServiceImple implements EmployeeService {
         return data;
     }
 
+    /**
+     * 新增员工业务
+     * 1、新增员工信息
+     * 2、为员工创建一个账号
+     * @param e
+     * @param user
+     * @return
+     */
     @Override
     public boolean addEmployee(Employee e,User user) {
         boolean b = true;
@@ -232,4 +249,153 @@ public class EmployeeServiceImple implements EmployeeService {
 
         return data;
     }
+
+    @Override
+    public List<Instructor> findInstructorByParameter(String e_id, String e_name, String sex) {
+        Connection con=null;
+        List<Instructor> datalist = null;
+        try {
+            con=JDBCutil.getConnection();
+            datalist = instructorDao.findInstructorByParameter(con,e_id,e_name,sex);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return datalist;
+    }
+
+    @Override
+    public List<Studentinfo> findStudentBye_id(int id) {
+        Connection con=null;
+
+        List<Studentinfo> data = null;
+        try {
+            con=JDBCutil.getConnection();
+            data = studentinfoDao.findStudentBye_id(con, id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return data;
+    }
+
+    @Override
+    public List<Studentinfo> selectStudentinfoByParameter(String phone, String name, String sex, int e_id) {
+        Connection con=null;
+        List<Studentinfo> datalist = null;
+
+
+        try {
+            con=JDBCutil.getConnection();
+            datalist = studentinfoDao.findStudentinfoByParameter(con,phone,name,sex,e_id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+
+        return datalist;
+    }
+
+    @Override
+    public boolean replaceCoach(int newe_id, int olde_id, int v_id) {
+        Connection con=null;
+        boolean flag= false;
+        try {
+            con=JDBCutil.getConnection();
+            flag = cochdao.updateCoachByE_idandV_id(con,newe_id,olde_id,v_id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return flag;
+    }
+
+    @Override
+    public List<Worktime> showAllWorktime() {
+        Connection con=null;
+        List<Worktime> data = null;
+        try {
+            con=JDBCutil.getConnection();
+            data = worktimeDao.findAllWorktime(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    @Override
+    public boolean isEmployeeByPhone(String phone) {
+        Connection con=null;
+        Employee data = null;
+        try {
+            con= JDBCutil.getConnection();
+            data = dao.findEmployeeByPhone(con, phone);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return data==null;
+    }
+
+    @Override
+    public boolean isEmployeeByEmail(String emil) {
+        Connection con=null;
+        Employee data = null;
+        try {
+            con= JDBCutil.getConnection();
+            data = dao.findEmployeeByEmail(con,emil);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return data==null;
+    }
+
+
 }

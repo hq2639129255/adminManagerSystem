@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+    <script src="js/CookieUtil.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+    <!--数据列表 begin-->
+    <table id="table_list" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>姓名</th>
+            <th>会员卡号</th>
+            <th>性别</th>
+            <th>联系方式</th>
+            <th class="w110">操作</th>
+        </tr>
+        </thead>
+        <tbody id="datalist">
+
+
+        </tbody>
+    </table>
+</div>
+<script src="js/CookieUtil.js"></script>
+<script src="js/Date.js"></script>
+<script>
+    $(function () {
+        init();
+    })
+
+
+
+    function init() {
+        $.ajax({
+            data:{Timeid:getCookie("Timeid")},
+            type: "GET",
+            url: "/admin/findCurentDateAppointment.do",
+            success: function (data) {
+                initdata(data);
+            }
+        })
+    }
+    function  initdata(data) {
+        let datainfo= JSON.parse(data);
+        if(datainfo.flag){
+            $("#datalist").html("");
+            for(let key in datainfo.dataList ){
+                let  $datatr=$("<tr>"+
+                    "<td name="+datainfo.dataList[key].v_id+">"+datainfo.dataList[key].e_name+"</td>"+
+                    "<td>"+datainfo.dataList[key].card_id+"</td>"+
+                    "<td>"+datainfo.dataList[key]['sex']+"</td>"+
+                    "<td>"+datainfo.dataList[key].phone+"</td>"+
+                    "</tr>");
+                let $tdupdate='<td> <a href="#" name="'+datainfo.dataList[key].v_id+'" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">取消预约</a> </td>';
+
+                $datatr.append($tdupdate);
+                $datatr.find("a:first").on("click",function () {
+                    let curentPostion=$(this).parent().parent();
+                    $.ajax({
+                        url: 'mangerClearAppointment.do',
+                        data: {crentdate: new Date().format("yyyy-MM-dd"),
+                            vid:curentPostion.find("td:first").attr("name")
+                        },
+                        dataType: "JSON",
+                        success: function (data) {
+                            alert(data.info);
+                           if(data.flag){
+                               curentPostion.remove();
+                           }
+
+                        }
+
+
+                    })
+                })
+
+                $("#datalist").append($datatr);
+            }
+        }else {
+            alert(datainfo.info)
+        }
+    }
+</script>
+</body>
+</html>

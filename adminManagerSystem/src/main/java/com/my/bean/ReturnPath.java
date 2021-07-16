@@ -7,6 +7,16 @@ public class ReturnPath <T> {
     private String info;
     private List<T> dataList;
 
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    private T data;
+
     public List<T> getDataList() {
         return dataList;
     }

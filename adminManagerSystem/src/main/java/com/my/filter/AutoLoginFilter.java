@@ -1,8 +1,11 @@
 package com.my.filter;
 
 import com.my.bean.User;
+import com.my.bean.Vipinfo;
 import com.my.service.UserService;
+import com.my.service.VipinfoviewService;
 import com.my.service.imple.UserServiceImple;
+import com.my.service.imple.VipinfoviewServiceImple;
 import sun.awt.geom.AreaOp;
 
 import javax.servlet.*;
@@ -57,9 +60,15 @@ public class AutoLoginFilter implements Filter {
                     byte data = userService.login(userinfo[0], userinfo[1], Integer.parseInt(userinfo[2]));
                     if (data == 2) {
                         session=request.getSession();
+                        VipinfoviewService service=new VipinfoviewServiceImple();
+                        Vipinfo v = service.getCurentVipinfo(userinfo[0]);
+                        session.setAttribute("userinfo",v);
                         Cookie cookiejs=new Cookie("JSESSIONID",session.getId());
                         response.addCookie(cookiejs);
                         session.setAttribute("user",new User(userinfo[0],userinfo[1],Integer.parseInt(userinfo[2]),0));
+                      Cookie cookieqxid=new Cookie("qxid",userinfo[2]);
+                        cookieqxid.setMaxAge(60*60);
+                      response.addCookie(cookieqxid);
                         chain.doFilter(request, response);
                     } else {
                         cookies[i].setMaxAge(0);

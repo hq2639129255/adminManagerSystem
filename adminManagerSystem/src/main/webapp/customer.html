@@ -28,9 +28,10 @@
                 </div>
 
                 <div class="input-group content_line content_left">
-                    <span class="input-group-addon" id="Span1">持卡类型</span>
-                    <select id="cardType" class="form-control line left">
-                        <option value="0">请选择持卡类型</option>
+                    <span class="input-group-addon" id="Span1">性别</span>
+                    <select id="vipsex" class="form-control line left">
+                        <option value="男">男</option>
+                        <option value="女">女</option>
                     </select>
                 </div>
             </div>
@@ -40,11 +41,11 @@
                     <a href="#" class="btn btn-primary">重置</a></div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-10">
-                <a href="#" class="btn btn-primary content_marright content_btn_add" data-toggle="modal" data-target="#add1" data-backdrop="static">新增</a>
-            </div>
-        </div>
+        <!--<div class="row">-->
+            <!--<div class="col-xs-10">-->
+                <!--<a href="#" class="btn btn-primary content_marright content_btn_add" data-toggle="modal" data-target="#add1" data-backdrop="static">新增</a>-->
+            <!--</div>-->
+        <!--</div>-->
     </div>
     <!--查询条件 end-->
 
@@ -56,9 +57,7 @@
             <th>会员卡号</th>
             <th>课程名</th>
             <th>性别</th>
-            <th>持卡类型</th>
             <th>联系方式</th>
-            <th>邮箱</th>
             <th class="w110">操作</th>
         </tr>
         </thead>
@@ -69,93 +68,93 @@
     </table>
     <!--数据列表 end-->
 
-    <div class="pages content_right" >
-        <div class="pages_record">
-            共&nbsp;<b id="pagesun">3</b>&nbsp;页 &nbsp;第&nbsp;<b id="curentpage">1</b>&nbsp;页&nbsp; <b id="rowcount">10</b>&nbsp;条/页&nbsp; &nbsp;共&nbsp;<b id="rowsun">27</b>&nbsp;条记录
-        </div>
+    <!--<div class="pages content_right" >-->
+        <!--<div class="pages_record">-->
+            <!--共&nbsp;<b id="pagesun">3</b>&nbsp;页 &nbsp;第&nbsp;<b id="curentpage">1</b>&nbsp;页&nbsp; <b id="rowcount">10</b>&nbsp;条/页&nbsp; &nbsp;共&nbsp;<b id="rowsun">27</b>&nbsp;条记录-->
+        <!--</div>-->
 
-        <ul class="pagination">
-            <li id="firstPage"><a href="#" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>
-            <li  id="upPage"><a href="#">上一页<span class="sr-only">(current)</span></a></li>
-            <li id="downpage"><a href="#">下一页</a></li>
-            <li id="endpage"><a href="#" aria-label="Next"><span aria-hidden="true">尾页</span></a></li>
-            <li>
+        <!--<ul class="pagination">-->
+            <!--<li id="firstPage"><a href="#" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>-->
+            <!--<li  id="upPage"><a href="#">上一页<span class="sr-only">(current)</span></a></li>-->
+            <!--<li id="downpage"><a href="#">下一页</a></li>-->
+            <!--<li id="endpage"><a href="#" aria-label="Next"><span aria-hidden="true">尾页</span></a></li>-->
+            <!--<li>-->
 
 
-                <select  class="form-control w80 line left"  name="pagecount">
-                    <option   value="5">5</option>
-                    <option selected="selected" value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
+                <!--<select  class="form-control w80 line left"  name="pagecount">-->
+                    <!--<option   value="5">5</option>-->
+                    <!--<option selected="selected" value="10">10</option>-->
+                    <!--<option value="15">15</option>-->
+                    <!--<option value="20">20</option>-->
+                <!--</select>-->
 
-            </li>
+            <!--</li>-->
 
-            <li><input type="text" placeholder="输入页数" class="form-control w80"></li>
-            <a href="#">跳转</a>
-            <input type="hidden" name="type" value="Vipinfoview"/>
+            <!--<li><input type="text" placeholder="输入页数" class="form-control w80"></li>-->
+            <!--<a href="#">跳转</a>-->
+            <!--<input type="hidden" name="type" value="Vipinfoview"/>-->
 
-        </ul>
+        <!--</ul>-->
 
-    </div>
+    <!--</div>-->
 </div>
 
 
 <!-- Modal begin -->
 <!--添加-->
-<div class="modal fade" id="add1" tabindex="-1" role="dialog" aria-labelledby="add11">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="add11">新增</h4>
-            </div>
-            <div class="modal-body p_bottom35">
-                <ul>
-                    <li>
-                        <label><span>姓名： </span></label>
-                        <input type="text" name="addname" maxlength="40">
-                    </li>
-                    <li></li>
-                    <li>
-                        <label><span>性别： </span></label>
-                        <select id="addsex" class="h26 line left">
-                            <option value="男">男</option>
-                            <option value="女">女</option>
-                        </select>
-                    </li>
-                    <li></li>
-                    <li>
-                        <label><span>卡类型： </span></label>
-                        <select id="addcardtype" class="h26 line left">
-                            <option value="0">请选择</option>
-                        </select>
-                    </li>
-                    <li></li>
-                    <li>
-                        <label><span>住址： </span></label>
-                        <input type="text" name="addAddrees" maxlength="40">
-                    </li>
-                    <li></li>
-                    <li>
-                        <label><span>联系方式： </span></label>
-                        <input type="text" name="addphone" maxlength="40">
-                    </li>
-                    <li></li>
-                    <li>
-                        <label><span>email： </span></label>
-                        <input type="text" name="addemil" maxlength="40">
-                    </li>
-                    <li></li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
-                <button type="button" id="addsave" class="btn btn-primary btn-sm">保存</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!--<div class="modal fade" id="add1" tabindex="-1" role="dialog" aria-labelledby="add11">-->
+    <!--<div class="modal-dialog" role="document">-->
+        <!--<div class="modal-content">-->
+            <!--<div class="modal-header">-->
+                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                <!--<h4 class="modal-title" id="add11">新增</h4>-->
+            <!--</div>-->
+            <!--<div class="modal-body p_bottom35">-->
+                <!--<ul>-->
+                    <!--<li>-->
+                        <!--<label><span>姓名： </span></label>-->
+                        <!--<input type="text" name="addname" maxlength="40">-->
+                    <!--</li>-->
+                    <!--<li></li>-->
+                    <!--<li>-->
+                        <!--<label><span>性别： </span></label>-->
+                        <!--<select id="addsex" class="h26 line left">-->
+                            <!--<option value="男">男</option>-->
+                            <!--<option value="女">女</option>-->
+                        <!--</select>-->
+                    <!--</li>-->
+                    <!--<li></li>-->
+                    <!--<li>-->
+                        <!--<label><span>卡类型： </span></label>-->
+                        <!--<select id="addcardtype" class="h26 line left">-->
+                            <!--<option value="0">请选择</option>-->
+                        <!--</select>-->
+                    <!--</li>-->
+                    <!--<li></li>-->
+                    <!--<li>-->
+                        <!--<label><span>住址： </span></label>-->
+                        <!--<input type="text" name="addAddrees" maxlength="40">-->
+                    <!--</li>-->
+                    <!--<li></li>-->
+                    <!--<li>-->
+                        <!--<label><span>联系方式： </span></label>-->
+                        <!--<input type="text" name="addphone" maxlength="40">-->
+                    <!--</li>-->
+                    <!--<li></li>-->
+                    <!--<li>-->
+                        <!--<label><span>email： </span></label>-->
+                        <!--<input type="text" name="addemil" maxlength="40">-->
+                    <!--</li>-->
+                    <!--<li></li>-->
+                <!--</ul>-->
+            <!--</div>-->
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>-->
+                <!--<button type="button" id="addsave" class="btn btn-primary btn-sm">保存</button>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 
 <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
     <div class="modal-dialog" role="document">
@@ -167,38 +166,16 @@
             <div class="modal-body p_bottom35">
                 <ul>
                     <li>
-                        <label><span>姓名： </span></label>
-                        <input type="text" name="uapdatename" maxlength="40">
-                    </li>
-                    <li></li>
-                    <li>
-                        <label><span>性别： </span></label>
-                        <select id="updatesex" class="h26 line left">
-                            <option value="男">男</option>
-                            <option value="女">女</option>
+                        <label><span>选择新教练： </span></label>
+                        <select id="seletTeach" class="h26 line left">
+                            <option value="0">请选择</option>
                         </select>
                     </li>
-                    <li></li>
-                    <li>
-                        <label><span>住址： </span></label>
-                        <input type="text" name="uapdateAddrees" maxlength="40">
-                    </li>
-                    <li></li>
-                    <li>
-                        <label><span>联系方式： </span></label>
-                        <input type="text" disabled="disabled" name="uapdatephone" maxlength="40">
-                    </li>
-                    <li></li>
-                    <li>
-                        <label><span>email： </span></label>
-                        <input type="text" name="uapdateemil" maxlength="40">
-                    </li>
-                    <li></li>
                 </ul>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
-                <button type="button" id="updatasave" class="btn btn-primary btn-sm">保存</button>
+                <button type="button" id="executesave" class="btn btn-primary btn-sm">保存</button>
             </div>
         </div>
     </div>
@@ -222,356 +199,163 @@
 
 
     $(function () {
-       let id= getCookie("id");
-       alert(id);
+     //  let id= getCookie("id");
+        init();
     })
-    <!--分页begin-->
-    // let $firstPage=$("#firstPage");
-    // let $upPage=$("#upPage");
-    // let $downpage=$("#downpage");
-    // let $endpage=$("#endpage");
-    // $firstPage.hover(activeStyle,notactiveStyle);
-    // $firstPage.hover(activeStyle,notactiveStyle);
-    // $upPage.hover(activeStyle,notactiveStyle);
-    // $downpage.hover(activeStyle,notactiveStyle);
-    // $endpage.hover(activeStyle,notactiveStyle);
-    //
-    // function activeStyle() {
-    //     $(this).addClass("active");
-    //
-    // }
-    // function notactiveStyle() {
-    //     $(this).removeClass("active");
-    //
-    // }
-    // function clickFirstPage() {
-    //     if($("#curentpage").text()=="1"){
-    //         $firstPage.addClass("disabled");
-    //         return false;
-    //     }else {
-    //         $endpage.removeClass("disabled");
-    //         $downpage.removeClass("disabled");
-    //         $.ajax({
-    //
-    //             type: "GET",
-    //             url: "/admin/findPageData.do",
-    //             data:{
-    //                 pagetype:$("[name=type]").val(),
-    //                 rowconut:$("[name=pagecount]>option:selected").val(),
-    //                 curentpage:1,
-    //                 datatype:$("[name=type]").val()},
-    //             success: function (data) {
-    //                 $("#datalist").html("");
-    //                 initdata(data);
-    //
-    //             }
-    //         })
-    //     }
-    //
-    // }
-    // function clickuppage() {
-    //     if($("#curentpage").text()=="1"){
-    //         $upPage.addClass("disabled");
-    //         $firstPage.addClass("disabled");
-    //         return false;
-    //     }else {
-    //         $downpage.removeClass("disabled");
-    //         $endpage.removeClass("disabled");
-    //         $.ajax({
-    //
-    //             type: "GET",
-    //             url: "/admin/findPageData.do",
-    //             data:{
-    //                 pagetype:$("[name=type]").val(),
-    //                 rowconut:$("[name=pagecount]>option:selected").val(),
-    //                 curentpage:parseInt($("#curentpage").text())-1,
-    //                 datatype:$("[name=type]").val()},
-    //             success: function (data) {
-    //                 $("#datalist").html("");
-    //                 initdata(data);
-    //
-    //             }
-    //         })
-    //     }
-    // }
-    //
-    // function  clickdownpage() {
-    //     if($("#curentpage").text()==$("#pagesun").text()){
-    //         $downpage.addClass("disabled");
-    //         $endpage.addClass("disabled");
-    //
-    //     }else {
-    //         $firstPage.removeClass("disabled");
-    //         $upPage.removeClass("disabled");
-    //         $.ajax({
-    //
-    //             type: "GET",
-    //             url: "/admin/findPageData.do",
-    //             data:{
-    //                 pagetype:$("[name=type]").val(),
-    //                 rowconut:$("[name=pagecount]>option:selected").val(),
-    //                 curentpage:parseInt($("#curentpage").text())+1,
-    //                 datatype:$("[name=type]").val()},
-    //             success: function (data) {
-    //                 $("#datalist").html("");
-    //                 initdata(data);
-    //
-    //             }
-    //
-    //         })}
-    //
-    //
-    // }
-    //
-    // function endPage() {
-    //     if($("#curentpage").text()==$("#pagesun").text()){
-    //         $downpage.addClass("disabled");
-    //         $endpage.addClass("disabled");
-    //         return false;
-    //
-    //     }else {
-    //         $firstPage.removeClass("disabled");
-    //         $upPage.removeClass("disabled");
-    //         $.ajax({
-    //
-    //             type: "GET",
-    //             url: "/admin/findPageData.do",
-    //             data:{
-    //                 pagetype:$("[name=type]").val(),
-    //                 rowconut:$("[name=pagecount]>option:selected").val(),
-    //                 curentpage:$("#pagesun").text(),
-    //                 datatype:$("[name=type]").val()},
-    //             success: function (data) {
-    //                 $("#datalist").html("");
-    //                 initdata(data);
-    //
-    //             }
-    //
-    //         })}
-    // }
-    //
-    // <!--分页end-->
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    // <!--初始化页面数据begin-->
-    // var  curentDataPostion;//点击位置
-    // $(function () {
-    //     init();
-    //     $downpage.click(clickdownpage);
-    //     $firstPage.click(clickFirstPage);
-    //     $upPage.click(clickuppage);
-    //     $endpage.click(endPage);
-    // })
-    // function init() {
-    //
-    //
-    //     $.ajax({
-    //         dataType:"JSON",
-    //         type: "GET",
-    //         url: "/admin/initCardType.do",
-    //         success: function (data) {
-    //             $(data).each(function (index,obj) {
-    //                 let $option=$("<option>"+obj.t_name +"</option>");
-    //                 $option.attr({value:obj.t_name});
-    //                 let $addoption=$("<option>"+obj.t_name +"</option>");
-    //                 $addoption.attr({value:obj.t_id});
-    //
-    //                 $("#addcardtype").append($addoption);
-    //                 $("#cardType").append($option);
-    //
-    //             })
-    //
-    //         }
-    //
-    //     });
-    //
-    //
-    //
-    //
-    //
-    //
-    //     $.ajax({
-    //         data:{pagetype:$("[name=type]").val()},
-    //         type: "GET",
-    //         url: "/admin/findPageData.do",
-    //         success: function (data) {
-    //             initdata(data);
-    //         }
-    //
-    //     })
-    //
-    // }
-    //
-    // function  initdata(data) {
-    //     let $pagesun=$("#pagesun");
-    //     let $curentpage=$("#curentpage");
-    //     let $rowcount=$("#rowcount");
-    //     let $rowsun=$("#rowsun");
-    //
-    //     let datalist= JSON.parse(data);
-    //
-    //     $pagesun.text(datalist.sunPage);
-    //     $curentpage.text(datalist.curentPage);
-    //     $rowcount.text(datalist.curentrow);
-    //     $rowsun.text(datalist.sunrow);
-    //
-    //     for(let key in datalist.pageData ){
-    //
-    //         let  $datatr=$("<tr>"+
-    //             "<td>"+datalist.pageData[key].e_name+"</td>"+
-    //             "<td>"+datalist.pageData[key].card_id+"</td>"+
-    //             "<td>"+datalist.pageData[key].address+"</td>"+
-    //             "<td>"+datalist.pageData[key]['sex']+"</td>"+
-    //             "<td>"+datalist.pageData[key].t_name+"</td>"+
-    //             "<td>"+datalist.pageData[key].phone+"</td>"+
-    //             "<td>"+datalist.pageData[key]['email']+"</td>"+
-    //             "</tr>");
-    //         let $tdupdate='<td> <a href="#" name="'+datalist.pageData[key].v_id+'" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">编辑</a> </td>';
-    //
-    //         $datatr.append($tdupdate);
-    //         $datatr.find("a:first").on("click",function () {
-    //
-    //             curentDataPostion=$(this).parent().parent();
-    //             $("[name=uapdatename]").val(curentDataPostion.find("td:first").text());
-    //             $("[name=uapdatephone]").val(curentDataPostion.find("td:eq(5)").text());
-    //             $("[name=uapdateAddrees]").val(curentDataPostion.find("td:eq(2)").text());
-    //             $("[name=uapdateemil]").val(curentDataPostion.find("td:eq(6)").text());
-    //         })
-    //
-    //         $("#datalist").append($datatr);
-    //     }
-    // }
-    //
-    //
-    // <!--初始化页面数据end-->
-    //
-    //
-    // <!--查询begin  -->
-    //
-    // $("#queryOK").click(function () {
-    //     $.ajax({
-    //         dataType:"JSON",
-    //         type:"POST",
-    //         url:'showSelectVipinfoview.do',
-    //         data:{phone:$("input[neme=phone]").val(),
-    //             vipname:$("input[name=vipname]").val(),
-    //             cardtype:$("#cardType>option:selected").val()
-    //         },
-    //         success:function (data) {
-    //             //{"v_id":1,"card_id":1,"e_name":"李靖","address":"湖南省邵阳市隆回县","sex":"男","t_name":"普通卡","phone":"13397552196"}
-    //             $("#datalist").html("");
-    //             if(data.flag){
-    //                 $(data.dataList).each(function (index,obj) {
-    //                     let  $datatr=$("<tr>"+
-    //                         "<td>"+obj.e_name+"</td>"+
-    //                         "<td>"+obj.card_id+"</td>"+
-    //                         "<td>"+obj.address+"</td>"+
-    //                         "<td>"+obj['sex']+"</td>"+
-    //                         "<td>"+obj.t_name+"</td>"+
-    //                         "<td>"+obj.phone+"</td>"+
-    //                         "<td>"+obj['email']+"</td>"+
-    //                         "</tr>");
-    //                     let $tdupdate='<td> <a href="#"   name="'+obj.v_id+'"class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">编辑</a></td>';
-    //                     $datatr.append($tdupdate);
-    //                     $datatr.find("a:first").on("click",function () {
-    //
-    //                         curentDataPostion=$(this).parent().parent();
-    //                         $("[name=uapdatename]").val(curentDataPostion.find("td:first").text());
-    //                         $("[name=uapdatephone]").val(curentDataPostion.find("td:eq(5)").text());
-    //                         $("[name=uapdateAddrees]").val(curentDataPostion.find("td:eq(2)").text());
-    //                         $("[name=uapdateemil]").val(curentDataPostion.find("td:eq(6)").text());
-    //                     })
-    //                     // $datatr.find("a:eq(2)").on("click",function () {
-    //                     //
-    //                     //     curentDataPostion=$(this).parent().parent();
-    //                     //     $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
-    //                     //     $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
-    //                     // })
-    //                     $("#datalist").append($datatr);
-    //
-    //                 })
-    //
-    //             }else {
-    //                 alert(data.info)
-    //             }
-    //
-    //
-    //         }
-    //
-    //
-    //     })
-    // });
-    // <!--条件查询end-->
-    // <!--新增 begin -->
-    // $("#addsave").click(function () {
-    //
-    //
-    //     $.ajax({
-    //         type:"POST",
-    //         dataType:"JSON",
-    //         url:"insertVipinfoview.do",
-    //         data:{addname:$("input[name=addname]").val(),
-    //             addcardtype:$("#addcardtype>option:selected").val(),
-    //             addsex:$("#addsex>option:selected").val(),
-    //             addphone:$("[name=addphone]").val(),
-    //             addAddrees:$("[name=addAddrees]").val(),
-    //             addemil:$("[name=addemil]").val()
-    //
-    //         },
-    //         success:function (data) {
-    //
-    //             alert(data.info);
-    //         }
-    //
-    //     })
-    //
-    //
-    //
-    // });
-    // <!--新增end -->
-    //
-    // <!-- 修改begin-->
-    // $("#updatasave").click(function () {
-    //     let $trdata=curentDataPostion;
-    //     $.ajax({
-    //         dataType:"JSON",
-    //         type:"POST",
-    //         url:"upadatevipinfo.do",
-    //         data:{name:$("[name=uapdatename]").val(),
-    //             updatesex:$("#updatesex>option:selected").val(),
-    //             uapdateAddrees:$("[name=uapdateAddrees]").val(),
-    //             uapdateemil:$("[name=uapdateemil]").val(),
-    //             vid:curentDataPostion.find("a:first").attr("name")
-    //         },
-    //         success:function (data) {
-    //             if(data.flag){
-    //                 alert(data.info);
-    //                 $trdata.find("td:eq(0)").text($("[name=uapdatename]").val());
-    //                 $trdata.find("td:eq(2)").text($("[name=uapdateAddrees]").val());
-    //                 $trdata.find("td:eq(3)").text($("#updatesex>option:selected").val());
-    //                 $trdata.find("td:eq(6)").text($("[name=uapdateemil]").val());
-    //             }else {
-    //                 alert(data.info);
-    //
-    //             }
-    //             curentDataPostion=null;
-    //         }
-    //
-    //
-    //     })
-    // });
-    <!-- 修改end -->
+
+
+
+    function init() {
+        $.ajax({
+            data:{id:getCookie("id")},
+            type: "GET",
+            url: "/admin/showSelectStudentinfo.do",
+            success: function (data) {
+                initdata(data);
+            }
+
+        })
+
+    }
+
+    function  initdata(data) {
+        let datainfo= JSON.parse(data);
+   //{"flag":true,"dataList":[{"e_id":22,"v_id":2,"card_id":2,"e_name":"李玲","c_name":"瑜伽","vipphone":"13397552196","vipsex":"男"},{"e_id":22,"v_id":40,"card_id":48,"e_name":"李玲","c_name":"肚皮舞","vipphone":"13397552196","vipsex":"男"},{"e_id":22,"v_id":22,"card_id":22,"e_name":"李玲","c_name":"健美操","vipphone":"13397552196","vipsex":"男"},{"e_id":22,"v_id":24,"card_id":24,"e_name":"李玲","c_name":"动感单车","vipphone":"13397552196","vipsex":"男"}]}
+     if(datainfo.flag){
+         $("#datalist").html("");
+        for(let key in datainfo.dataList ){
+            let  $datatr=$("<tr>"+
+                "<td>"+datainfo.dataList[key].vipname+"</td>"+
+                "<td>"+datainfo.dataList[key].card_id+"</td>"+
+                "<td>"+datainfo.dataList[key].c_name+"</td>"+
+                "<td>"+datainfo.dataList[key].vipsex+"</td>"+
+                "<td>"+datainfo.dataList[key].vipphone+"</td>"+
+                "</tr>");
+            let $tdupdate='<td> <a href="#" name="'+datainfo.dataList[key].v_id+'" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">更换教练</a> </td>';
+
+            $datatr.append($tdupdate);
+            $datatr.find("a:first").on("click",function () {
+                curentDataPostion=$(this).parent().parent();
+                $.ajax({
+                    dataType:"JSON",
+                    data:{id:getCookie("id")},
+                    type: "GET",
+                    url: "/admin/initteach.do",
+                    success: function (data) {
+                        $("#seletTeach>option:eq(0)").siblings().remove();
+                        $(data).each(function (index,obj) {
+                            let $option=$("<option>"+obj.e_id+"&nbsp;"+obj.e_name+"</option>");
+                            $option.attr({value:obj.e_id});
+                            $("#seletTeach").append( $option);
+                        })
 
 
 
 
+                    }
 
+                })
+            })
+
+            $("#datalist").append($datatr);
+        }
+     }else {
+         alert(datainfo.info)
+     }
+    }
+
+
+    <!--初始化页面数据end-->
+
+
+    <!--查询begin  -->
+
+    $("#queryOK").click(function () {
+        $.ajax({
+            //String phone, String name, String sex,int e_id
+            dataType:"JSON",
+            type:"POST",
+            url:'querySelectStudentinfo.do',
+            data:{phone:$("input[neme=phone]").val(),
+                vipname:$("input[name=vipname]").val(),
+                vipsex:$("#vipsex>option:selected").val(),
+                e_id:getCookie("id")
+            },
+            success:function (data) {
+
+                $("#datalist").html("");
+                if(data.flag){
+                    $(data.dataList).each(function (index,obj) {
+                        let  $datatr=$("<tr>"+
+                            "<td>"+obj.vipname+"</td>"+
+                            "<td>"+obj.card_id+"</td>"+
+                            "<td>"+obj.c_name+"</td>"+
+                            "<td>"+obj.vipsex+"</td>"+
+                            "<td>"+obj.vipphone+"</td>"+
+                            "</tr>");
+                        let $tdupdate='<td> <a href="#" name="'+obj.v_id+'" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">更换教练</a> </td>';
+                       $datatr.append($tdupdate);
+                        $datatr.find("a:first").on("click",function () {
+                            curentDataPostion=$(this).parent().parent();
+                            $.ajax({
+                                dataType:"JSON",
+                                data:{id:getCookie("id")},
+                                type: "GET",
+                                url: "/admin/initteach.do",
+                                success: function (data) {
+                                    $("#seletTeach>option:eq(0)").siblings().remove();
+                                    $(data).each(function (index,obj) {
+                                        let $option=$("<option>"+obj.e_id+"&nbsp;"+obj.e_name+"</option>");
+                                        $option.attr({value:obj.e_id});
+                                        $("#seletTeach").append( $option);
+                                    })
+
+
+
+
+                                }
+
+                            })
+                        })
+
+                       $("#datalist").append($datatr);
+                    })
+
+                }else {
+                    alert(data.info)
+                }
+
+
+             }
+
+
+        })
+    });
+    <!--条件查询end-->
+    <!--更换教练-->
+    $("#executesave").click(function () {
+        //int newe_id,int olde_id,int v_id
+        $.ajax({
+            type:"POST",
+            dataType:"JSON",
+            url:"replaceCoach.do",
+            data:{newe_id:$("#seletTeach>option:selected").val(),
+                olde_id:getCookie("id"),
+                v_id:curentDataPostion.find("td:eq(5)>a:first").attr("name")
+            },
+            success:function (data) {
+                if(data.flag){
+                    curentDataPostion.remove();
+                }
+                alert(data.info);
+                curentDataPostion=null;
+            }
+
+
+        })
+
+    });
+    <!---->
 </script>
 </body>
 </html>

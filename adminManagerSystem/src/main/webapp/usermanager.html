@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+    <!--查询条件 begin-->
+    <div id="search_btn"class="content_search_group">
+        <div class="row">
+            <div class="col-xs-10">
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon2">账号</span>
+                    <input type="text" neme="qid" class="form-control content_search_text" placeholder="输入账号" aria-describedby="basic-addon2">
+                </div>
+
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon3">权限</span>
+                    <select  id="qaid" class="form-control line left">
+                        <option>请选择权限</option>
+                    </select>
+                </div>
+
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="Span1">姓名</span>
+                    <input type="text" name="qname" class="form-control content_search_text" placeholder="输入姓名" aria-describedby="basic-addon2">
+
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="three_two">
+                    <a href="#"  id="queryOK" class="btn btn-primary content_marright">查询</a>
+                    <a href="#" class="btn btn-primary">重置</a></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-10">
+                <a href="#" class="btn btn-primary content_marright content_btn_add" data-toggle="modal" data-target="#add1" data-backdrop="static">新增</a>
+            </div>
+        </div>
+    </div>
+    <!--查询条件 end-->
+
+    <!--数据列表 begin-->
+    <!--数据列表 begin-->
+    <table id="table_list" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>会员名</th>
+            <th>手机号</th>
+            <th>邮箱</th>
+            <th>权限</th>
+            <th>状态</th>
+            <th class="w158">操作</th>
+        </tr>
+        </thead>
+        <tbody id="datalist">
+        </tbody>
+    </table>
+    <!--数据列表 end-->
+
+    <!--数据列表 end-->
+
+
+    <!--分页 begin-->
+    <div class="pages content_right" >
+        <div class="pages_record">
+            共&nbsp;<b id="pagesun">3</b>&nbsp;页 &nbsp;第&nbsp;<b id="curentpage">1</b>&nbsp;页&nbsp; <b id="rowcount">10</b>&nbsp;条/页&nbsp; &nbsp;共&nbsp;<b id="rowsun">27</b>&nbsp;条记录
+        </div>
+
+        <ul class="pagination">
+            <li id="firstPage"><a href="#" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>
+            <li  id="upPage"><a href="#">上一页<span class="sr-only">(current)</span></a></li>
+            <li id="downpage"><a href="#">下一页</a></li>
+            <li id="endpage"><a href="#" aria-label="Next"><span aria-hidden="true">尾页</span></a></li>
+            <li>
+
+
+                <select  class="form-control w80 line left"  name="pagecount">
+                    <option   value="5">5</option>
+                    <option selected="selected" value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+
+            </li>
+
+            <li><input type="text" placeholder="输入页数" class="form-control w80"></li>
+            <a href="#">跳转</a>
+            <input type="hidden" name="type" value="Userinfo"/>
+
+        </ul>
+
+    </div>
+    <!--分页 end-->
+
+</div>
+
+
+<!-- Modal begin -->
+<!--添加-->
+<div class="modal fade" id="add1" tabindex="-1" role="dialog" aria-labelledby="add11">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="add11">新增</h4>
+            </div>
+            <div class="modal-body p_bottom35">
+                <ul>
+                    <li>
+                        <label><span>姓名： </span></label>
+                        <input type="text" name="addname" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>性别： </span></label>
+                        <select id="addsex" class="h26 line left">
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>职务类型： </span></label>
+                        <select id="addjob" class="h26 line left">
+                            <option value="0">请选择</option>
+                        </select>
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>住址： </span></label>
+                        <input type="text" name="addAddrees" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>联系方式： </span></label>
+                        <input type="text" name="addphone" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>email： </span></label>
+                        <input type="text" name="addemil" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>用户权限： </span></label>
+                      <select id="addqx">
+                          <option value="0">请选择权限</option>
+                      </select>
+                    </li>
+                    <li></li>
+
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                <button type="button" id="addsave" class="btn btn-primary btn-sm">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel1">修改身份</h4>
+            </div>
+            <div class="modal-body p_bottom35">
+                <ul>
+                    <li>
+                        <label><span>用户姓名： </span></label>
+                        <input type="text" disabled="disabled" name="userName" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>权限： </span></label>
+                        <select class="h26 line left" id="updateqx" name="editcardtype">
+                            <option  value="请选择">请选择</option>
+
+                        </select>
+                    </li>
+
+                    <li></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                <button type="button" id="updatasave" class="btn btn-primary btn-sm">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--修改权限-->
+<div class="modal fade" id="buyservice" tabindex="-1" role="dialog" aria-labelledby="edit">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel2"></h4>
+            </div>
+            <div class="modal-body p_bottom35">
+                <ul>
+                    <li>
+                        <label><span>卡号： </span></label>
+                        <input type="text" disabled="disabled" name="xfvipcard" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>所属会员： </span></label>
+                        <input type="text" name="xfname" disabled="disabled"  maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>续费业务： </span></label>
+                        <select class="h26 line left" id="updateservice" name="editservice">
+                            <option  value="请选择">请选择</option>
+
+                        </select>
+                    </li>
+
+                    <li></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                <button type="button" id="xfsave" class="btn btn-primary btn-sm">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal end-->
+<script src="js/CookieUtil.js"></script>
+<script src="js/Date.js"></script>
+<script>
+    //    添加编辑模态框
+    $('#add').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var recipient = button.data('whatever') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-title').text('' + recipient)
+        modal.find('.modal-body input').val(recipient)
+    });
+
+    <!--   -->
+    var authorityMap=new Map();
+    var userStatus=new Map();
+    var  curentDataPostion;//点击位置
+    <!--分页begin-->
+    let $firstPage=$("#firstPage");
+    let $upPage=$("#upPage");
+    let $downpage=$("#downpage");
+    let $endpage=$("#endpage");
+    $firstPage.hover(activeStyle,notactiveStyle);
+    $upPage.hover(activeStyle,notactiveStyle);
+    $downpage.hover(activeStyle,notactiveStyle);
+    $endpage.hover(activeStyle,notactiveStyle);
+
+    function activeStyle() {
+        $(this).addClass("active");
+
+    }
+    function notactiveStyle() {
+        $(this).removeClass("active");
+
+    }
+    function clickFirstPage() {
+        if($("#curentpage").text()=="1"){
+            $firstPage.addClass("disabled");
+            $upPage.addClass("disabled");
+            return false;
+        }else {
+            $endpage.removeClass("disabled");
+            $downpage.removeClass("disabled");
+            $.ajax({
+                dataType:"JSON",
+                type: "GET",
+                url: "/admin/findPageData.do",
+                data:{
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:1,
+                    datatype:$("[name=type]").val()},
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+            })
+        }
+
+    }
+    function clickuppage() {
+        if($("#curentpage").text()=="1"){
+            $upPage.addClass("disabled");
+            $firstPage.addClass("disabled");
+            return false;
+        }else {
+            $downpage.removeClass("disabled");
+            $endpage.removeClass("disabled");
+            $.ajax({
+                dataType:"JSON",
+                type: "GET",
+                url: "/admin/findPageData.do",
+                data:{
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:parseInt($("#curentpage").text())-1,
+                    datatype:$("[name=type]").val()},
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+            })
+        }
+    }
+
+    function  clickdownpage() {
+        if($("#curentpage").text()==$("#pagesun").text()){
+            $downpage.addClass("disabled");
+            $endpage.addClass("disabled");
+
+        }else {
+            $firstPage.removeClass("disabled");
+            $upPage.removeClass("disabled");
+            $.ajax({
+                dataType:"JSON",
+                type: "GET",
+                url: "/admin/findPageData.do",
+                data:{
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:parseInt($("#curentpage").text())+1,
+                    datatype:$("[name=type]").val()},
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+
+            })}
+
+
+    }
+
+    function endPage() {
+        if($("#curentpage").text()==$("#pagesun").text()){
+            $downpage.addClass("disabled");
+            $endpage.addClass("disabled");
+            return false;
+
+        }else {
+            $firstPage.removeClass("disabled");
+            $upPage.removeClass("disabled");
+            $.ajax({
+                dataType:"JSON",
+                type: "GET",
+                url: "/admin/findPageData.do",
+                data:{
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:$("#pagesun").text(),
+                    datatype:$("[name=type]").val()},
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+
+            })}
+    }
+
+    <!--分页end-->
+
+
+    <!--初始化页面数据begin-->
+
+    $(function () {
+
+        $downpage.click(clickdownpage);
+        $firstPage.click(clickFirstPage);
+        $upPage.click(clickuppage);
+        $endpage.click(endPage);
+        init();
+    })
+
+        function init() {
+            $.ajax({
+                dataType:"JSON",
+                type: "GET",
+                url: "/admin/initJobtype.do",
+                success: function (data) {
+                    $(data).each(function (index,obj) {
+                        let $option=$("<option>"+obj.jName+"</option>");
+                        $option.attr({value:obj.jId});
+                        $("#addjob").append($option);
+
+                    })
+
+                }
+
+            });
+
+
+            $.ajax({
+                dataType:"JSON",
+                type: "GET",
+                url: "/admin/initAuthority.do",
+                success: function (data) {
+                    $(data).each(function (i,o) {
+                            authorityMap.set(o.id,o.name);
+                            let $option=$("<option>"+o.name+"</option>");
+                        $option.attr({"value":o.id});
+                        let $aoption=$("<option>"+o.name+"</option>");
+                        $aoption.attr({"value":o.id});
+                        $("#qaid").append($option);
+                        $("#addqx").append( $aoption);
+                    })
+
+                }
+
+            });
+            $.ajax({
+                dataType:"JSON",
+                type: "GET",
+                url: "/admin/initUserstatus.do",
+                success: function (data) {
+                    $(data).each(function (i,o) {
+
+                            userStatus.set(o.id,o.name);
+                    })
+
+                }
+
+            });
+
+
+            $.ajax({
+                dataType:"JSON",
+                data:{pagetype:$("[name=type]").val()},
+                type: "GET",
+                url: "/admin/findPageData.do",
+                success: function (data) {
+                    initdata(data);
+
+                }
+
+            })
+
+    }
+
+    function initdata(data) {
+        let $pagesun=$("#pagesun");
+        let $curentpage=$("#curentpage");
+        let $rowcount=$("#rowcount");
+        let $rowsun=$("#rowsun");
+
+        $pagesun.text(data.sunPage);
+        $curentpage.text(data.curentPage);
+        $rowcount.text(data.curentrow);
+        $rowsun.text(data.sunrow);
+//{"e_name":"李超","username":"14579532314","a_id":4,"sta_id":0,"email":"0"}
+        $(data.pageData).each(function (i,o) {
+            let  $datatr=$("<tr>"+
+                "<td>"+o.e_name+"</td>"+
+                "<td>"+o.username+"</td>"+
+                "<td>"+o.email+"</td>"+
+                "<td>"+authorityMap.get(o.a_id)+"</td>"+
+                "<td>"+userStatus.get(o.sta_id)+"</td>"+
+                "</tr>");
+            let $tdupdate=$("<td><a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>修改</a>"+
+                "<a href='#' class='btn btn-primary btn-sm'   data-backdrop='static'>重置</a><a href='#' class='btn btn-primary btn-sm'   data-backdrop='static'>冻结</a></td>");
+            $datatr.append($tdupdate);
+            if(o.sta_id==1){
+                $tdupdate.find("a:eq(2)").css({"background-color": "#f00"});
+                $tdupdate.find("a:eq(2)").html("解冻");
+            }
+             $tdupdate.find("a:first").on("click",modifyqx);
+            $tdupdate.find("a:eq(1)").on("click",resetPassword);
+            $tdupdate.find("a:eq(2)").on("click",updateStatus);
+
+            $("#datalist").append($datatr);
+        })
+
+    }
+
+ function  resetPassword() {
+        let $curentTr= $(this).parent().parent();
+    let flag= checkQx($curentTr);
+    if(!flag){return;}
+
+
+     $.ajax({
+         dataType:"JSON",
+         data:{userName:$curentTr.find("td:eq(1)").text()},
+         url:'resetPassword.do',
+         success:function (data) {
+          alert(data.info);
+         }
+
+
+     })
+
+ }
+
+    function modifyqx() {
+        curentDataPostion=$(this);
+        $("#updateqx").find("option:first").siblings().remove();
+        let qxid=getCookie("qxid");
+     if(qxid==1){
+         $("#updateqx").append($("<option value='2'>"+authorityMap.get(2)+"</option>"));
+         $("#updateqx").append($("<option value='3'>"+authorityMap.get(3)+"</option>"));
+         $("#updateqx").append($("<option value='4'>"+authorityMap.get(4)+"</option>"));
+     }else  if(qxid==2){
+         $("#updateqx").append($("<option value='3'>"+authorityMap.get(3)+"</option>"));
+         $("#updateqx").append($("<option value='4'>"+authorityMap.get(4)+"</option>"));
+        }
+        $("input[name=userName]").val(curentDataPostion.parent().parent().find("td:first").text());
+    }
+    <!--修改权限begin-->
+    $("#updatasave").on("click",savemodify);
+    function  savemodify() {
+      let crenttr=  curentDataPostion.parent().parent();
+        let flag= checkQx(crenttr);
+        if(!flag){return;}
+
+        $.ajax({
+            url:'updateAuthorityByUserName.do',
+            dataType:"JSON",
+            data:{
+              aid:$("#updateqx>option:selected").val(),
+             userName: crenttr.find("td:eq(1)").text()
+            },
+            success:function (data) {
+                alert(data.info);
+                if(data.flag){
+                    crenttr.find("td:eq(3)").text(authorityMap.get(parseInt($("#updateqx>option:selected").val())));
+                }
+            }
+        })
+
+
+    }
+    <!--修改权限end-->
+    <!--修改账号状态begin-->
+    function updateStatus() {
+        curentDataPostion = $(this);
+        let $curentTr= $(this).parent().parent();
+        let flag= checkQx($curentTr);
+        if(!flag){return;}
+
+        if ($(this).text() == '冻结') {
+            //{"flag":true,"info":"取消预约成功"}
+            $.ajax({
+                url: 'lockUserCode.do',
+                data: {userName:$curentTr.find("td:eq(1)").text()},
+                dataType: "JSON",
+                success: function (data) {
+                    alert(data.info);
+                    if (data.flag) {
+                        curentDataPostion.html("解冻");
+                        $curentTr.find("td:eq(4)").text("冻结");
+                        curentDataPostion.css({"background-color": "#f00"});
+                    }
+                }
+
+
+            })
+        } else if ($(this).text() == '解冻') {
+            $.ajax({
+                url: 'unLockUserCode.do',
+                data: {userName:$curentTr.find("td:eq(1)").text()},
+                dataType: "JSON",
+                success: function (data) {
+                    alert(data.info);
+                    if (data.flag) {
+                        curentDataPostion.html("冻结");
+                        $curentTr.find("td:eq(4)").text("正常");
+                        curentDataPostion.css({"background-color": ""});
+                    }
+                }
+
+
+            })
+        }
+
+
+    }
+
+    <!--修改账号状态end-->
+
+function  checkQx($curentTr) {
+    let qxid=getCookie("qxid");
+    if($curentTr.find("td:eq(3)").text()=='超级管理员'){
+        alert("权限不足");
+        return false;
+    }
+    if(qxid==2){
+        if($curentTr.find("td:eq(3)").text()=='管理员'){
+            alert("权限不足");
+            return false;
+        }
+
+    }
+    return true;
+}
+    <!--查询begin  -->
+    $("#queryOK").click(function () {
+        //String userName, int aid, String vname
+        $.ajax({
+            dataType:"JSON",
+            type:"POST",
+            url:'findUserinfoByParameter.do',
+            data:{userName:$("input[neme=qid]").val(),
+                vname:$("input[name=qname]").val(),
+                aid:$("#qaid>option:selected").val()
+            },
+            success:function (data) {
+                if(data.flag){
+                    $("#datalist").html("");
+
+                    //{"flag":true,"dataList":[{"e_name":"李轩","username":"18099254362","a_id":1,"sta_id":0,"email":"2639129255@qq.com"}]}
+                 $(data.dataList).each(function (i,o) {
+
+                         let  $datatr=$("<tr>"+
+                             "<td>"+o.e_name+"</td>"+
+                             "<td>"+o.username+"</td>"+
+                             "<td>"+o.email+"</td>"+
+                             "<td>"+authorityMap.get(o.a_id)+"</td>"+
+                             "<td>"+userStatus.get(o.sta_id)+"</td>"+
+                             "</tr>");
+                         let $tdupdate=$("<td><a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>修改</a>"+
+                             "<a href='#' class='btn btn-primary btn-sm'   data-backdrop='static'>重置</a><a href='#' class='btn btn-primary btn-sm'   data-backdrop='static'>冻结</a></td>");
+                         $datatr.append($tdupdate);
+                         if(o.sta_id==1){
+                             $tdupdate.find("a:eq(2)").css({"background-color": "#f00"});
+                             $tdupdate.find("a:eq(2)").html("解冻");
+                         }
+                         $tdupdate.find("a:first").on("click",modifyqx);
+                         $tdupdate.find("a:eq(1)").on("click",resetPassword);
+                         $tdupdate.find("a:eq(2)").on("click",updateStatus);
+
+                         $("#datalist").append($datatr);
+                 })
+
+                }else {
+                    alert(data.info)
+                }
+
+
+            }
+
+
+        })
+    });
+
+<!---->
+    <!--新增员工资料begin-->
+    $("#addsave").click(function () {
+        let qxid=getCookie("qxid");
+        if($("#addqx>option:selected").val()=='1'){
+            alert("权限不足");
+            return false;
+        }
+        if(qxid==2){
+            if($("#addqx>option:selected").val()=='2'){
+                alert("权限不足");
+                return false;
+            }}
+        $.ajax({
+            type:"POST",
+            dataType:"JSON",
+            url:"addUser.do",
+            data:{addname:$("input[name=addname]").val(),
+                addsex:$("#addsex>option:selected").val(),
+                addjob:$("#addjob>option:selected").val(),
+                addAddrees:$("[name=addAddrees]").val(),
+                addphone:$("[name=addphone]").val(),
+                addemil:$("[ name=addemil]").val(),
+                addqx: $("#addqx>option:selected").val()
+            },
+            success:function (data) {
+                if(data.flag){
+                    alert(data.info);
+
+                }else {
+                    alert(data.info);
+                }
+            }
+
+        })
+
+    });
+    <!--新增员工资料end-->
+
+
+
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

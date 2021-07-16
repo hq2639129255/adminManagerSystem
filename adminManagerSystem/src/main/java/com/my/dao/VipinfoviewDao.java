@@ -13,6 +13,15 @@ public interface VipinfoviewDao {
     List<Vipinfoview> findVipinfoviewAll(Connection con);
     Page<Vipinfoview> findVipinfoviewByPagesize(Connection con, int offset, int rowcount) throws IllegalAccessException, NoSuchFieldException, InstantiationException;
     public List<Vipinfoview> findVipinfoviewByParameter(Connection con,String  phone,String type,String name) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
-boolean addviminfo(Connection con,Vipinfo vip,int type);
+
+    /**
+     *
+     * @param con
+     * @param vip
+     * @param type
+     * @return true 手机号不存在
+     */
+    boolean addviminfo(Connection con,Vipinfo vip,int type);
+
 
 }

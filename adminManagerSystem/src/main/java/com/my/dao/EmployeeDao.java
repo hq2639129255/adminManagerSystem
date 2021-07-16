@@ -15,5 +15,8 @@ boolean updateEmployee(Connection con,Employee e) throws SQLException;
     List<Employee> findEmployeebyId(Connection con,int id) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 String findPhoneByid(Connection con,int id) throws SQLException;
 boolean deleteEmployeebyId(Connection con,int id) throws SQLException;
+Employee findEmployeeByPhone(Connection con, String phone) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+    Employee findEmployeeByEmail(Connection con, String emil) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+
 
 }

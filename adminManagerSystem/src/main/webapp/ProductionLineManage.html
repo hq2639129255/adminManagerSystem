@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8" />
     <title>生产线管理-列表</title>
-
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="assets/content/content.css" rel="stylesheet" />
     <script src="assets/js/jquery.min.js"></script>
@@ -53,10 +52,12 @@
         <tr>
             <th>员工号</th>
             <th>姓名</th>
+            <th>班次</th>
             <th>职务</th>
             <th>住址</th>
             <th class="w110">性别</th>
             <th class="w158">联系方式</th>
+            <th class="w158">邮箱</th>
             <th class="w110">操作</th>
         </tr>
         </thead>
@@ -146,7 +147,13 @@
                         <input type="text" name="addemil" maxlength="40">
                     </li>
                     <li></li>
-
+                    <li>
+                        <label><span>班次： </span></label>
+                        <select id="workid" class="h26 line left">
+                            <option value="0">请选择</option>
+                        </select>
+                    <li></li>
+                    </li>
                 </ul>
             </div>
             <div class="modal-footer">
@@ -250,6 +257,13 @@
                         <input type="text" name="updatemil" maxlength="40">
                     </li>
                     <li></li>
+                    <li>
+                        <label><span>班次： </span></label>
+                        <select id="editworkid" class="h26 line left">
+                            <option  value="0">请选择</option>
+                        </select>
+                    </li>
+                    <li></li>
                 </ul>
             </div>
             <div class="modal-footer">
@@ -275,6 +289,7 @@
     <!--分页begin-->
     var  curentDataPostion;//点击位置
     var joptypeMap=new Map();
+    var workidMap=new Map();
     <!--分页begin-->
     let $firstPage=$("#firstPage");
     let $upPage=$("#upPage");
@@ -421,6 +436,29 @@
         $.ajax({
             dataType:"JSON",
             type: "GET",
+            url: "/admin/initWorktime.do",
+            success: function (data) {
+             //{"wId":1,"wName":"早班","starttime":"07:30:00 上午","endstime":"04:30:00 下午"}
+$(data).each(function (i,o) {
+    workidMap.set(o.wId,o.wName);
+  let $workOption=  $("<option>"+o.wName+"</option>");
+    $workOption.attr({"value":o.wId});
+    let $eworkOption=  $("<option>"+o.wName+"</option>");
+    $eworkOption.attr({"value":o.wId});
+    $("#workid").append( $workOption);
+    $("#editworkid").append($eworkOption);
+
+})
+            }
+
+        });
+
+
+
+
+        $.ajax({
+            dataType:"JSON",
+            type: "GET",
             url: "/admin/initJobtype.do",
             success: function (data) {
                 $(data).each(function (index,obj) {
@@ -468,10 +506,12 @@
             let  $datatr=$("<tr>"+
                 "<td>"+datalist.pageData[key].e_id+"</td>"+
                 "<td>"+datalist.pageData[key].e_name+"</td>"+
-                "<td>"+joptypeMap.get(datalist.pageData[key].j_id)+"</td>"+
+                "<td>"+ workidMap.get(datalist.pageData[key].workId)+"</td>"+
+                "<td>"+joptypeMap.get(parseInt(datalist.pageData[key].j_id))+"</td>"+
                 "<td>"+datalist.pageData[key].address+"</td>"+
                 "<td>"+datalist.pageData[key].sex+"</td>"+
                 "<td>"+datalist.pageData[key].phone+"</td>"+
+                "<td>"+datalist.pageData[key].email+"</td>"+
                 "</tr>");
             let $tdupdate=$('<td> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">编辑</a> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#del" data-backdrop="static">删除</a> </td>');
             $datatr.append($tdupdate);
@@ -479,8 +519,32 @@
                 curentDataPostion=$(this).parent().parent();
                 $("[name=updateid]").val(curentDataPostion.find("td:first").text());
                 $("[name=updatename]").val(curentDataPostion.find("td:eq(1)").text());
-                $("[name=updatAddrees]").val(curentDataPostion.find("td:eq(3)").text());
-                $("[name=updatphone]").val(curentDataPostion.find("td:eq(5)").text());
+                $("[name=updatAddrees]").val(curentDataPostion.find("td:eq(4)").text());
+                $("[name=updatphone]").val(curentDataPostion.find("td:eq(6)").text());
+                $("[name=updatemil]").val(curentDataPostion.find("td:eq(7)").text());
+
+
+                $("#editworkid>option").each(function (i,o) {
+                    if($(o).text()==curentDataPostion.find("td:eq(2)").text()){
+                        $(o).attr({"selected":true});
+                    }
+
+                });
+
+                $("#updatsex>option").each(function (i,o) {
+                    if($(o).text()==curentDataPostion.find("td:eq(5)").text()){
+                        $(o).attr({"selected":true});
+                    }
+
+                });
+                $("#updatjob>option").each(function (i,o) {
+                    if($(o).text()==curentDataPostion.find("td:eq(3)").text()){
+                        $(o).attr({"selected":true});
+                    }
+
+                });
+
+
             })
             $datatr.find("a:eq(1)").on("click",function () {
                 curentDataPostion=$(this).parent().parent();
@@ -516,8 +580,128 @@
 
     }
     <!--初始化页面end-->
+    <!--表单验证begin-->
+    var phoneReg=/^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+    var emilReg=/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+    function clearTextStyle() {
+        $(this).parent().next("li").text("");
+    }
+    function checkName() {
+        let flag=true;
+        if($("input[name=addname]").val()==""){
+            flag=false;
+            $("input[name=addname]").parent().next("li").text("姓名不能为空").css({"color":"#f00"});
+        }
+        return flag;
+    }
+
+    function  checkJob() {
+        let flag=true;
+        if($("#addjob>option:selected").val()=='0'){
+            flag=false;
+            $("#addjob").parent().next("li").text("请选择职务类型").css({"color":"#f00"});
+        }
+        return flag;
+    }
+    function  checkAddrees() {
+        let flag=true;
+        if($("[name=addAddrees]").val()==""){
+            flag=false;
+            $("[name=addAddrees]").parent().next("li").text("地址不能为空").css({"color":"#f00"});
+        }
+return flag;
+    }
+function  checkphone() {
+        let flag=true;
+        if( $("[name=addphone]").val()==""){
+            flag=false;
+            $("[name=addphone]").parent().next("li").text("手机号不能为空").css({"color":"#f00"});
+        }else if(!phoneReg.test($("[name=addphone]").val())){
+            flag=false;
+            $("[name=addphone]").parent().next("li").text("手机号格式错误").css({"color":"#f00"});
+        }else{
+            $.ajax({
+                async:false,
+                url:"isEmployeeByPhone.do",
+                dataJson:"JSON",
+                data:{phone:$("[name=addphone]").val()},
+                success:function (data) {
+                 if(data=='true'){
+                  flag=true;
+                 }else {
+                     flag=false;
+                     $("[name=addphone]").parent().next("li").text("手机号已经存在").css({"color":"#f00"});
+                 }
+                }
+
+            });
+        }
+return flag;
+}
+
+function  checkEmail(){
+        let flag=true;
+        if($("[name=addemil]").val()==""){
+            flag=false;
+            $("[name=addemil]").parent().next("li").text("邮箱不能为空").css({"color":"#f00"});
+        }else if(!emilReg.test($("[name=addemil]").val())){
+            flag=false;
+            $("[name=addemil]").parent().next("li").text("邮箱格式错误").css({"color":"#f00"});
+        }else{
+            $.ajax({
+                async:false,
+                url:"isEmployeeByEmail.do",
+                dataJson:"JSON",
+                data:{Email:$("[name=addemil]").val()},
+                success:function (data) {
+                    if(data=='true'){
+                        flag=true;
+                    }else {
+                        flag=false;
+                        $("[name=addemil]").parent().next("li").text("邮箱号已经存在").css({"color":"#f00"});
+                    }
+                }
+
+            });
+        }
+        return flag;
+    }
+
+    function  checkWorkID() {
+      let flag=true;
+      if($("#workid>option:selected").val()=="0"){
+          flag=false;
+          $("#workid").parent().next("li").text("请选择班次").css({"color":"#f00"});
+      }
+      return flag;
+    }
+    $("#workid").blur(checkWorkID);
+
+    $("#workid").focus(clearTextStyle);
+    $("[name=addemil]").focus(clearTextStyle);
+    $("[name=addemil]").blur(checkEmail);
+    $("[name=addphone]").focus(clearTextStyle);
+    $("[name=addphone]").blur(checkphone);
+    $("[name=addAddrees]").blur(checkAddrees);
+    $("[name=addAddrees]").focus(clearTextStyle);
+
+    $("#addjob").blur(checkJob);
+    $("#addjob").focus(clearTextStyle);
+
+
+    $("input[name=addname]").blur(checkName);
+    $("input[name=addname]").focus(clearTextStyle);
+    <!--表单验证end-->
     <!--新增员工资料begin-->
     $("#addsave").click(function () {
+        let workIDok=   checkWorkID();
+        let emailok=checkEmail();
+        let  phoneok=checkphone();
+        let  addreesok=checkAddrees();
+        let jobok=checkJob();
+        let nameok=checkName();
+
+        if(workIDok&&emailok&&phoneok&&addreesok&&jobok&&nameok){
         $.ajax({
             type:"POST",
             dataType:"JSON",
@@ -527,8 +711,8 @@
                 addjob:$("#addjob>option:selected").val(),
                 addAddrees:$("[name=addAddrees]").val(),
                 addphone:$("[name=addphone]").val(),
-                addemil:$("[ name=addemil]").val()
-
+                addemil:$("[name=addemil]").val(),
+                addworkid:$("#workid>option:selected").val()
             },
             success:function (data) {
                 if(data.flag){
@@ -539,7 +723,7 @@
                 }
             }
 
-        })
+        })}
 
     });
     <!--新增员工资料end-->
@@ -562,10 +746,12 @@
                         let  $datatr=$("<tr>"+
                             "<td>"+obj.e_id+"</td>"+
                             "<td>"+obj.e_name+"</td>"+
-                            "<td>"+joptypeMap.get(obj.j_id)+"</td>"+
+                            "<td>"+ workidMap.get(parseInt(+obj.workId))+"</td>"+
+                            "<td>"+joptypeMap.get(parseInt(obj.j_id))+"</td>"+
                             "<td>"+obj.address+"</td>"+
                             "<td>"+obj.sex+"</td>"+
                             "<td>"+obj.phone+"</td>"+
+                            "<td>"+obj.email+"</td>"+
                             "</tr>");
                         $tdupdate=$('<td> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">编辑</a> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#del" data-backdrop="static">删除</a> </td>');
                         $datatr.append($tdupdate);
@@ -573,8 +759,9 @@
                             curentDataPostion=$(this).parent().parent();
                             $("[name=updateid]").val(curentDataPostion.find("td:first").text());
                             $("[name=updatename]").val(curentDataPostion.find("td:eq(1)").text());
-                            $("[name=updatAddrees]").val(curentDataPostion.find("td:eq(3)").text());
-                            $("[name=updatphone]").val(curentDataPostion.find("td:eq(5)").text());
+                            $("[name=updatAddrees]").val(curentDataPostion.find("td:eq(4)").text());
+                            $("[name=updatphone]").val(curentDataPostion.find("td:eq(6)").text());
+                            $("[name=updatemil]").val(curentDataPostion.find("td:eq(7)").text());
                         })
                         $datatr.find("a:eq(1)").on("click",function () {
                             curentDataPostion=$(this).parent().parent();
@@ -617,37 +804,139 @@
 
 
         })
-    })
+    });
+    <!--查询end-->
+    <!--修改表单验证begin-->
+    function checkUpdateName() {
+        let flag=true;
+        if($("[name=updatename]").val()==""){
+            flag=false;
+            $("[name=updatename]").parent().next("li").text("姓名不能为空").css({"color":"#f00"});
+        }
+        return flag;
+    }
+
+    function  checkUpdateJob() {
+        let flag=true;
+        if($("#updatjob>option:selected").val()=='0'){
+            flag=false;
+            alert("请选择职务类型");
+            $("#updatjob").parent().next("li").text("请选择职务类型").css({"color":"#f00"});
+        }
+        return flag;
+    }
+    function  checkUpdateAddrees() {
+        let flag=true;
+        if($("[name=updatAddrees]").val()==""){
+            flag=false;
+            $("[name=updatAddrees]").parent().next("li").text("地址不能为空").css({"color":"#f00"});
+        }
+        return flag;
+    }
+
+
+    function  checkUpdateEmail(){
+        let flag=true;
+        if($("[name=updatemil]").val()==""){
+            flag=false;
+            $("[name=updatemil]").parent().next("li").text("邮箱不能为空").css({"color":"#f00"});
+        }else if(!emilReg.test($("[name=updatemil]").val())){
+            flag=false;
+            $("[name=updatemil]").parent().next("li").text("邮箱格式错误").css({"color":"#f00"});
+        }else{
+            $.ajax({
+                async:false,
+                url:"isEmployeeByEmail.do",
+                dataJson:"JSON",
+                data:{Email:$("[name=updatemil]").val()},
+                success:function (data) {
+                    if(data=='true'){
+                        flag=true;
+                    }else {
+                        flag=false;
+                        $("[name=updatemil]").parent().next("li").text("邮箱号已经存在").css({"color":"#f00"});
+                    }
+                }
+
+            });
+        }
+        return flag;
+    }
+
+    function  checkUpdateWorkID() {
+
+        let flag=true;
+        if($("#editworkid>option:selected").val()=="0"){
+            flag=false;
+            $("#editworkid").parent().next("li").text("请选择班次").css({"color":"#f00"});
+        }
+        return flag;
+    }
+    $("#editworkid").blur(checkUpdateWorkID);
+    $("#editworkid").focus(clearTextStyle);
+    $("[name=updatemil]").focus(clearTextStyle);
+    $("[name=updatemil]").blur(checkEmail);
+    $("[name=updatAddrees]").blur(checkUpdateAddrees);
+    $("[name=updatAddrees]").focus(clearTextStyle);
+
+    $("#updatjob").blur(checkUpdateJob);
+    $("#updatjob").focus(clearTextStyle);
+
+
+    $("[name=updatename]").blur(checkUpdateName);
+    $("[name=updatename]").focus(clearTextStyle);
+
+
+
+    <!--修改表单验证end-->
     <!-- 修改begin-->
     $("#updateemp").click(function () {
         let $trdata=curentDataPostion;
-        $.ajax({
-            dataType:"JSON",
-            type:"POST",
-            url:"upadateEmployee.do",
-            data:{eid:$("[name=updateid]").val(),
-                ename:$("[name=updatename]").val(),
-                  sex:$("#updatsex>option:selected").val(),
-                jobid:$("#updatjob>option:selected").val(),
-                addres:$("[name=updatAddrees]").val(),
-                emil:$("[name=updatemil]").val()
-            },
-            success:function (data) {
-                if(data.flag){
-                    alert(data.info);
-                    $trdata.find("td:eq(1)").text($("[name=updatename]").val());
-                    $trdata.find("td:eq(2)").text(joptypeMap.get(parseInt($("#updatjob>option:selected").val())));
-                    $trdata.find("td:eq(3)").text($("[name=updatAddrees]").val());
-                    $trdata.find("td:eq(4)").text($("#updatsex>option:selected").val());
-                }else {
-                    alert(data.info);
 
+        let workIDok=   checkUpdateWorkID();
+        let emailok=checkUpdateEmail();
+        let  addreesok=checkUpdateAddrees();
+        let jobok=checkUpdateJob();
+        let nameok=checkUpdateName();
+
+
+
+
+        if(workIDok&&emailok&&addreesok&&jobok&&nameok) {
+            $.ajax({
+                dataType: "JSON",
+                type: "POST",
+                url: "upadateEmployee.do",
+                data: {
+                    eid: $("[name=updateid]").val(),
+                    ename: $("[name=updatename]").val(),
+                    sex: $("#updatsex>option:selected").val(),
+                    jobid: $("#updatjob>option:selected").val(),
+                    addres: $("[name=updatAddrees]").val(),
+                    emil: $("[name=updatemil]").val(),
+                    eworkid: $("#editworkid>option:selected").val()
+                },
+                success: function (data) {
+                    if (data.flag) {
+                        alert(data.info);
+                        $trdata.find("td:eq(1)").text($("[name=updatename]").val());
+                        $trdata.find("td:eq(2)").text(workidMap.get(parseInt($("#editworkid>option:selected").val())));
+                        $trdata.find("td:eq(3)").text(joptypeMap.get(parseInt($("#updatjob>option:selected").val())));
+                        $trdata.find("td:eq(4)").text($("[name=updatAddrees]").val());
+                        $trdata.find("td:eq(5)").text($("#updatsex>option:selected").val());
+                        $trdata.find("td:eq(7)").text($("[name=updatemil]").val());
+                    } else {
+                        alert(data.info);
+
+                    }
+                    curentDataPostion = null;
                 }
-                curentDataPostion=null;
-            }
 
 
-        })
+            })
+
+
+        }
     });
 $("#executesave").click(function () {
     $.ajax({

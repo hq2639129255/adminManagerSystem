@@ -412,16 +412,6 @@
             $rowsun.text(datalist.sunrow);
 
             for(let key in datalist.pageData ){
-            // <tr>
-            //     <td>刘亮</td>
-            //     <td>刘亮</td>
-            //     <td>株洲醴陵</td>
-            //     <td>男</td>
-            //     <td>钻石卡</td>
-            //     <td>15100984321</td>
-
-            //         </tr>
-             //13397552196"}
                 let  $datatr=$("<tr>"+
                     "<td>"+datalist.pageData[key].e_name+"</td>"+
                     "<td>"+datalist.pageData[key].card_id+"</td>"+
@@ -442,14 +432,6 @@
                     $("[name=uapdateAddrees]").val(curentDataPostion.find("td:eq(2)").text());
                     $("[name=uapdateemil]").val(curentDataPostion.find("td:eq(6)").text());
                 })
-                // $datatr.find("a:eq(2)").on("click",function () {
-                //
-                //     curentDataPostion=$(this).parent().parent();
-                //     $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
-                //     $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
-                // })
-
-
                 $("#datalist").append($datatr);
             }
         }
@@ -493,12 +475,6 @@
                                 $("[name=uapdateAddrees]").val(curentDataPostion.find("td:eq(2)").text());
                                 $("[name=uapdateemil]").val(curentDataPostion.find("td:eq(6)").text());
                             })
-                            // $datatr.find("a:eq(2)").on("click",function () {
-                            //
-                            //     curentDataPostion=$(this).parent().parent();
-                            //     $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
-                            //     $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
-                            // })
                             $("#datalist").append($datatr);
 
                         })

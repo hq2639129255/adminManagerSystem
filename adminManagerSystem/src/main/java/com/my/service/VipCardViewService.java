@@ -15,4 +15,5 @@ public interface VipCardViewService {
     List<VipCardView> showFacilityByParameter(VipCardView vipCardView);
     List<Setmeal> initSetmeal();
     boolean buyservice(boolean flag, int daycount,int id);
+
 }

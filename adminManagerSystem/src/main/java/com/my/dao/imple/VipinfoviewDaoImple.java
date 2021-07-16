@@ -69,6 +69,17 @@ public class VipinfoviewDaoImple extends BaseDao<Vipinfoview> implements Vipinfo
         return datalist;
     }
 
+    /**
+     * 新增会员
+     * 1、插入一条卡信息
+     * 2、插入会员信息
+     * 3、插入业务续费信息
+     * 4、新增一个会员账号
+     * @param con
+     * @param vip
+     * @param type
+     * @return
+     */
     @Override
     public boolean addviminfo(Connection con, Vipinfo vip, int type) {
         boolean flag=true;

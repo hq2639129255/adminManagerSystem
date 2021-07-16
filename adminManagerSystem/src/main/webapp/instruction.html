@@ -18,17 +18,17 @@
       <div class="col-xs-10">
        <div class="input-group content_line content_left">
                     <span class="input-group-addon" id="basic-addon2">教练工号</span>
-                    <input type="text" class="form-control content_search_text" placeholder="输入教练员工号" aria-describedby="basic-addon2">
+                    <input type="text" name="e_id" class="form-control content_search_text" placeholder="输入教练员工号" aria-describedby="basic-addon2">
          </div>
 
          <div class="input-group content_line content_left">
                     <span class="input-group-addon" id="basic-addon3">教练员姓名</span>
-                    <input type="text" class="form-control" placeholder="输入教练员名称" aria-describedby="basic-addon2">
+                    <input type="text" id="qname" class="form-control" placeholder="输入教练员名称" aria-describedby="basic-addon2">
          </div>
 
          <div class="input-group content_line content_left">
          <span class="input-group-addon" id="Span1">性别</span>
-         <select class="form-control line left">
+         <select id="qsex" class="form-control line left">
                     <option value="男">男</option>
                     <option value="女">女</option>
                 </select>
@@ -36,15 +36,15 @@
     </div> 
        <div class="col-xs-2">
          <div class="three_two">
-         <a href="#" class="btn btn-primary content_marright">查询</a>
+         <a href="#" id="queryOK" class="btn btn-primary content_marright">查询</a>
          <a href="#" class="btn btn-primary">重置</a></div> 
          </div>           
     </div>
-    <div class="row">
-    <div class="col-xs-10">
-   <a href="#" class="btn btn-primary content_marright content_btn_add" data-toggle="modal" data-target="#add1" data-backdrop="static">新增</a>
-    </div> 
-    </div>
+    <!--<div class="row">-->
+    <!--<div class="col-xs-10">-->
+   <!--<a href="#" class="btn btn-primary content_marright content_btn_add" data-toggle="modal" data-target="#add1" data-backdrop="static">新增</a>-->
+    <!--</div> -->
+    <!--</div>-->
          </div>
         <!--查询条件 end-->
 
@@ -101,94 +101,94 @@
 
 
                   <!-- Modal begin -->
-              <!--添加-->
-              <div class="modal fade" id="add1" tabindex="-1" role="dialog" aria-labelledby="add11">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title" id="add11">新增</h4>
-                                    </div>
-                                    <div class="modal-body p_bottom35">
-                                         <ul>
-                                            <li>
-                                                <label><span>编码： </span></label>
-                                                <input type="text" maxlength="40">
-                                            </li>
-                                            <li>
-                                                <label><span>名称： </span></label>
-                                                <input type="text" maxlength="40">
-                                            </li>
-                                            <li>
-                                                <label><span>所属终端： </span></label>
-                                                <select class="h26 line left">
-                                                    <option>请选择</option>
-                                                    <option>PC001</option>
-                                                    <option>PC002</option>
-                                                    <option>PC003</option>
-                                                </select>
-                                            </li>
-                                            <li>
-                                                <label><span>负责人： </span></label>
-                                                <input type="text" maxlength="40">
-                                            </li>
-                                            <li>
-                                                <label><span>备注： </span></label>
-                                                <textarea class="form-control" rows="3" maxlength="200"></textarea>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
-                                        <button type="button" class="btn btn-primary btn-sm">保存</button>
-                                    </div>
-                                </div>
-                            </div>
-              </div>
+              <!--&lt;!&ndash;添加&ndash;&gt;-->
+              <!--<div class="modal fade" id="add1" tabindex="-1" role="dialog" aria-labelledby="add11">-->
+                            <!--<div class="modal-dialog" role="document">-->
+                                <!--<div class="modal-content">-->
+                                    <!--<div class="modal-header">-->
+                                        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                                        <!--<h4 class="modal-title" id="add11">新增</h4>-->
+                                    <!--</div>-->
+                                    <!--<div class="modal-body p_bottom35">-->
+                                         <!--<ul>-->
+                                            <!--<li>-->
+                                                <!--<label><span>编码： </span></label>-->
+                                                <!--<input type="text" maxlength="40">-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<label><span>名称： </span></label>-->
+                                                <!--<input type="text" maxlength="40">-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<label><span>所属终端： </span></label>-->
+                                                <!--<select class="h26 line left">-->
+                                                    <!--<option>请选择</option>-->
+                                                    <!--<option>PC001</option>-->
+                                                    <!--<option>PC002</option>-->
+                                                    <!--<option>PC003</option>-->
+                                                <!--</select>-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<label><span>负责人： </span></label>-->
+                                                <!--<input type="text" maxlength="40">-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<label><span>备注： </span></label>-->
+                                                <!--<textarea class="form-control" rows="3" maxlength="200"></textarea>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                    <!--<div class="modal-footer">-->
+                                        <!--<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>-->
+                                        <!--<button type="button" class="btn btn-primary btn-sm">保存</button>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+              <!--</div>-->
 
-              <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title" id="myModalLabel1">编辑</h4>
-                                    </div>
-                                    <div class="modal-body p_bottom35">
-                                        <ul>
-                                            <li>
-                                                <label><span>编码： </span></label>
-                                                <input type="text" maxlength="40">
-                                            </li>
-                                            <li>
-                                                <label><span>名称： </span></label>
-                                                <input type="text" maxlength="40">
-                                            </li>
-                                            <li>
-                                                <label><span>所属终端： </span></label>
-                                                <select class="h26 line left">
-                                                    <option>请选择</option>
-                                                    <option>PC001</option>
-                                                    <option>PC002</option>
-                                                    <option>PC003</option>
-                                                </select>
-                                            </li>
-                                            <li>
-                                                <label><span>负责人： </span></label>
-                                                <input type="text" maxlength="40">
-                                            </li>
-                                            <li>
-                                                <label><span>备注： </span></label>
-                                                <textarea class="form-control" rows="3" maxlength="200"></textarea>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
-                                        <button type="button" class="btn btn-primary btn-sm">保存</button>
-                                    </div>
-                                </div>
-                            </div>
-              </div>
+              <!--<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">-->
+                            <!--<div class="modal-dialog" role="document">-->
+                                <!--<div class="modal-content">-->
+                                    <!--<div class="modal-header">-->
+                                        <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                                        <!--<h4 class="modal-title" id="myModalLabel1">编辑</h4>-->
+                                    <!--</div>-->
+                                    <!--<div class="modal-body p_bottom35">-->
+                                        <!--<ul>-->
+                                            <!--<li>-->
+                                                <!--<label><span>编码： </span></label>-->
+                                                <!--<input type="text" maxlength="40">-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<label><span>名称： </span></label>-->
+                                                <!--<input type="text" maxlength="40">-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<label><span>所属终端： </span></label>-->
+                                                <!--<select class="h26 line left">-->
+                                                    <!--<option>请选择</option>-->
+                                                    <!--<option>PC001</option>-->
+                                                    <!--<option>PC002</option>-->
+                                                    <!--<option>PC003</option>-->
+                                                <!--</select>-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<label><span>负责人： </span></label>-->
+                                                <!--<input type="text" maxlength="40">-->
+                                            <!--</li>-->
+                                            <!--<li>-->
+                                                <!--<label><span>备注： </span></label>-->
+                                                <!--<textarea class="form-control" rows="3" maxlength="200"></textarea>-->
+                                            <!--</li>-->
+                                        <!--</ul>-->
+                                    <!--</div>-->
+                                    <!--<div class="modal-footer">-->
+                                        <!--<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>-->
+                                        <!--<button type="button" class="btn btn-primary btn-sm">保存</button>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+              <!--</div>-->
               <!--Modal end-->
 
     <script>
@@ -385,14 +385,6 @@
                     // document.cookie = "id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/admin;";//删除cookie
                     // alert(document.cookie);
                 })
-                // $datatr.find("a:eq(2)").on("click",function () {
-                //
-                //     curentDataPostion=$(this).parent().parent();
-                //     $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
-                //     $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
-                // })
-
-
                 $("#datalist").append($datatr);
             }
 
@@ -401,6 +393,58 @@
 
         }
         <!--初始化页面数据end-->
+
+        <!--查询begin  -->
+
+        $("#queryOK").click(function () {
+            $.ajax({
+                dataType:"JSON",
+                type:"POST",
+                url:'showSelectInstructor.do',
+                data:{e_name:$("#qname").val(),
+                    e_id:$("input[name=e_id]").val(),
+                    qsex:$("#qsex>option:selected").val()
+                },
+                success:function (data) {
+                 //{"flag":true,"dataList":[{"e_id":36,"name":"刘亮","phone":"18099254321","sex":"男","studentcount":1}]
+                    $("#datalist").html("");
+                    if(data.flag){
+                        $(data.dataList).each(function (index,obj) {
+                            let  $datatr=$("<tr>"+
+                                "<td>"+obj.e_id+"</td>"+
+                                "<td>"+obj['name']+"</td>"+
+                                "<td>"+obj['sex']+"</td>"+
+                                "<td>"+obj.phone+"</td>"+
+                                "<td>"+obj.studentcount+"</td>"+
+                                "</tr>");
+                            let $tdupdate="<td><a href='customer.html' class='btn btn-primary btn-sm'  data-target='#edit' data-backdrop='static'>详情</a></td>";
+
+                            $datatr.append($tdupdate);
+
+                            $datatr.find("a:first").on("click",function () {
+                                curentDataPostion=$(this).parent().parent();
+                                document.cookie = "id="+curentDataPostion.find("td:first").text();
+                                // alert(document.cookie);
+                                // document.cookie = "id="+"2";
+                                // alert(document.cookie);
+                                // document.cookie = "id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/admin;";//删除cookie
+                                // alert(document.cookie);
+                            })
+                            $("#datalist").append($datatr);
+
+                        })
+
+                    }else {
+                        alert(data.info)
+                    }
+
+
+                }
+
+
+            })
+        });
+        <!--条件查询end-->
 
 
 </script>

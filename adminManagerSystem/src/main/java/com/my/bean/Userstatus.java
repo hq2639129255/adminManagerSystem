@@ -3,7 +3,7 @@ package com.my.bean;
 public class Userstatus {
 //    sta_id TINYINT   COMMENT'状态id',
 //    islock VARCHAR(8) COMMENT'状态'
-    private byte id;
+    private int id;
     private String name;
 
     public Userstatus() {
@@ -17,7 +17,7 @@ public class Userstatus {
                 '}';
     }
 
-    public byte getId() {
+    public int getId() {
         return id;
     }
 

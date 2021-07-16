@@ -31,5 +31,40 @@ public class UserDaoImple extends BaseDao<User> implements UserDao {
         return row>0;
     }
 
+    @Override
+    public boolean updateAuthorityByUserName(Connection con,int aid, String userName) throws SQLException {
+      String sql="UPDATE  `user` SET `a_id`=? WHERE `username`=?";
+int row=this.update(con,sql,aid,userName);
+        return row>0;
+    }
+
+    @Override
+    public boolean resetPassword(Connection con, String UserName) throws SQLException {
+        String sql=" UPDATE `user` SET `u_password`='8ddcff3a80f4189ca1c9d4d902c3c909' WHERE `username`=?";
+        int row = this.update(con, sql, UserName);
+        return row>0;
+    }
+
+    @Override
+    public boolean lockUserCode(Connection con, String UserName) throws SQLException {
+        String  sql="UPDATE `user` SET `sta_id`=1 WHERE `username`=?";
+        int row = this.update(con,sql, UserName);
+        return row>0;
+    }
+
+    @Override
+    public boolean unLockUserCode(Connection con, String UserName) throws SQLException {
+     String sql="UPDATE `user` SET `sta_id`=0 WHERE `username`=?";
+        int row = this.update(con,sql, UserName);
+        return row>0;
+    }
+
+    @Override
+    public boolean managerAdduser(Connection con, User u) throws SQLException {
+        String sql="INSERT INTO`user`(`username`,`u_password`,`a_id`,`sta_id`)VALUES(?,'8ddcff3a80f4189ca1c9d4d902c3c909',?,0)";
+        int b = this.update(con, sql, u.getUsername(),u.getAu_id());
+        return b>0;
+    }
+
 
 }

@@ -1,7 +1,7 @@
 package com.my.bean;
 
 public class Authority {
-    private  byte id;
+    private  int id;
     private String name;
 
     @Override
@@ -12,7 +12,7 @@ public class Authority {
                 '}';
     }
 
-    public byte getId() {
+    public int getId() {
         return id;
     }
 

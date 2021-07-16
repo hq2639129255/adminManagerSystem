@@ -115,6 +115,7 @@
                                                 <label><span>姓名： </span></label>
                                                 <input type="text" name="addvipname" maxlength="40">
                                             </li>
+                                             <li></li>
                                             <li>
                                              <label><span>性别： </span></label>
                                                 <select class="h26 line left" name="addsex">
@@ -122,20 +123,24 @@
                                                     <option>女</option>
                                                 </select>
                                          </li>
+                                             <li></li>
                                              <li>
                                                  <label><span>手机号码： </span></label>
                                                  <input type="text" maxlength="40" name="addphone">
                                              </li>
+                                             <li></li>
                                              <li>
                                                  <label><span>邮箱： </span></label>
                                                  <input type="text" maxlength="40" name="addemil">
                                              </li>
+                                             <li></li>
                                             <li>
                                                 <label><span>卡类型： </span></label>
                                                 <select id="cardType"  class="h26 line left" name="addcardtype">
-                                                    <option value="请选择">请选择</option>
+                                                    <option value="0">请选择</option>
                                                 </select>
                                             </li>
+                                             <li></li>
                                         </ul>
                                     </div>
                                     <div class="modal-footer">
@@ -168,7 +173,7 @@
                                             <li>
                                                 <label><span>卡类型： </span></label>
                                                 <select class="h26 line left" id="updatecardtype" name="editcardtype">
-                                                    <option  value="请选择">请选择</option>
+                                                    <option  value="0">请选择</option>
 
                                                 </select>
                                             </li>
@@ -206,7 +211,7 @@
                         <li>
                             <label><span>续费业务： </span></label>
                             <select class="h26 line left" id="updateservice" name="editservice">
-                                <option  value="请选择">请选择</option>
+                                <option  value="0">请选择</option>
 
                             </select>
                         </li>
@@ -234,12 +239,14 @@
             modal.find('.modal-title').text('' + recipient)
             modal.find('.modal-body input').val(recipient)
         });
+
+<!--   -->
+        var  curentDataPostion;//点击位置
 <!--分页begin-->
         let $firstPage=$("#firstPage");
         let $upPage=$("#upPage");
         let $downpage=$("#downpage");
         let $endpage=$("#endpage");
-        $firstPage.hover(activeStyle,notactiveStyle);
         $firstPage.hover(activeStyle,notactiveStyle);
         $upPage.hover(activeStyle,notactiveStyle);
         $downpage.hover(activeStyle,notactiveStyle);
@@ -363,7 +370,7 @@
 
 
 <!--初始化页面数据begin-->
-        var  curentDataPostion;//点击位置
+
         $(function () {
             init();
             $downpage.click(clickdownpage);
@@ -453,8 +460,7 @@
                     $("[name=enditvipcard]").val(curentDataPostion.find("td:first").text());
                    $("[name=editname]").val(curentDataPostion.find("td:eq(2)").text());
                 })
-                $datatr.find("a:eq(2)").on("click",function () {
-
+                $datatr.find("a:eq(1)").on("click",function () {
                     curentDataPostion=$(this).parent().parent();
                     $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
                     $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
@@ -471,8 +477,127 @@
 
 
 <!--初始化页面数据end-->
+        <!--新增表单验证begin-->
+        var phoneReg=/^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+        var emilReg=/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+        function clearTextStyle() {
+            $(this).parent().next("li").text("");
+        }
+        function checkName() {
+            let flag=true;
+            if($("input[name=addvipname]").val()==""){
+                flag=false;
+                $("input[name=addvipname]").parent().next("li").text("姓名不能为空").css({"color":"#f00"});
+            }
+           return flag;
+        }
+        
+        function checkPhone() {
+            let flag=true;
+            if($("[name=addphone]").val()==""){
+                flag=false;
+                $("[name=addphone]").parent().next("li").text("手机号不能为空").css({"color":"#f00"});
+            }else if(!phoneReg.test($("[name=addphone]").val())){
+                flag=false;
+                $("[name=addphone]").parent().next("li").text("手机号格式错误").css({"color":"#f00"});
+            }else{
+                $.ajax({
+                    async:false,
+                    url:"isVipinfoByphone.do",
+                    dataJson:"JSON",
+                    data:{phone:$("[name=addphone]").val()},
+                    success:function (data) {
+                        if(data=='true'){
+                            flag=true;
+                        }else {
+                            flag=false;
+                            $("[name=addphone]").parent().next("li").text("手机号已经存在").css({"color":"#f00"});
+                        }
+                    }
+
+                });
+            }
+            return flag;
+            
+        }
+        function  checkEmail(){
+            let flag=true;
+            if($("[name=addemil]").val()==""){
+                flag=false;
+                $("[name=addemil]").parent().next("li").text("邮箱不能为空").css({"color":"#f00"});
+            }else if(!emilReg.test($("[name=addemil]").val())){
+                flag=false;
+                $("[name=addemil]").parent().next("li").text("邮箱格式错误").css({"color":"#f00"});
+            }else{
+                $.ajax({
+                    async:false,
+                    url:"isVipinfoByEmail.do",
+                    dataJson:"JSON",
+                    data:{Email:$("[name=addemil]").val()},
+                    success:function (data) {
+                        if(data=='true'){
+                            flag=true;
+                        }else {
+                            flag=false;
+                            $("[name=addemil]").parent().next("li").text("邮箱号已经存在").css({"color":"#f00"});
+                        }
+                    }
+
+                });
+            }
+            return flag;
+        }
+
+        function  checkCardtype() {
+            let flag=true;
+            if($("[name=addcardtype]>option:selected").val()=="0"){
+                flag=false;
+                $("[name=addcardtype]").parent().next("li").text("请选择卡类型").css({"color":"#f00"});
+            }
+            return flag;
+        }
+        function  checkServiceType() {
+            let flag=true;
+            if(  $("#updateservice>option:selected").val()=="0"){
+                flag=false;
+                $("#updateservice").parent().next("li").text("请选择业务类型").css({"color":"#f00"});
+            }
+            return flag;
+        }
+        function  checkEditCardType() {
+            let flag=true;
+            if(  $("#updatecardtype>option:selected").val()=="0"){
+                flag=false;
+                $("#updatecardtype").parent().next("li").text("请选择卡类型").css({"color":"#f00"});
+            }
+            return flag;
+        }
+
+
+        $("#updatecardtype").blur(checkEditCardType);
+        $("#updatecardtype").focus(clearTextStyle);
+
+        $("#updateservice").focus(clearTextStyle);
+        $("#updateservice").blur(checkServiceType);
+        $("[name=addcardtype]").blur(checkCardtype);
+        $("[name=addcardtype]").focus(clearTextStyle);
+        $("[name=addemil]").blur(checkEmail);
+        $("[name=addemil]").focus(clearTextStyle);
+        $("[name=addphone]").focus(clearTextStyle);
+        $("[name=addphone]").blur(checkPhone);
+        $("input[name=addvipname]").focus(clearTextStyle);
+        $("input[name=addvipname]").blur(checkName);
+        <!--新增表单验证end-->
 <!--新增begin -->
         $("#saveCard").click(function () {
+            let vipnameOk=checkName();
+            let phoneOk=checkPhone();
+            let emilOk=checkEmail();
+            let cardtypeOk=checkCardtype();
+
+
+
+            if(vipnameOk&&phoneOk&&emilOk&&cardtypeOk){
             $.ajax({
                 type:"POST",
                 url:"insertCard.do",
@@ -490,38 +615,44 @@
 
 
             })
-
+                }
         });
 
 <!--新增end-->
 <!-- 修改begin-->
   $("#updatasave").click(function () {
-      let $trdata=curentDataPostion;
+      let $trdata = curentDataPostion;
+      let cardTypeOk = checkEditCardType();
+      if(cardTypeOk){
       $.ajax({
-          dataType:"JSON",
-            type:"POST",
-            url:"upadatevipcard.do",
-            data:{name:$("[name=editname]").val(),
-                  type:$("#updatecardtype>option:selected").val(),
-                id:$("[name=enditvipcard]").val()
-            },
-          success:function (data) {
-              if(data.flag){
+          dataType: "JSON",
+          type: "POST",
+          url: "upadatevipcard.do",
+          data: {
+              name: $("[name=editname]").val(),
+              type: $("#updatecardtype>option:selected").val(),
+              id: $("[name=enditvipcard]").val()
+          },
+          success: function (data) {
+              if (data.flag) {
                   alert(data.info);
                   $trdata.find("td:eq(1)").text($("#updatecardtype>option:selected").text());
                   $trdata.find("td:eq(2)").text($("[name=editname]").val());
-                  alert($trdata.html());
-
-              }else {
+              } else {
                   alert(data.info);
 
               }
-              curentDataPostion=null;
+              curentDataPostion = null;
           }
 
 
       })
+
+  }
       });
+
+
+
 <!-- 修改end -->
         <!--查询begin  -->
 
@@ -553,8 +684,7 @@
                                 $("[name=enditvipcard]").val(curentDataPostion.find("td:first").text());
                                 $("[name=editname]").val(curentDataPostion.find("td:eq(2)").text());
                             })
-                            $datatr.find("a:eq(2)").on("click",function () {
-
+                            $datatr.find("a:eq(1)").on("click",function () {
                                 curentDataPostion=$(this).parent().parent();
                                 $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
                                 $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
@@ -580,31 +710,34 @@
         })
 
         $("#xfsave").click(function () {
+          let serviceType=  checkServiceType();
+            if(serviceType){
             $.ajax({
-                url:"buyservice.do",
-                dataType:"JSON",
-                data:{
-                    vipcardid:$("[name=xfvipcard]").val(),
-                    service:$("#updateservice>option:selected").val(),
-                    servicedate:curentDataPostion.find("td:eq(3)").text()
+                url: "buyservice.do",
+                dataType: "JSON",
+                data: {
+                    vipcardid: $("[name=xfvipcard]").val(),
+                    service: $("#updateservice>option:selected").val(),
+                    servicedate: curentDataPostion.find("td:eq(3)").text()
                 },
-                success:function (data) {
+                success: function (data) {
 
                     //{"flag":true,"info":"续费成功"}
-                    if(data.flag){
+                    if (data.flag) {
                         alert(data.info);
-                     let olddate=new Date(curentDataPostion.find("td:eq(3)").text());
-                     let newdate=   new Date(olddate.getTime()+$("#updateservice>option:selected").val()*86400000).format("yyyy-MM-dd hh:mm:ss")
+                        let olddate = new Date(curentDataPostion.find("td:eq(3)").text());
+                        let newdate = new Date(olddate.getTime() + $("#updateservice>option:selected").val() * 86400000).format("yyyy-MM-dd hh:mm:ss");
+
                         curentDataPostion.find("td:eq(3)").text(newdate);
 
-                    }else {
+                    } else {
                         alert(data.info);
                     }
 
-
+                    curentDataPostion = null;
                 }
             })
-
+        }
         })
 
 

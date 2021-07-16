@@ -24,9 +24,9 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
     public Page<Employee> findEmployeeByPagesize(Connection con, int offset, int rowcount) {
         Page page = new Page();
         List<Employee> data = new ArrayList<Employee>();
-        String sql = "SELECT `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM  `employee` where `e_status`=1  LIMIT ?,?";
+        String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId`  FROM  `employee` where `e_status`=1  LIMIT ?,?";
         try {
-            String sqlsun = "SELECT COUNT(1) AS sun  FROM   `employee`";
+            String sqlsun = "SELECT COUNT(1) AS sun  FROM   `employee` where `e_status`=1";
             Long rowsun = (Long) this.getValue(con, sqlsun);
             page.setSunrow(Integer.parseInt(rowsun.toString()));
 
@@ -45,6 +45,7 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
                 e.setSex(re.getString("sex"));
                 e.setPhone(re.getString("phone"));
                 e.setEmail(re.getString("email"));
+                e.setWorkId(re.getInt("workId"));
                 data.add(e);
             }
             page.setCurentrow(data.size());
@@ -59,8 +60,8 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
 
     @Override
     public boolean addEmployee(Connection con, Employee e) throws SQLException {
-        String sql = "INSERT INTO `employee`(`j_id`,`e_name`,`address`,`sex`,`phone`,`email`)VALUES(?,?,?,?,?,?)";
-        int b = this.update(con, sql,e.getJ_id(),e.getE_name(),e.getAddress(),e.getSex(),e.getPhone(),e.getEmail() );
+        String sql = "INSERT INTO `employee`(`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId`)VALUES(?,?,?,?,?,?,?)";
+        int b = this.update(con, sql,e.getJ_id(),e.getE_name(),e.getAddress(),e.getSex(),e.getPhone(),e.getEmail(),e.getWorkId() );
         return b > 0;
     }
 
@@ -68,23 +69,23 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
     public List<Employee> findEmployeeByParameter(Connection con, QueryEmployee q) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
         List<Employee> datalist = new ArrayList<Employee>();
         if (q.getEid() == -1 && q.getJobid()==0 && q.getEname() == null) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee` where  `e_status`=1";
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee` where  `e_status`=1";
 
             datalist= this.getListInstence(con,sql);
 
 
         } else if (q.getEid() != -1) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `e_id`=? and `e_status`=1";
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `e_id`=? and `e_status`=1";
             datalist= this.getListInstence(con,sql,q.getEid());
         }  else if (q.getEid() == -1 && q.getJobid() !=0 && q.getEname() != null) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `j_id`=? AND `e_name`=? and `e_status`=1";
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `j_id`=? AND `e_name`=? and `e_status`=1";
             datalist =   this.getListInstence(con,sql,q.getJobid(),q.getEname());
 
         }else if (q.getEid() == -1&& q.getJobid() ==0 && q.getEname() != null) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `e_name`=? and `e_status`=1";
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `e_name`=? and `e_status`=1";
             datalist= this.getListInstence(con,sql,q.getEname());
         }else {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee`  WHERE `j_id`=? and `e_status`=1";
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `j_id`=? and `e_status`=1";
             datalist = this.getListInstence(con, sql, q.getJobid());
         }
         return   datalist;
@@ -92,15 +93,15 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
 
     @Override
     public boolean updateEmployee(Connection con, Employee e) throws SQLException {
-        String sql="UPDATE  `employee` SET `e_name`=?,`sex`=?,`j_id`=?,`address`=?,`email`=? WHERE `e_id`=?";
-        int b = this.update(con,sql, e.getE_name(), e.getSex(), e.getJ_id(), e.getAddress(), e.getEmail(), e.getE_id());
+        String sql="UPDATE  `employee` SET `e_name`=?,`sex`=?,`j_id`=?,`address`=?,`email`=?,`workId`=? WHERE `e_id`=?";
+        int b = this.update(con,sql, e.getE_name(), e.getSex(), e.getJ_id(), e.getAddress(), e.getEmail(),e.getWorkId(), e.getE_id());
         return b>0;
 
     }
 
     @Override
     public List<Employee> findEmployeebyId(Connection con, int id) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        String sql="SELECT `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email` FROM `employee` WHERE `e_id`!=? and `j_id`=2 and `e_status`=1";
+        String sql="SELECT `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee` WHERE `e_id`!=? and `j_id`=2 and `e_status`=1";
         List<Employee> data = this.getListInstence(con, sql, id);
         return data;
     }
@@ -119,6 +120,19 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
         return row>0;
     }
 
+    @Override
+    public Employee findEmployeeByPhone(Connection con,String phone) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        String sql="SELECT `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`e_status`,`workId`  FROM `employee` WHERE `phone`=?";
+        Employee  data = this.getInstence(con, sql, phone);
+        return data;
+    }
+
+    @Override
+    public Employee findEmployeeByEmail(Connection con, String emil) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        String sql="SELECT `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`e_status`,`workId`  FROM `employee` WHERE `email`=?";
+        Employee  data = this.getInstence(con, sql,emil);
+        return data;
+    }
 
 
 }

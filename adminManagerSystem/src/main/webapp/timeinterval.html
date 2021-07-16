@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+    <!--数据列表 begin-->
+    <table id="table_list" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>时段ID</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>人数</th>
+            <th class="w110">操作</th>
+        </tr>
+        </thead>
+        <tbody id="datalist">
+        </tbody>
+    </table>
+    <!--数据列表 end-->
+</div>
+<script>
+    <!--初始化页面数据begin-->
+    var  curentDataPostion;//点击位置
+
+    $(function () {
+        init();
+    })
+
+
+
+    function init() {
+        $.ajax({
+            data:{pagetype:$("[name=type]").val()},
+            type: "GET",
+            url: "/admin/initUserAppointmentInfoDao.do",
+            success: function (data) {
+                initdata(data);
+            }
+
+        })
+
+    }
+    function initdata(data) {
+        let datalist = JSON.parse(data);
+        for (let key in datalist) {
+            let $datatr = $("<tr>" +
+                "<td name=" + datalist[key].id + ">" + datalist[key].timeName + "</td>" +
+                "<td>" + datalist[key].startTime + "</td>" +
+                "<td>" + datalist[key].endTime + "</td>" +
+                "<td>" + datalist[key].count + "</td>" +
+                "</tr>");
+            let $tdupdate =$("<td><a href='Appointment.html' class='btn btn-primary btn-sm'  data-target='#edit' data-backdrop='static'>详情</a></td>");
+            $datatr.append($tdupdate);
+            $tdupdate.find("a:first").click(function () {
+                document.cookie = "Timeid="+$(this).parent().parent().find("td:first").attr("name");
+            })
+            $("#datalist").append($datatr);
+        }
+    }
+
+
+
+</script>
+</body>
+</html>

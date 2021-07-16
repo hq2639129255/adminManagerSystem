@@ -32,6 +32,17 @@ String sql="SELECT  * FROM vipmanager_v ";
         return data;
     }
 
+    /**
+     * 会员卡新增
+     * 1、插入会员卡信息
+     * 2、插入会员信息
+     * 3、插入续费业务信息
+     * 4、新增一个用户
+     * @param con
+     * @param cardtype
+     * @param vipinfo
+     * @return
+     */
     @Override
     public boolean insert(Connection con, int cardtype, Vipinfo vipinfo) {
         boolean flag=true;

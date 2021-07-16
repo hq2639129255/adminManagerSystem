@@ -14,5 +14,4 @@ public interface FacilityService {
     boolean deleteFacilityByid(int id);
     List<Facility> showFacilityByParameter(QueryObj queryObj);
 
-
 }
