@@ -43,4 +43,37 @@ public class StudentinfoDaoImple extends BaseDao<Studentinfo> implements Student
 
         return datalist;
     }
+
+    @Override
+    public List<Studentinfo> findStudentByPhone(Connection con, String phone) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+
+        String sql="SELECT  e_id,v_id,card_id,vipname,c_name,vipphone,vipsex FROM teach_view WHERE  phone=?";
+        List<Studentinfo> data=  this.getListInstence(con,sql,phone);
+        return data;
+    }
+
+    @Override
+    public List<Studentinfo> findStudentinfoByParameter(Connection con, String phone, String name, String sex, String e_phone) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        List<Studentinfo> datalist = new ArrayList<Studentinfo>();
+        if (phone==null && name==null && sex== null) {
+            String sql ="SELECT  e_id,v_id,card_id,vipname,c_name,vipphone,vipsex FROM teach_view WHERE phone=?";
+            datalist= this.getListInstence(con, sql,e_phone);
+        } else if (phone != null) {
+            String sql = "SELECT  e_id,v_id,card_id,vipname,c_name,vipphone,vipsex FROM teach_view WHERE phone=? and vipphone=?";
+            datalist = this.getListInstence(con, sql,e_phone,phone);
+
+        }  else if (phone == null && name!= null && sex != null) {
+            String sql = "SELECT  e_id,v_id,card_id,vipname,c_name,vipphone,vipsex FROM teach_view WHERE phone=? and vipsex=? and vipname=?";
+            datalist = this.getListInstence(con, sql,e_phone,sex,name);
+        }else if (phone==null && sex == null && name != null) {
+            String sql = "SELECT  e_id,v_id,card_id,vipname,c_name,vipphone,vipsex FROM teach_view WHERE phone=? and vipname=?";
+            datalist = this.getListInstence(con, sql,e_phone,name);
+        }else {
+            String sql = "SELECT  e_id,v_id,card_id,vipname,c_name,vipphone,vipsex FROM teach_view WHERE phone=? and vipsex=? ";
+            datalist = this.getListInstence(con, sql,e_phone,sex);
+        }
+
+
+        return datalist;
+    }
 }

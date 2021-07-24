@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+    <!--数据列表 begin-->
+    <table id="table_list" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>月份</th>
+            <th>工资</th>
+            <th>违规罚款</th>
+            <th>奖励</th>
+            <th>实发工资</th>
+            <th>备注</th>
+        </tr>
+        </thead>
+        <tbody id="datalist">
+
+        </tbody>
+    </table>
+    <!--数据列表 end-->
+</div>
+<script src="js/Date.js"></script>
+<script>
+
+    <!--初始化页面数据begin-->
+
+
+    $(function () {
+
+        init();
+    })
+
+
+
+    function init() {
+$.ajax({
+    url:"findSalaryByeid.do",
+    dataType:"JSON",
+    success:function (data) {
+        if(data.flag){
+            initdata(data.dataList);
+        }else {
+            alert(data.info);
+        }
+
+    }
+})
+
+     }
+    function initdata(data) {
+$(data).each(function (i,o) {
+
+let $curenttr=$("<tr>\n" +
+    "<td>"+new Date(o.sa_month).format("yyyy-MM")+"</td>\n" +
+    "<td>"+o.salary+"</td>\n" +
+    "<td>"+o.payment+"</td>\n" +
+    "<td>"+o.award+"</td>\n" +
+    "<td>"+o.net_payroll+"</td>\n" +
+    "<td>"+o.remark+"</td>\n" +
+    "</tr>");
+$("#datalist").append($curenttr);
+})
+
+
+    }
+
+
+
+</script>
+</body>
+</html>

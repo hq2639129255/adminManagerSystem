@@ -51,7 +51,7 @@
                             <img class="nav-user-photo" src="assets/avatars/user.jpg" alt="Jason's Photo" />
                             <span class="user-info">
                                 <small>欢迎光临,</small>
-                                Jason
+                              <span id="userName">张超</span>
                             </span>
 
                             <i class="icon-caret-down"></i>
@@ -199,48 +199,13 @@
 							               
 							             </a>
 							  </li>
-							<li>
-							             <a href="ChangePassword.html" target="MainFrm" class="index_menu" title="安全退出系统">
+							<li id="clearLoginInfo">
+                                <a href="javaScript:;"  class="index_menu" title="安全退出系统">
 							                <i class="icon-off"></i>
 											 <span class="menu-text">  安全退出系统</span>
-											
 							            </a>
 							 </li>
 
-                    
-
-                    <!--系统工具 begin-->
-                    
-                    <!--系统工具 end-->
-					<!-- 会员搜索 begin-->
-					
-					
-					<!-- 会员搜索 end  -->
-					<!-- 健身器材管理 begin -->
-					
-					<!--  健身器材管理 end -->
-					<!-- 教练执教管理begin -->
-					
-					<!-- 教练执教管理end -->
-					
-					
-					<!-- 预约管理 begin -->
-					
-					
-					<!-- 预约管理 end -->
-					<!-- 考勤管理begin -->
-					
-					<!--考勤管理end  -->
-					<!-- 工资管理begin -->
-					
-					<!-- 工资管理end -->
-					<!-- 安全退出系统begin -->
-					
-					<!--安全退出系统 end  -->
-					
-					
-
-              
                 </ul>
                 <!-- /.nav-list -->
                 <!--菜单 end-->
@@ -319,6 +284,16 @@
     <!-- inline scripts related to this page -->
 
     <script type="text/javascript">
+        <!--初始化用户名-->
+        $(function () {
+            $.ajax({
+                url:"initEmpLoginName.do",
+                success:function (data) {
+                    $("#userName").text(data);
+                }
+            })
+        });
+        <!---->
         //* 左部高度+固定
         $(function () {
             var Hw = Number($("#breadcrumbs").height() + $("#navbar").height());
@@ -536,7 +511,21 @@
             });
 
 
-        })
+        });
+        <!--安全退出系统begin-->
+        $("#clearLoginInfo").on("click",clearLoginInfo);
+        function clearLoginInfo() {
+            $.ajax({
+                url:"clearCurentSessionInfo.do",
+                success:function (data) {
+location.href="login.html";
+                }
+            });
+
+        }
+
+
+        <!--安全退出系统end-->
     </script>
     <div style="display: none">
         <script src='http://v7.cnzz.com/stat.php?id=155540&web_id=155540' language='JavaScript' charset='gb2312'></script>

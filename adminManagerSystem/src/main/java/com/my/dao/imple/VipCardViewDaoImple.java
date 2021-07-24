@@ -2,6 +2,7 @@ package com.my.dao.imple;
 
 import com.my.bean.*;
 import com.my.dao.BaseDao;
+import com.my.dao.UserDao;
 import com.my.dao.VipCardViewDao;
 import com.my.utils.JDBCutil;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 public class VipCardViewDaoImple extends BaseDao<VipCardView> implements VipCardViewDao {
     private SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private UserDao userDao=new UserDaoImple();
     @Override
     public List<VipCardView> findVipCardViewAll(Connection con) {
         List<VipCardView> data=null;
@@ -84,6 +86,14 @@ String sql="SELECT  * FROM vipmanager_v ";
             pre3.setInt(1,cardKey);
             pre3.setInt(2,vipkey);
             pre3.executeUpdate();
+            User u=new User();
+            u.setUsername(vipinfo.getPhone());
+            u.setAu_id(4);
+            userDao.adduser(con,u);
+
+
+
+
         } catch (SQLException e) {
 
             try {

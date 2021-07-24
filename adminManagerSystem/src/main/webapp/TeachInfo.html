@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+
+    <!--数据列表 begin-->
+    <table id="table_list" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>员工号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>联系方式</th>
+            <th>课程</th>
+        </tr>
+        </thead>
+        <tbody id="datalist">
+
+        </tbody>
+    </table>
+    <!--数据列表 end-->
+</div>
+
+<script>
+    $(function () {
+        init();
+    })
+
+    function init() {
+       $.ajax({
+           url:"shoeTeachinfo.do",
+           dataType:"JSON",
+           success:function (data) {
+               //[{"e_name":"刘亮","phone":"18099254321","sex":"男","c_name":"爵士"}]
+
+             //[{"e_id":36,"e_name":"刘亮","phone":"18099254321","sex":"男","c_name":"爵士"}]
+             $(data).each(function (i,o) {
+                 let $crenttr=$("<tr>" +
+                     " <td>"+o.e_id+"</td>" +
+                     " <td>"+o.e_name+"</td> " +
+                     "<td>"+o.sex+"</td> " +
+                     "<td>"+o.phone+"</td> " +
+                     "<td>"+o.c_name+"</td></tr>");
+                 $("#datalist").append($crenttr);
+             });
+
+           }
+
+
+       })
+    }
+</script>
+</body>
+</html>

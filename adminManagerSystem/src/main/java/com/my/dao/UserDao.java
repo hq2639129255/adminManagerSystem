@@ -14,6 +14,8 @@ boolean resetPassword(Connection con,String UserName) throws SQLException;
 boolean lockUserCode(Connection con,String UserName) throws SQLException;
 boolean unLockUserCode(Connection con,String UserName) throws SQLException;
 boolean managerAdduser(Connection con,User u) throws SQLException;
+boolean updatePassword(Connection con,String newPassword,String userName,String oldPassword) throws SQLException;
+
 
 
 }

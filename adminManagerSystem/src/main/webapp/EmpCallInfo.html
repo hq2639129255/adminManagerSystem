@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+    <!--数据列表 begin-->
+    <table id="table_list" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>日期</th>
+            <th>上班卡</th>
+            <th>下班卡</th>
+            <th>状态</th>
+            <th>备注</th>
+        </tr>
+        </thead>
+        <tbody id="datalist">
+        </tbody>
+    </table>
+    <!--数据列表 end-->
+</div>
+<script>
+    <!--初始化页面数据begin-->
+
+
+    $(function () {
+        init();
+    })
+
+
+
+    function init() {
+        $.ajax({
+            dataType:"JSON",
+            data:{pagetype:$("[name=type]").val()},
+            type: "GET",
+            url: "/admin/showCallInfoByid.do",
+            success: function (data) {
+                  initdata(data);
+                //{"flag":true,"dataList":[{"id":0,"employeeId":0,"cDate":"七月 19, 2021","cEndtime":"09:31:40 下午","wId":0,"remark":"未打上班卡","callstatus":"缺卡"}
+            }
+
+        })
+
+    }
+    function initdata(data) {
+        if(data.flag){
+            $(data.dataList).each(function (i,o) {
+                let $datatr = $("<tr>" +
+                    "<td>" + o.cDate + "</td>" +
+                    "<td>" + (o.cStarttime==null ? "" : o.cStarttime) + "</td>" +
+                    "<td>" + (o.cEndtime==null ?"" :o.cEndtime)+ "</td>" +
+                    "<td>" + o.callstatus + "</td>" +
+                    "<td>" + (o.remark==null ? "":o.remark) + "</td>" +
+                    "</tr>");
+
+                $("#datalist").append($datatr);
+            })
+
+
+
+
+        }else {
+            alert("暂无打卡信息");
+        }
+    }
+
+
+
+</script>
+</body>
+</html>

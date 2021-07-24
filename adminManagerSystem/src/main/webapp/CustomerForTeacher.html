@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+    <script src="js/CookieUtil.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+    <!--查询条件 begin-->
+    <div id="search_btn"class="content_search_group">
+        <div class="row">
+            <div class="col-xs-10">
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon2">手机号</span>
+                    <input type="text" neme=phone class="form-control content_search_text" placeholder="输入手机号" aria-describedby="basic-addon2">
+                </div>
+
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon3">姓名查询</span>
+                    <input type="text" name=vipname class="form-control" placeholder="输入姓名" aria-describedby="basic-addon2">
+                </div>
+
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="Span1">性别</span>
+                    <select id="vipsex" class="form-control line left">
+                        <option value="0">请选择</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="three_two">
+                    <a href="#" class="btn btn-primary content_marright" id="queryOK">查询</a>
+                    <a href="#" class="btn btn-primary" id="reset">重置</a></div>
+            </div>
+        </div>
+        <!--<div class="row">-->
+        <!--<div class="col-xs-10">-->
+        <!--<a href="#" class="btn btn-primary content_marright content_btn_add" data-toggle="modal" data-target="#add1" data-backdrop="static">新增</a>-->
+        <!--</div>-->
+        <!--</div>-->
+    </div>
+    <!--查询条件 end-->
+
+    <!--数据列表 begin-->
+    <table id="table_list" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>姓名</th>
+            <th>会员卡号</th>
+            <th>课程名</th>
+            <th>性别</th>
+            <th>联系方式</th>
+        </tr>
+        </thead>
+        <tbody id="datalist">
+
+
+        </tbody>
+    </table>
+</div>
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel1">编辑</h4>
+            </div>
+            <div class="modal-body p_bottom35">
+                <ul>
+                    <li>
+                        <label><span>选择新教练： </span></label>
+                        <select id="seletTeach" class="h26 line left">
+                            <option value="0">请选择</option>
+                        </select>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                <button type="button" id="executesave" class="btn btn-primary btn-sm">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal end-->
+<script>
+    //    添加编辑模态框
+    $('#add').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var recipient = button.data('whatever') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-title').text('' + recipient)
+        modal.find('.modal-body input').val(recipient)
+    });
+    <!--           -->
+
+    // alert(document.cookie);
+
+
+
+    $(function () {
+        alert(getCookie("AutoLogin"));
+        //  let id= getCookie("id");
+        init();
+        $("#reset").on("click",clearText);
+    })
+
+
+
+    function init() {
+
+        $.ajax({
+            type: "GET",
+            url: "/admin/findStudentByPhone.do",
+            success: function (data) {
+                initdata(data);
+            }
+
+        })
+
+    }
+
+    function  initdata(data) {
+        let datainfo= JSON.parse(data);
+        //{"flag":true,"dataList":[{"e_id":22,"v_id":2,"card_id":2,"e_name":"李玲","c_name":"瑜伽","vipphone":"13397552196","vipsex":"男"},{"e_id":22,"v_id":40,"card_id":48,"e_name":"李玲","c_name":"肚皮舞","vipphone":"13397552196","vipsex":"男"},{"e_id":22,"v_id":22,"card_id":22,"e_name":"李玲","c_name":"健美操","vipphone":"13397552196","vipsex":"男"},{"e_id":22,"v_id":24,"card_id":24,"e_name":"李玲","c_name":"动感单车","vipphone":"13397552196","vipsex":"男"}]}
+        if(datainfo.flag){
+            $("#datalist").html("");
+            for(let key in datainfo.dataList ){
+                let  $datatr=$("<tr>"+
+                    "<td>"+datainfo.dataList[key].vipname+"</td>"+
+                    "<td>"+datainfo.dataList[key].card_id+"</td>"+
+                    "<td>"+datainfo.dataList[key].c_name+"</td>"+
+                    "<td>"+datainfo.dataList[key].vipsex+"</td>"+
+                    "<td>"+datainfo.dataList[key].vipphone+"</td>"+
+                    "</tr>");
+                $("#datalist").append($datatr);
+            }
+        }else {
+            alert(datainfo.info)
+        }
+    }
+
+
+    <!--初始化页面数据end-->
+
+
+    <!--查询begin  -->
+
+    $("#queryOK").click(function () {
+        $.ajax({
+            //String phone, String name, String sex,int e_id
+            dataType:"JSON",
+            type:"POST",
+            url:'querySelectStudentinfoByEphone.do',
+            data:{phone:$("input[neme=phone]").val(),
+                vipname:$("input[name=vipname]").val(),
+                vipsex:$("#vipsex>option:selected").val()
+            },
+            success:function (data) {
+
+                $("#datalist").html("");
+                if(data.flag){
+                    $(data.dataList).each(function (index,obj) {
+                        let  $datatr=$("<tr>"+
+                            "<td>"+obj.vipname+"</td>"+
+                            "<td>"+obj.card_id+"</td>"+
+                            "<td>"+obj.c_name+"</td>"+
+                            "<td>"+obj.vipsex+"</td>"+
+                            "<td>"+obj.vipphone+"</td>"+
+                            "</tr>");
+                        $("#datalist").append($datatr);
+                    })
+
+                }else {
+                    alert(data.info)
+                }
+
+
+            }
+
+
+        })
+    });
+    <!--条件查询end-->
+
+
+    <!--重置查询条件begin-->
+    function clearText() {
+        $("input[neme=phone]").val("");
+          $("input[name=vipname]").val("");
+           $("#vipsex>option:eq(0)").attr({"selected":true});
+
+    }
+    
+
+    <!--重置查询条件end-->
+</script>
+</body>
+</html>

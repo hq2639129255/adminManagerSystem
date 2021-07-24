@@ -1,10 +1,8 @@
 package com.my.dao.imple;
 
-import com.my.bean.Facility;
-import com.my.bean.Page;
-import com.my.bean.Vipinfo;
-import com.my.bean.Vipinfoview;
+import com.my.bean.*;
 import com.my.dao.BaseDao;
+import com.my.dao.UserDao;
 import com.my.dao.VipinfoviewDao;
 import com.my.utils.JDBCutil;
 
@@ -13,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VipinfoviewDaoImple extends BaseDao<Vipinfoview> implements VipinfoviewDao {
+    private UserDao userDao=new UserDaoImple();
     @Override
     public List<Vipinfoview> findVipinfoviewAll(Connection con) {
         return null;
@@ -122,6 +121,10 @@ public class VipinfoviewDaoImple extends BaseDao<Vipinfoview> implements Vipinfo
             pre3.setInt(1,cardKey);
             pre3.setInt(2,vipkey);
             pre3.executeUpdate();
+            User u=new User();
+            u.setAu_id(4);
+            u.setUsername(vip.getPhone());
+            userDao.adduser(con,u);
         } catch (SQLException e) {
 
             try {

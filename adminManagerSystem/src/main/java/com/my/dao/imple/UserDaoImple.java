@@ -19,8 +19,8 @@ public class UserDaoImple extends BaseDao<User> implements UserDao {
 
     @Override
     public boolean adduser(Connection con, User u) throws SQLException {
-        String sql="INSERT INTO  `user` (`username`,`a_id`,`sta_id`) VALUES(?,3,0);";
-        int b = this.update(con, sql, u.getUsername());
+        String sql="INSERT INTO  `user` (`username`,`a_id`,`sta_id`) VALUES(?,?,0);";
+        int b = this.update(con, sql, u.getUsername(),u.getAu_id());
         return b>0;
     }
 
@@ -64,6 +64,13 @@ int row=this.update(con,sql,aid,userName);
         String sql="INSERT INTO`user`(`username`,`u_password`,`a_id`,`sta_id`)VALUES(?,'8ddcff3a80f4189ca1c9d4d902c3c909',?,0)";
         int b = this.update(con, sql, u.getUsername(),u.getAu_id());
         return b>0;
+    }
+
+    @Override
+    public boolean updatePassword(Connection con, String newPassword, String userName, String oldPassword) throws SQLException {
+      String sql="UPDATE  `user` SET `u_password`=? WHERE `username`=? AND `u_password`=?";
+        int row = this.update(con, sql, newPassword, userName, oldPassword);
+        return row>0;
     }
 
 

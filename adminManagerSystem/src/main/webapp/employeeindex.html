@@ -51,7 +51,7 @@
                             <img class="nav-user-photo" src="assets/avatars/user.jpg" alt="Jason's Photo" />
                             <span class="user-info">
                                 <small>欢迎光临,</small>
-                                Jason
+                                <span id="userName">张超</span>
                             </span>
 
                             <i class="icon-caret-down"></i>
@@ -121,7 +121,7 @@
                 <!--菜单 begin-->
                 <ul class="nav nav-list">
                     <li class="active">
-                        <a href="index.html">
+                        <a href="javaScript:;">
                             <i class="icon-dashboard"></i>
                             <span class="menu-text">控制台 </span>
                         </a>
@@ -136,7 +136,7 @@
 					
 					 
 					   <li>
-					                <a href="customerinfo.html" target="MainFrm" class="index_menu" title="会员资料管理">
+					                <a href="CustomerForTeacher.html" target="MainFrm" class="index_menu" title="会员资料管理">
 					                   <i class="icon-user"></i>
 									    <span class="menu-text"> 学员基本信息</span>
 					                  
@@ -151,14 +151,14 @@
 						 </li>
 						 
 						  <li>
-						               <a href="timeinterval.html" target="MainFrm" class="index_menu" title="预约管理">
+						               <a href="StudentAppointmentForTeach.html" target="MainFrm" class="index_menu" title="预约管理">
 						                  <i class="icon-beer"></i>
 										    <span class="menu-text">   学员预约信息</span>
 						               
 						              </a>
 						   </li>
 						   <li>
-						                <a href="hitcard.html" target="MainFrm" class="index_menu" title="考勤打卡">
+						                <a href="callCard.html" target="MainFrm" class="index_menu" title="考勤打卡">
 						                   <i class="icon-calendar "></i>
 						   										       <span class="menu-text">  考勤打卡</span>
 						   										   
@@ -166,7 +166,7 @@
 						               </a>
 						    </li>
 						   <li>
-						                <a href="employeeclockingin.html" target="MainFrm" class="index_menu" title="考勤信息">
+						                <a href="EmpCallInfo.html" target="MainFrm" class="index_menu" title="考勤信息">
 						                   <i class="icon-calendar "></i>
 										       <span class="menu-text">  考勤信息</span>
 										   
@@ -174,56 +174,19 @@
 						               </a>
 						    </li>
 							<li>
-							             <a href="employeesalaryinfo.html" target="MainFrm" class="index_menu" title="工资信息">
+							             <a href="empSalaryinfo.html" target="MainFrm" class="index_menu" title="工资信息">
 							                <i class="icon-eye-open"></i>
 																	       <span class="menu-text"> 工资信息</span>
-																	   
-							              
-							            </a>
-							 </li>
-							 
-							<li>
-							             <a href="ChangePassword.html" target="MainFrm" class="index_menu" title="安全退出系统">
-							                <i class="icon-off"></i>
-											 <span class="menu-text">  安全退出系统</span>
-											
+
 							            </a>
 							 </li>
 
-                    
-
-                    <!--系统工具 begin-->
-                    
-                    <!--系统工具 end-->
-					<!-- 会员搜索 begin-->
-					
-					
-					<!-- 会员搜索 end  -->
-					<!-- 健身器材管理 begin -->
-					
-					<!--  健身器材管理 end -->
-					<!-- 教练执教管理begin -->
-					
-					<!-- 教练执教管理end -->
-					
-					
-					<!-- 预约管理 begin -->
-					
-					
-					<!-- 预约管理 end -->
-					<!-- 考勤管理begin -->
-					
-					<!--考勤管理end  -->
-					<!-- 工资管理begin -->
-					
-					<!-- 工资管理end -->
-					<!-- 安全退出系统begin -->
-					
-					<!--安全退出系统 end  -->
-					
-					
-
-              
+                    <li id="clearLoginInfo">
+                        <a href="javaScript:;"  class="index_menu" title="安全退出系统">
+                            <i class="icon-off"></i>
+                            <span class="menu-text">  安全退出系统</span>
+                        </a>
+                    </li>
                 </ul>
                 <!-- /.nav-list -->
                 <!--菜单 end-->
@@ -302,6 +265,18 @@
     <!-- inline scripts related to this page -->
 
     <script type="text/javascript">
+        <!--初始化用户名-->
+        $(function () {
+            $.ajax({
+                url:"initEmpLoginName.do",
+                success:function (data) {
+                    $("#userName").text(data);
+                }
+            })
+        });
+        <!---->
+
+
         //* 左部高度+固定
         $(function () {
             var Hw = Number($("#breadcrumbs").height() + $("#navbar").height());
@@ -519,9 +494,20 @@
             });
 
 
-        })
+        });
 
+        <!--安全退出系统begin-->
+        $("#clearLoginInfo").on("click",clearLoginInfo);
+        function clearLoginInfo() {
+            $.ajax({
+                url:"clearCurentSessionInfo.do",
+                success:function (data) {
+                    location.href="login.html";
+                }
+            });
 
+        }
+        <!--安全退出系统end-->
     </script>
     <div style="display: none">
         <script src='http//v7.cnzz.com/stat.php?id=155540&web_id=155540' language='JavaScript' charset='gb2312'></script>

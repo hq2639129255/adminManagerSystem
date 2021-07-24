@@ -1,12 +1,16 @@
 package com.my.servlet;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.my.bean.*;
+import com.my.dao.VipCardViewDao;
+import com.my.dao.imple.VipCardViewDaoImple;
 import com.my.exception.UserIsLock;
 import com.my.exception.UserNameORpasswordException;
 import com.my.service.*;
 import com.my.service.imple.*;
 import com.my.utils.MD5Util;
+import jdk.nashorn.internal.ir.Flags;
 
 import javax.servlet.ServletException;
 import javax.servlet.SessionCookieConfig;
@@ -16,10 +20,13 @@ import java.io.PrintWriter;
 import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +46,7 @@ public class ResponseUserServlet extends HttpServlet {
             Method method=this.getClass().getDeclaredMethod(methodName,HttpServletRequest.class,HttpServletResponse.class);
             method.setAccessible(true);
             method.invoke(this,request,response);
+
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -91,6 +99,10 @@ doPost(request,response);
          VipinfoviewService service=new VipinfoviewServiceImple();
          Vipinfo v = service.getCurentVipinfo(usernaem);
          session.setAttribute("userinfo",v);
+
+         EmployeeService eservice =new EmployeeServiceImple();
+         Employee empUser = eservice.findEmployeeByPhone(user.getUsername());
+    session.setAttribute("empUserInfo",empUser);
         Cookie cookiejs=new Cookie("JSESSIONID",session.getId());
         response.addCookie(cookiejs);
          Cookie cookieqxid=new Cookie("qxid",String.valueOf(user.getAu_id()));
@@ -165,6 +177,18 @@ response.addCookie(cookie);
             Page<Userinfo> data = service.showCrentUserinfo(pageoffset, Integer.parseInt(rowconut));
             Gson gson=new Gson();
             response.getWriter().write(gson.toJson(data));
+        }else if("CallCardInfo".equals(datatype)){
+            EmployeeService service=new EmployeeServiceImple();
+            Page<CallCardInfo> data = service.findCallCardInfoByPagesize(pageoffset, Integer.parseInt(rowconut));
+            Gson gson=new Gson();
+            System.out.println(gson.toJson(data));
+            response.getWriter().write(gson.toJson(data));
+        }else if("SalaryView".equals(datatype)){
+            EmployeeService service=new EmployeeServiceImple();
+            Page<SalaryView> data = service.findSalaryViewByPagesize(pageoffset, Integer.parseInt(rowconut));
+            Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+            response.getWriter().write(gson.toJson(data));
+
         }
 
     }
@@ -432,6 +456,7 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
         String  addphone=request.getParameter("addphone");
         String  addemil=request.getParameter("addemil");
         String  workid=request.getParameter("addworkid");
+        String  salary=request.getParameter("salary");
         Employee e=new  Employee();
         User user=new User();
         user.setUsername(addphone);
@@ -446,7 +471,7 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
         e.setAddress(addAddrees);
         e.setWorkId(Integer.parseInt(workid));
         EmployeeService service=new EmployeeServiceImple();
-        boolean b = service.addEmployee(e,user);
+        boolean b = service.addEmployee(e,user,Double.parseDouble(salary));
         Gson gson=new Gson();
         ReturnPath returnPath=new ReturnPath();
         returnPath.setFlag(b);
@@ -591,7 +616,7 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
         if("".equals(vipname)||vipname==null){
             vipname=null;
         }
-        if("".equals(cardtype)||cardtype==null){
+        if("".equals(cardtype)||"0".equals(cardtype)||cardtype==null){
             cardtype=null;
         };
         System.out.println( phone);
@@ -601,10 +626,10 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
         List<Vipinfoview> data = service.findVipinfoviewByParameter(phone,cardtype,vipname);
         Gson gson=new Gson();
         ReturnPath<Vipinfoview> returnPath=new ReturnPath<Vipinfoview>();
-        if(data.size()==0){
+        if(data==null){
             returnPath.setFlag(false);
             returnPath.setInfo("没有查询到符合条件的数据");
-        }else {
+        } else {
             returnPath.setFlag(true);
             returnPath.setDataList(data);
 
@@ -697,7 +722,7 @@ protected void showSelectInstructor(HttpServletRequest request, HttpServletRespo
     if("".equals(e_id)||e_id==null){
         e_id=null;
     }
-    if("".equals(qsex)||qsex==null){
+    if("".equals(qsex)||"0".equals(qsex)||qsex==null){
         qsex=null;
     };
     System.out.println("name:"+e_name);
@@ -750,7 +775,7 @@ protected void showSelectInstructor(HttpServletRequest request, HttpServletRespo
         if("".equals(vipname)||vipname==null){
             vipname=null;
         }
-        if("".equals(vipsex)||vipsex==null){
+        if("0".equals(vipsex)||vipsex==null){
             vipsex=null;
         };
 
@@ -772,6 +797,43 @@ protected void showSelectInstructor(HttpServletRequest request, HttpServletRespo
         }
         response.getWriter().write(gson.toJson(returnPath));
     }
+
+    protected void querySelectStudentinfoByEphone(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User u= (User) session.getAttribute("user");
+        String phone=request.getParameter("phone");
+        if("".equals(phone)||phone==null){
+            phone=null;
+        }
+        String vipname=request.getParameter("vipname");
+        String vipsex=request.getParameter("vipsex");
+        if("".equals(vipname)||vipname==null){
+            vipname=null;
+        }
+        if("0".equals(vipsex)||vipsex==null){
+            vipsex=null;
+        };
+
+        System.out.println( phone);
+        System.out.println( vipname);
+        System.out.println(vipsex);
+
+        EmployeeService service=new EmployeeServiceImple();
+        List<Studentinfo> data = service.findStudentinfoByParameter(phone,vipname,vipsex,u.getUsername());
+        Gson gson=new Gson();
+        ReturnPath<Studentinfo> returnPath=new ReturnPath<Studentinfo>();
+        if(data==null){
+            returnPath.setFlag(false);
+            returnPath.setInfo("没有查询到符合条件的数据");
+        }else {
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+
 
     protected void replaceCoach(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String newe_id=request.getParameter("newe_id");
@@ -1032,6 +1094,7 @@ response.getWriter().write(gson.toJson(returnPath));
         String  addphone=request.getParameter("addphone");
         String  addemil=request.getParameter("addemil");
         String addqx=request.getParameter("addqx");
+        String salary=request.getParameter("addSalary");
         Employee e=new  Employee();
         User user=new User();
         user.setUsername(addphone);
@@ -1045,7 +1108,7 @@ response.getWriter().write(gson.toJson(returnPath));
         e.setSex(addsex);
         e.setAddress(addAddrees);
        UserService service=new UserServiceImple();
-        boolean b = service.addUser(e,user);
+        boolean b = service.addUser(e,user,Double.parseDouble(salary));
 
         Gson gson=new Gson();
         ReturnPath returnPath=new ReturnPath();
@@ -1093,7 +1156,7 @@ response.getWriter().write(gson.toJson(returnPath));
 
     protected void isEmployeeByEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
         EmployeeService service=new EmployeeServiceImple();
-        String email=request.getParameter("phone");
+        String email=request.getParameter("Email");
         boolean  flag = service.isEmployeeByEmail(email);
         response.getWriter().write(new Boolean(flag).toString());
     }
@@ -1110,5 +1173,517 @@ response.getWriter().write(gson.toJson(returnPath));
         boolean  flag = service.isVipinfoByEmail(email);
         response.getWriter().write(new Boolean(flag).toString());
     }
+
+    /**
+     * 修改密码判断密码是否错误
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     * @throws SQLException
+     */
+    protected void isOkOldPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+String oldPassword=request.getParameter("oldPassword");
+        HttpSession session = request.getSession();
+     User u= (User) session.getAttribute("user");
+     UserService service=new UserServiceImple();
+        boolean b = service.isOkOldPassword(u.getUsername(), MD5Util.md5(oldPassword), u.getAu_id());
+response.getWriter().write(new Boolean(b).toString());
+    }
+
+    protected void updatePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        String oldPassword=request.getParameter("oldPassword");
+        String newPassword=request.getParameter("newpassword");
+        HttpSession session = request.getSession();
+        User u= (User) session.getAttribute("user");
+        UserService service=new UserServiceImple();
+        boolean b = service.updatePassword(MD5Util.md5(newPassword),u.getUsername(),MD5Util.md5(oldPassword));
+        response.getWriter().write(new Boolean(b).toString());
+    }
+    protected void     clearCurentSessionInfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+      Cookie[] cookies=request.getCookies();
+      for (int i=0;cookies!=null&&i<cookies.length;i++){
+          cookies[i].setMaxAge(0);
+          response.addCookie(cookies[i]);
+      }
+        HttpSession session = request.getSession();
+        session.removeAttribute("user");
+        session.removeAttribute("userinfo");
+    }
+
+    /**
+     * 初始化员工打卡页面
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     * @throws SQLException
+     */
+    protected void showCurentEmployeeCallinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        EmployeeService service=new EmployeeServiceImple();
+        HttpSession session = request.getSession();
+        User user =(User) session.getAttribute("user");
+        EmployeeCallInfo data = service.showCurentEmployeeCallinfo(user.getUsername());
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+
+    protected void initCurentEmployeeCallinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        EmployeeService service=new EmployeeServiceImple();
+        String curentdate=request.getParameter("curentdate");
+        String eid=request.getParameter("eid");
+        Checkingin data = service.showCurentEmployeeCallinfo(curentdate, Integer.parseInt(eid));
+        Gson gson=new Gson();
+        ReturnPath<Checkingin> returnPath=new ReturnPath<>();
+        if(data==null){
+            returnPath.setFlag(false);
+        }else {
+            returnPath.setFlag(true);
+        }
+        returnPath.setData(data);
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    protected void insertStartCallinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormattime=new SimpleDateFormat("HH:mm:ss");
+        Checkingin checkingin=new Checkingin();
+
+        String  eid=request.getParameter("eid");
+
+        String wid=request.getParameter("wid");
+
+        String curentdate=request.getParameter("curentdate");
+        String curenttime=request.getParameter("curenttime");
+        String remark=request.getParameter("remark");
+        String status=request.getParameter("status");
+
+        try {
+            checkingin.setWId(Integer.parseInt(wid));
+            checkingin.setEmployeeId(Integer.parseInt(eid));
+            checkingin.setCDate(new java.sql.Date(simpleDateFormat.parse(curentdate).getTime()) );
+            checkingin.setCallstatus(status);
+            checkingin.setRemark(remark);
+            checkingin.setCStarttime(new Time(simpleDateFormattime.parse(curenttime).getTime()));
+            System.out.println(eid);
+            System.out.println(wid);
+            System.out.println(curentdate);
+            System.out.println(curenttime);
+            System.out.println(status);
+            System.out.println(remark);
+            EmployeeService service=new EmployeeServiceImple();
+            boolean flag = service.insertStartCallinfo(checkingin);
+           response.getWriter().write(new Boolean(flag).toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+    }
+
+
+    protected void insertEndCallinfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormattime=new SimpleDateFormat("HH:mm:ss");
+        Checkingin checkingin=new Checkingin();
+
+        String  eid=request.getParameter("eid");
+
+        String wid=request.getParameter("wid");
+
+        String curentdate=request.getParameter("curentdate");
+        String curenttime=request.getParameter("curenttime");
+        String remark=request.getParameter("remark");
+        String status=request.getParameter("status");
+
+        try {
+            checkingin.setWId(Integer.parseInt(wid));
+            checkingin.setEmployeeId(Integer.parseInt(eid));
+            checkingin.setCDate(new java.sql.Date(simpleDateFormat.parse(curentdate).getTime()) );
+            checkingin.setCallstatus(status);
+            checkingin.setRemark(remark);
+            checkingin.setCEndtime(new Time(simpleDateFormattime.parse(curenttime).getTime()));
+            System.out.println(eid);
+            System.out.println(wid);
+            System.out.println(curentdate);
+            System.out.println(curenttime);
+            System.out.println(status);
+            System.out.println(remark);
+            EmployeeService service=new EmployeeServiceImple();
+            boolean flag = service.insertEndCallinfo(checkingin);
+            response.getWriter().write(new Boolean(flag).toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
+
+    protected void updateEndCallinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormattime=new SimpleDateFormat("HH:mm:ss");
+        Checkingin checkingin=new Checkingin();
+        String  eid=request.getParameter("eid");
+        String wid=request.getParameter("wid");
+        String curentdate=request.getParameter("curentdate");
+        String curenttime=request.getParameter("curenttime");
+        String status=request.getParameter("status");
+
+        try {
+            checkingin.setWId(Integer.parseInt(wid));
+            checkingin.setEmployeeId(Integer.parseInt(eid));
+            checkingin.setCDate(new java.sql.Date(simpleDateFormat.parse(curentdate).getTime()) );
+            checkingin.setCallstatus(status);
+            checkingin.setCEndtime(new Time(simpleDateFormattime.parse(curenttime).getTime()));
+            System.out.println(eid);
+            System.out.println(wid);
+            System.out.println(curentdate);
+            System.out.println(curenttime);
+            System.out.println(status);
+            EmployeeService service=new EmployeeServiceImple();
+            boolean flag = service.updateEndCallinfo(checkingin);
+            response.getWriter().write(new Boolean(flag).toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+    protected void  findAllCallCardInfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        EmployeeService service=new EmployeeServiceImple();
+       String month= request.getParameter("month");
+        List<CallCardInfo> data = service.findAllCallCardInfo(Integer.parseInt(month));
+
+Gson gson=new Gson();
+response.getWriter().write(gson.toJson(data));
+    }
+
+//    protected void   findCallCardInfoByPagesize(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+//        EmployeeService service=new EmployeeServiceImple();
+//        String month= request.getParameter("month");
+//        List<CallCardInfo> data = service.findAllCallCardInfo(Integer.parseInt(month));
+//
+//        Gson gson=new Gson();
+//        response.getWriter().write(gson.toJson(data));
+//    }
+
+
+    protected void  findCheckinginByEidAndMonth(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        EmployeeService service=new EmployeeServiceImple();
+        String month= request.getParameter("month");
+        String eid=request.getParameter("eid");
+        List<Checkingin> data = service.findCheckinginByEidAndMonth(Integer.parseInt(eid), Integer.parseInt(month));
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+
+
+
+
+
+    protected void  findCallCardInfoByparameter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        String empOn=request.getParameter("empON");
+        String name=request.getParameter("name");
+        String month=request.getParameter("month");
+        if("".equals(empOn)||empOn==null){
+            empOn=null;
+        }
+        if("".equals(name)||name==null){
+            name=null;
+        }
+        if("0".equals(month)||month==null){
+            month="0";
+        }
+
+
+        System.out.println(empOn);
+        System.out.println(name);
+        System.out.println(month);
+        EmployeeService service=new EmployeeServiceImple();
+        List<CallCardInfo> data = service.findCallCardInfoByparameter(empOn, name, Integer.parseInt(month));
+Gson gson=new Gson();
+ReturnPath<CallCardInfo> returnPath=new ReturnPath<CallCardInfo>();
+if(data==null){
+    returnPath.setFlag(false);
+    returnPath.setInfo("未查询到数据");
+}else {
+    returnPath.setFlag(true);
+    returnPath.setDataList(data);
+
+}
+response.getWriter().write(gson.toJson(returnPath));
+    }
+
+    protected void  findStudentByPhone(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        HttpSession session = request.getSession();
+           User u= (User) session.getAttribute("user");
+        EmployeeService service=new EmployeeServiceImple();
+        List<Studentinfo> data = service.findStudentByPhone(u.getUsername());
+        Gson gson=new Gson();
+        ReturnPath<Studentinfo> returnPath=new ReturnPath<Studentinfo>();
+        if(data==null){
+            returnPath.setFlag(false);
+            returnPath.setInfo("暂无学员分配");
+        }else {
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    protected void  showCallInfoByid(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        HttpSession session = request.getSession();
+        String month=request.getParameter("month");
+        if("".equals(month)||month==null){
+            month= String .valueOf(Calendar.getInstance().get(Calendar.MONTH)+1);
+        }
+      Employee empUser=(Employee) session.getAttribute("empUserInfo");
+        EmployeeService service=new EmployeeServiceImple();
+        List<Checkingin> data = service.findCheckinginByE_id(empUser.getE_id(), Integer.parseInt(month));
+        ReturnPath<Checkingin> returnPath=new ReturnPath<Checkingin>();
+        if(data==null){
+            returnPath.setFlag(false);
+            returnPath.setInfo("你还没有考勤信息");
+        }else {
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+
+        }
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    protected void   findStudentAppointmentForTeachByE_id(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        HttpSession session = request.getSession();
+        Employee empUser=(Employee) session.getAttribute("empUserInfo");
+        EmployeeService service=new EmployeeServiceImple();
+        List<StudentAppointmentForTeach> data = service.findStudentAppointmentForTeachByE_id(empUser.getE_id());
+        ReturnPath<StudentAppointmentForTeach> returnPath=new ReturnPath<StudentAppointmentForTeach>();
+        if(data==null){
+            returnPath.setFlag(false);
+            returnPath.setInfo("目前暂无学员预约健身");
+        }else {
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+
+        }
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+    protected void   shoeCurentUserinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+
+                    HttpSession session = request.getSession();
+            Vipinfo u=( Vipinfo)     session.getAttribute("userinfo");
+
+        VipCardView  vipCardView =new VipCardView();
+        vipCardView.setCid(u.getCard_id());
+        VipCardViewService service=new VipCardViewServiceImple ();
+        List<VipCardView> data = service.showFacilityByParameter(vipCardView);
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+
+    protected void   shoeCurentUserRenew(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+
+        HttpSession session = request.getSession();
+        Vipinfo u=( Vipinfo)     session.getAttribute("userinfo");
+
+        VipCardView  vipCardView =new VipCardView();
+        vipCardView.setCid(u.getCard_id());
+        VipUserService service=new VipUserServiceImple();
+        List<Renew> data = service.findRenewByCid(vipCardView.getCid());
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+
+    /**
+     * 获取会员页面教练和课程信息
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     * @throws SQLException
+     */
+    protected void   shoeTeachinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+
+        HttpSession session = request.getSession();
+        Vipinfo u=( Vipinfo)     session.getAttribute("userinfo");
+        UserService service=new UserServiceImple();
+        List<TeachInfo> data = service.findTeachInfoByvipphone(u.getPhone());
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+
+    /**
+     * 初始化会员页面购买课程会员下拉框
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     * @throws SQLException
+     */
+    protected void   initCourse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+
+        VipUserService service=new VipUserServiceImple();
+        List<Course> data = service.findAllCourse();
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+
+    /**
+     * 初始化会员页面会员购买课程教练信息
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     * @throws SQLException
+     */
+    protected void   initTeach(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+
+        VipUserService service=new VipUserServiceImple();
+        List<Employee> data = service.findAllTeach();
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+
+    protected void   insertCoachinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+String e_id=request.getParameter("e_id");
+String c_id=request.getParameter("c_id");
+        HttpSession session = request.getSession();
+   Vipinfo    vipuser=(Vipinfo) session.getAttribute("userinfo");
+        System.out.println(vipuser.getV_id());
+        System.out.println(e_id);
+        System.out.println(c_id);
+        VipUserService service=new VipUserServiceImple();
+        boolean flag = service.insertCoachinfo(Integer.parseInt(e_id), vipuser.getV_id(), Integer.parseInt(c_id));
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(new Boolean(flag)));
+    }
+
+    protected void  initLoginName(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        HttpSession session = request.getSession();
+ Vipinfo  user =(Vipinfo)    session.getAttribute("userinfo");
+       response.getWriter().write(user.getE_name());
+    }
+    protected void  initEmpLoginName(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        HttpSession session = request.getSession();
+        Employee e=(Employee)   session.getAttribute("empUserInfo");
+        response.getWriter().write(e.getE_name());
+    }
+
+    protected void  findAllSalaryView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+
+        EmployeeService service=new EmployeeServiceImple();
+        List<SalaryView> data = service.findAllSalaryView();
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
+    }
+
+    protected void showSelectSalaryView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+       request.setCharacterEncoding("utf-8");
+        String month=request.getParameter("qmonth");
+        if("0".equals(month)){
+            month=null;
+        }else {
+            month=Calendar.getInstance().get(Calendar.YEAR)+"-"+month+"-"+1;
+        }
+        System.out.println(month);
+        String name=request.getParameter("qname");
+        String empno=request.getParameter("qempno");
+        if("".equals(name)||name==null){
+            name=null;
+        }
+        if("".equals(empno)||empno==null){
+            empno="0";
+        };
+       EmployeeService service=new EmployeeServiceImple();
+        List<SalaryView> data = service.findSalaryViewByParameter(month, name, Integer.parseInt(empno));
+        Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+        ReturnPath<SalaryView> returnPath=new ReturnPath<SalaryView>();
+        if(data==null){
+            returnPath.setFlag(false);
+            returnPath.setInfo("没有查询到符合条件的数据");
+        } else {
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+
+        }
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+    protected void  updateSalary(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+      SimpleDateFormat simpdate=new SimpleDateFormat("yyyy-MM-dd");
+        String salary=request.getParameter("salary");
+        String payment=request.getParameter("payment");
+        String award=request.getParameter("award");
+        String remark=request.getParameter("remark");
+        String eid=request.getParameter("eid");
+        String month=request.getParameter("month");
+
+
+      double   net_payroll=Double.parseDouble(salary)-Double.parseDouble(payment)+Double.parseDouble(award);
+        Salary salaryinfo= new Salary();
+        salaryinfo.setSalary(Double.parseDouble(salary));
+        try {
+            salaryinfo.setSaMonth(new java.sql.Date(simpdate.parse(month).getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        salaryinfo.setPayment(Double.parseDouble(payment));
+        salaryinfo.setAward(Double.parseDouble(award));
+        salaryinfo.setEmployeeId(Integer.parseInt(eid));
+        salaryinfo.setNetPayroll(net_payroll);
+        salaryinfo.setRemark(remark);
+        EmployeeService service=new EmployeeServiceImple();
+        boolean flag = service.updateSalary(salaryinfo);
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(new Boolean(flag)));
+    }
+    protected void  sendCurentMonthSalary(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+
+        SimpleDateFormat simpDate=new SimpleDateFormat("yyyy-MM-dd");
+        String month=simpDate.format(new Date());
+        Calendar calendar=Calendar.getInstance();
+        try {
+            calendar.setTime(simpDate.parse(month));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        calendar.add(Calendar.MONTH,-1);
+        EmployeeService service=new EmployeeServiceImple();
+        boolean flag = service.sendCurentMonthSalary(simpDate.format(calendar.getTime()));
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(new Boolean(flag)));
+    }
+
+    protected void  isSendSalary(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        EmployeeService service=new EmployeeServiceImple();
+        boolean flag = service.isSendSalary();
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(new Boolean(flag)));
+    }
+    protected void   findSalaryByeid(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        HttpSession session = request.getSession();
+        Employee emp=(Employee)   session.getAttribute("empUserInfo");
+
+        EmployeeService service=new EmployeeServiceImple();
+        List<SalaryView> data = service.findSalaryBye_id(emp.getE_id());
+        ReturnPath<SalaryView> returnPath=new ReturnPath<SalaryView>();
+        if(data!=null){
+            returnPath.setFlag(true);
+            returnPath.setDataList(data);
+        }else {
+            returnPath.setFlag(false);
+            returnPath.setInfo("暂无工资信息");
+        }
+        Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+        response.getWriter().write(gson.toJson(returnPath));
+    }
+
+
+
 
 }

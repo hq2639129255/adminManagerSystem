@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+		#callCard{
+			height: 200px;
+			width: 200px;
+			border-radius:400px;
+			border: none;
+			background-color:DodgerBlue;
+		color: #fff;
+		font-size: 20px;
+
+		
+		}
+		#callCardContext{
+			text-align: center;
+		}
+		#einfo{
+			text-align: center;
+		}
+		ul{
+			margin: 0px auto;
+			width:350px;
+			height:250px;
+			list-style: none;
+			text-align: left;
+            font-size: 20px;
+			
+		}
+		body{
+			background-color: beige;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="callCardContext">
+			<button id="callCard">打卡</button>
+		</div>
+		<div id="einfo">
+			<ul>
+				<li><label>姓名：</label><span id="name"></span></li>
+				<li><label>工号：</label><span id="eid"></span></li>
+				<li><label>班次：</label><span id="wordName"></span></li>
+				<li><label>上班卡打卡时间：</label><span id="stardcard">暂未打卡</span></li>
+				<li><label>下班卡打卡时间：</label><span id="endcard">暂未打卡</span></li>
+			</ul>
+		</div>
+		<script src="js/jquery.min.js"></script>
+	<script src="js/Date.js"></script>
+	<script>
+        var starttimestr="";//上班时间
+        var endtimestr="";//下班时间
+		var workidMap=new Map();
+		var curentUser=null;//当前用户考勤信息
+		var crentDateStr=null;//当前日期
+		$(function () {
+            init();
+            $("#callCard").on("click",callCard);
+        });
+		<!--初始化begin-->
+function  init() {
+    //查询班次信息
+    $.ajax({
+        dataType:"JSON",
+        type: "GET",
+        url: "/admin/initWorktime.do",
+        success: function (data) {
+            $(data).each(function (i,o) {
+                workidMap.set(o.wId,o.wName);
+            })
+        }
+
+    });
+
+//查询当前员工班次信息
+    $.ajax({
+        //{"e_id":53,"e_name":"徐一鸣","phone":"15745688976","w_id":1,"w_name":"早班","starttime":"07:30:00 上午","endstime":"04:30:00 下午"}
+        dataType:"JSON",
+        type: "GET",
+        url: "/admin/showCurentEmployeeCallinfo.do",
+        success: function (data) {
+            curentUser=data;
+            let date=new Date();
+            crentDateStr=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+             starttimestr="";
+             endtimestr="";
+            if(data.starttime.search("上午")!=-1){
+                let sdate=data.starttime.substring(0,data.starttime.lastIndexOf("上午"));
+                starttimestr= crentDateStr+" "+sdate;
+			}
+			else if(data.starttime.search("下午")!=-1){
+                let sdate=data.starttime.substring(0,data.starttime.lastIndexOf("下午"));
+                let arr=sdate.split(":");
+                if(arr[0].indexOf("0")==0){
+                    arr[0]=arr[0].substring(1);
+                    arr[0]=parseInt(arr[0])+12;
+                    starttimestr=crentDateStr+" "+arr[0]+":"+arr[1]+arr[2];
+				}else {
+                    arr[0]=parseInt(arr[0])+12;
+                    starttimestr=crentDateStr+" "+arr[0]+":"+arr[1]+arr[2];
+				}
+			}
+
+            if(data.endstime.search("上午")!=-1){
+                let sdate=data.endstime.substring(0,data.endstime.lastIndexOf("上午"));
+                endtimestr= crentDateStr+" "+sdate;
+            }
+            else if(data.endstime.search("下午")!=-1){
+                let sdate=data.endstime.substring(0,data.endstime.lastIndexOf("下午"));
+                let arr=sdate.split(":");
+                if(arr[0].indexOf("0")==0){
+                    arr[0]=arr[0].substring(1);
+                    arr[0]=parseInt(arr[0])+12;
+                    endtimestr=crentDateStr+" "+arr[0]+":"+arr[1]+":"+arr[2];
+                }else {
+                    arr[0]=parseInt(arr[0])+12;
+                    endtimestr=crentDateStr+" "+arr[0]+":"+arr[1]+":"+arr[2];
+				}
+            }
+
+			//当前时间小于打卡时间前后1小时
+            if(date.getTime()>new Date(starttimestr).getTime()-3600000&&date.getTime()<new Date(starttimestr).getTime()+3600000){
+                $("#callCard").html(starttimestr.replace(crentDateStr,""));
+            }else if(date.getTime()>new Date(starttimestr).getTime()+3600000||date.getTime()>new Date(endtimestr).getTime()){
+                $("#callCard").html(endtimestr.replace(crentDateStr,""));
+            }
+$("#name").html( curentUser.e_name);
+$("#eid").html( curentUser.e_id);
+$("#wordName").html(curentUser.w_name);
+//查询当前员工有没有打卡信息
+            $.ajax({
+                url:"initCurentEmployeeCallinfo.do",
+                dataType:"JSON",
+                data:{
+                    curentdate:new Date(new Date().getTime()).format("yyyy-MM-dd"),
+                    eid:curentUser.e_id
+                },
+                success:function (datainfo) {
+                    //{"flag":true,"data":{"id":1,"employeeId":53,"cDate":"七月 17, 2021","cStarttime":"07:30:00 上午","cEndtime":"05:30:00 下午","wId":1,"remark":"","callstatus":"正常"}}
+
+
+                    //
+                    // alert(datainfo['data'].cStarttime!=null);
+                    // alert(datainfo['data'].cEndtime==null);
+                    // alert(date);
+                    // alert(endtimestr);
+                    // alert(starttimestr);
+                    // alert(date.getTime()<new Date(endtimestr).getTime());
+                    if(datainfo.flag){
+
+                       if(datainfo['data'].cStarttime!=null&&datainfo['data'].cEndtime!=null){
+                           //上班卡和下班卡都打卡了
+                           $("#callCard").attr({"disabled":true});
+                           $("#callCard").css({"opacity":0.5});
+                       }else if(datainfo['data'].cStarttime!=null&&datainfo['data'].cEndtime==null&&date.getTime()<new Date(endtimestr).getTime()){
+                           //上班卡打卡下班卡未打当前时间还没到下班时间
+                           $("#callCard").attr({"disabled":true});
+                           $("#callCard").css({"opacity":0.5});
+                       }else if(datainfo['data'].cStarttime==null&&datainfo['data'].cEndtime!=null){
+                        //上班未打卡下班打卡
+                           $("#callCard").attr({"disabled":true});
+                           $("#callCard").css({"opacity":0.5});
+                       }else if(datainfo['data'].cEndtime!=null){
+                           $("#callCard").attr({"disabled":true});
+                           $("#callCard").css({"opacity":0.5});
+
+                       }
+
+                       $("#stardcard").html(datainfo['data'].cStarttime);
+                       $("#endcard").html(datainfo['data'].cEndtime);
+
+                   }else {
+                       if(date.getTime()>new Date(starttimestr).getTime()-3600000&&date.getTime()<new Date(starttimestr).getTime()+3600000){
+                           $("#callCard").html(starttimestr.replace(crentDateStr,""));
+                       }else if(date.getTime()>new Date(starttimestr).getTime()+3600000||date.getTime()>new Date(endtimestr).getTime()){
+                           $("#callCard").html(endtimestr.replace(crentDateStr,""));
+
+                       }
+
+
+                   }
+                }
+
+            });
+
+        }
+
+    });
+
+
+
+
+
+
+
+}
+
+		function  callCard() {
+            let date=new Date();
+            //正常打上班卡执行插入操作
+			if(date.getTime()>new Date(starttimestr).getTime()-3600000&&date.getTime()<new Date(starttimestr).getTime()){
+                $.ajax({
+                    type:"POST",
+                    url:"insertStartCallinfo.do",
+                    dataType:"JSON",
+                    // INSERT INTO  `checkingin`(`employee_id`,`w_id`,`c_date`,`c_starttime`,`c_endtime`,callstatus,`remark`)VALUES(?,?,?,?,NULL,'缺卡','未打下班卡');
+                    data:{
+                        eid:curentUser.e_id,
+                        wid:curentUser.w_id,
+                        curentdate:crentDateStr,
+                        curenttime:new Date(new Date()).format("hh:mm:ss"),
+                        status:"缺卡",
+                        remark:"未打下班卡"
+                    },
+                    success:function (data) {
+                        if(data){
+                            alert("打卡成功");
+                            $("#stardcard").html(new Date(new Date()).format("hh:mm:ss"));
+                            $("#callCard").attr({"disabled":true});
+                            $("#callCard").css({"opacity":0.5});
+                        }
+
+
+                    }
+                });
+			}   //迟到打卡
+			else if(date.getTime()>new Date(starttimestr).getTime()&&date.getTime()<new Date(endtimestr).getTime()){
+			let flag=    confirm("你已迟到是否继续打卡？");
+			if(flag){
+                $.ajax({
+                    type:"POST",
+                    url:"insertStartCallinfo.do",
+                    dataType:"JSON",
+                    // INSERT INTO  `checkingin`(`employee_id`,`w_id`,`c_date`,`c_starttime`,`c_endtime`,callstatus,`remark`)VALUES(?,?,?,?,NULL,'缺卡','未打下班卡');
+                    data:{
+                        eid:curentUser.e_id,
+                        wid:curentUser.w_id,
+                        curentdate:crentDateStr,
+						curenttime:new Date(new Date()).format("hh:mm:ss"),
+                        status:"缺卡/迟到",
+						remark:"未打下班卡/迟到"+Math.floor(((new Date().getTime()-new Date(starttimestr).getTime())/1000)/60)+"分钟"
+                    },
+                    success:function (data) {
+                     if(data){
+                         alert("打卡成功");
+                         $("#stardcard").html(new Date(new Date()).format("hh:mm:ss"));
+                         $("#callCard").attr({"disabled":true});
+                         $("#callCard").css({"opacity":0.5});
+                     }
+
+
+                    }
+                })
+			}//正常打下班卡
+			}else if(date.getTime()>new Date(endtimestr).getTime()){
+
+                //查询当前员工有没有打卡信息
+                $.ajax({
+                    url:"initCurentEmployeeCallinfo.do",
+                    dataType:"JSON",
+                    data:{
+                        curentdate:new Date(new Date().getTime()).format("yyyy-MM-dd"),
+                        eid:curentUser.e_id
+                    },
+                    success:function (datainfo) {
+//"data":{"id":49,"employeeId":37,"cDate":"七月 20, 2021","cStarttime":"01:48:29 下午","wId":1,"remark":"未打下班卡/迟到378分钟","callstatus":"缺卡/迟到"}
+                        if(datainfo.flag){
+                            if(datainfo['data'].callstatus.search("迟到")!=-1){
+                                $.ajax({
+                                    type:"POST",
+                                    url:"updateEndCallinfo.do",
+                                    dataType:"JSON",
+                                    // INSERT INTO  `checkingin`(`employee_id`,`w_id`,`c_date`,`c_starttime`,`c_endtime`,callstatus,`remark`)VALUES(?,?,?,?,NULL,'缺卡','未打下班卡');
+                                    data:{
+                                        eid:curentUser.e_id,
+                                        wid:curentUser.w_id,
+                                        curentdate:crentDateStr,
+                                        curenttime:new Date(new Date()).format("hh:mm:ss"),
+                                        status:"迟到"
+                                    },
+                                    success:function (data) {
+                                        alert(data);
+                                        if(data){
+                                            alert("打卡成功");
+                                            $("#endcard").html(new Date(new Date()).format("hh:mm:ss"));
+                                            $("#callCard").attr({"disabled":true});
+                                            $("#callCard").css({"opacity":0.5});
+                                        }
+
+
+                                    }
+                                })
+							}else {
+
+                            $.ajax({
+                                type:"POST",
+                                url:"updateEndCallinfo.do",
+                                dataType:"JSON",
+                                // INSERT INTO  `checkingin`(`employee_id`,`w_id`,`c_date`,`c_starttime`,`c_endtime`,callstatus,`remark`)VALUES(?,?,?,?,NULL,'缺卡','未打下班卡');
+                                data:{
+                                    eid:curentUser.e_id,
+                                    wid:curentUser.w_id,
+                                    curentdate:crentDateStr,
+                                   curenttime:new Date(new Date()).format("hh:mm:ss"),
+                                    status:"正常"
+                                },
+                                success:function (data) {
+                                    alert(data);
+                                    if(data){
+                                        alert("打卡成功");
+                                        $("#endcard").html(new Date(new Date()).format("hh:mm:ss"));
+                                        $("#callCard").attr({"disabled":true});
+                                        $("#callCard").css({"opacity":0.5});
+                                    }
+
+
+                                }
+                            })
+
+                            }
+                        }else {
+                            $.ajax({
+                                type:"POST",
+                                url:"insertEndCallinfo.do",
+                                dataType:"JSON",
+                                // INSERT INTO  `checkingin`(`employee_id`,`w_id`,`c_date`,`c_starttime`,`c_endtime`,callstatus,`remark`)VALUES(?,?,?,?,NULL,'缺卡','未打下班卡');
+                                data:{
+                                    eid:curentUser.e_id,
+                                    wid:curentUser.w_id,
+                                    curentdate:crentDateStr,
+                                    curenttime:new Date(new Date()).format("hh:mm:ss"),
+                                    status:"缺卡",
+                                    remark:"未打上班卡"
+                                },
+                                success:function (data) {
+                                    if(data){
+                                        alert("打卡成功");
+                                        $("#endcard").html(new Date(new Date()).format("hh:mm:ss"));
+                                        $("#callCard").attr({"disabled":true});
+                                        $("#callCard").css({"opacity":0.5});
+                                    }
+
+
+                                }
+                            })
+
+                        }
+                    }
+
+                });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			}else {
+			    alert("非打卡时间");
+			}
+
+
+
+        }
+
+
+	</script>
+	</body>
+</html>

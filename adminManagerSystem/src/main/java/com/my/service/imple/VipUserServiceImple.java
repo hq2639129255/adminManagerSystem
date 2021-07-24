@@ -1,14 +1,8 @@
 package com.my.service.imple;
 
-import com.my.bean.AppointmentUserinfo;
-import com.my.bean.Make_an_appointment;
-import com.my.bean.UserAppointmentInfo;
-import com.my.dao.AppointmentUserinfoDao;
-import com.my.dao.Make_an_appointmentDao;
-import com.my.dao.UserAppointmentInfoDao;
-import com.my.dao.imple.AppointmentUserinfoDaoImple;
-import com.my.dao.imple.Make_an_appointmentDaoImple;
-import com.my.dao.imple.UserAppointmentInfoDaoImple;
+import com.my.bean.*;
+import com.my.dao.*;
+import com.my.dao.imple.*;
 import com.my.service.VipUserService;
 import com.my.utils.JDBCutil;
 import sun.misc.JavaUtilJarAccess;
@@ -21,6 +15,11 @@ public class VipUserServiceImple implements VipUserService {
     private UserAppointmentInfoDao dao=new UserAppointmentInfoDaoImple();
     private Make_an_appointmentDao make_dao=new  Make_an_appointmentDaoImple();
    private AppointmentUserinfoDao appointmentUserinfoDao=  new AppointmentUserinfoDaoImple();
+   private RenewDao renewDao=new RenewDaoImple();
+   private CourseDao courseDao=new CourseDaoImple();
+  private  EmployeeDao employeeDao=new EmployeeDaoImple();
+  private CoachDao coachDao=new CoachDaoImple();
+
     @Override
     public List<UserAppointmentInfo> showAppointment() {
         Connection con=null;
@@ -122,5 +121,99 @@ public class VipUserServiceImple implements VipUserService {
             e.printStackTrace();
         }
         return data;
+    }
+
+    @Override
+    public List<Renew> findRenewByCid(int c_id) {
+        Connection con=null;
+        List<Renew> data = null;
+        try {
+            con=JDBCutil.getConnection();
+            data = renewDao.findRenewByCid(con, c_id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+            }
+        }
+        return data;
+    }
+
+    @Override
+    public List<Course> findAllCourse() {
+        Connection con=null;
+        List<Course> data = null;
+        try {
+            con=JDBCutil.getConnection();
+            data = courseDao.findAllCourse(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return data;
+    }
+
+    @Override
+    public List<Employee> findAllTeach() {
+        Connection con=null;
+        List<Employee> data = null;
+        try {
+            con=JDBCutil.getConnection();
+            data = employeeDao.findAllTeach(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return data;
+    }
+
+    @Override
+    public boolean insertCoachinfo(int e_id, int v_id, int c_id) {
+        Connection con=null;
+        boolean flag = false;
+        try {
+            con=JDBCutil.getConnection();
+            flag = coachDao.insertCoachinfo(con, e_id, v_id, c_id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return flag;
     }
 }

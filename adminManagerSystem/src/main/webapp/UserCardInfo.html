@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+    <!--数据列表 begin-->
+    <table id="table_list" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>卡号</th>
+            <th>卡类型</th>
+            <th>持卡会员</th>
+            <th>到期时间</th>
+        </tr>
+        </thead>
+        <tbody id="datalist">
+
+        </tbody>
+    </table>
+    <!--数据列表 end-->
+    <!--数据列表 begin-->
+    <table id="renewlist" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>卡号</th>
+            <th>续费业务</th>
+            <th>续费时间</th>
+        </tr>
+        </thead>
+        <tbody id="renewdatalist">
+
+        </tbody>
+    </table>
+    <!--数据列表 end-->
+
+
+
+</div>
+
+
+
+<script src="js/Date.js"></script>
+<script>
+    var servicename=new Map();
+$(function () {
+    $.ajax({
+        dataType:"JSON",
+        type: "GET",
+        url: "/admin/initSetmeal.do",
+        success: function (data) {
+
+            $(data).each(function (index,obj) {
+                servicename.set(obj.setId,obj.neme);
+
+            })
+
+        }
+
+    });
+    init();
+})
+
+    function init() {
+
+
+
+        $.ajax({
+            url:"shoeCurentUserinfo.do",
+            dataType:"JSON",
+            success:function (data) {
+                $(data).each(function (i,o) {
+                    let $curentTr=$("<tr>\n" +
+                        "<td>"+o.cid+"</td>\n" +
+                        "<td>"+o.t_name+"</td>\n" +
+                        "<td>"+o.e_name+"</td>\n" +
+                        "<td>"+o.serviceendtime+"</td>\n" +
+                        "</tr>");
+                  $("#datalist").append($curentTr);
+                })
+
+            }
+
+
+        });
+
+        $.ajax({
+            url:"shoeCurentUserRenew.do",
+            dataType:"JSON",
+            success:function (data) {
+                $(data).each(function (i,o) {
+                    let $curentTr=$("<tr>\n" +
+                        "<td>"+o.cardId+"</td>\n" +
+                        "<td>"+ servicename.get(o.setId)+"</td>\n" +
+                        "<td>"+new Date(o.buytime).format("yyyy-MM-dd hh:mm:ss") +"</td>\n" +
+                        "</tr>");
+                    $("#renewdatalist").append($curentTr);
+                 })
+
+            }
+
+
+        });
+
+    }
+</script>
+</body>
+</html>

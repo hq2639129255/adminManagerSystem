@@ -21,4 +21,11 @@ public class CoachDaoImple extends BaseDao<Coach>  implements CoachDao{
    int row= this.update(con,sql,newe_id,olde_id,v_id);
         return row>0;
     }
+
+    @Override
+    public boolean insertCoachinfo(Connection con, int e_id, int v_id, int c_id) throws SQLException {
+String sql="INSERT INTO `coach` (`e_id`,`v_id`,`c_id`) VALUES(?,?,?)";
+        int row = this.update(con, sql, e_id, v_id, c_id);
+        return row>0;
+    }
 }

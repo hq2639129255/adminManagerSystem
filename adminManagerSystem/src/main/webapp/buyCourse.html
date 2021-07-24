@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+    <!--查询条件 begin-->
+    <div id="search_btn"class="content_search_group">
+        <div class="row">
+                <div class="col-xs-10">
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon">课程名</span>
+                    <select  id="course" class="form-control line left">
+                        <option value="0">请选择课程</option>
+                    </select>
+                </div>
+
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" >教练</span>
+                    <select id="teach" class="form-control line left">
+                        <option value="0">请选择教练</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="three_two">
+                    <a href="#"  id="queryOK" class="btn btn-primary content_marright">购买</a>
+                    <a href="#" class="btn btn-primary" id="reset">重置</a></div>
+            </div>
+        </div>
+    </div>
+    <!--查询条件 end-->
+
+
+
+
+</div>
+
+<script src="js/Date.js"></script>
+<script>
+    function  clearQueryText() {
+        $("#course>option").each(function (i,o) {
+            if($(o).val()=="0")
+            {
+                $(o).attr({"selected":true});
+            }
+        });
+        $("#teach>option").each(function (i,o) {
+            if($(o).val()=="0")
+            {
+                $(o).attr({"selected":true});
+            }
+        })
+        
+    }
+$(function () {
+    init();
+    $("#reset").on("click",clearQueryText);
+    $("#queryOK").on("click",buyCourse);
+})
+    function  init() {
+    $.ajax({
+        url:"initCourse.do",
+        dataType:"JSON",
+        success:function (data) {
+
+
+            //[{"id":1,"cName":"有氧拉丁操","price":300},{"id":2,"cName":"极限搏击操","price":300},
+            $(data).each(function (i,o) {
+                let $option=$("<option>"+o.price+"RMB"+"&nbsp;&nbsp;&nbsp;&nbsp;"+o.cName+"</option>");
+                $option.attr({"value":o.id});
+                $("#course").append($option);
+            })
+        }
+    })
+
+$.ajax({
+    url:"initTeach.do",
+    dataType:"JSON",
+    success:function (data) {
+        //[{"e_id":33,"j_id":0,"e_name":"侯谦","workId":0,"e_status":0},{"e_id":36,"j_id":0,"e_name":"刘亮","workId":0,"e_status":0},{"e_id":37,"j_id":0,"e_name":"李轩","workId":0,"e_status":0},{"e_id":38,"j_id":0,"e_name":"李欢","workId":0,"e_status":0},{"e_id":39,"j_id":0,"e_name":"李俊杰","workId":0,"e_status":0},{"e_id":40,"j_id":0,"e_name":"李阳志","workId":0,"e_status":0},{"e_id":41,"j_id":0,"e_name":"夏少雄","workId":0,"e_status":0},{"e_id":42,"j_id":0,"e_name":"刘政","workId":0,"e_status":0},{"e_id":53,"j_id":0,"e_name":"徐一鸣","workId":0,"e_status":0},{"e_id":54,"j_id":0,"e_name":"王春","workId":0,"e_status":0},{"e_id":55,"j_id":0,"e_name":"李亮亮","workId":0,"e_status":0},{"e_id":56,"j_id":0,"e_name":"高佳乐",
+$(data).each(function (i,o) {
+    let $option=$("<option>"+o.e_id+"&nbsp;&nbsp;&nbsp;&nbsp;"+o.e_name+"</option>");
+    $option.attr({"value":o.e_id});
+    $("#teach").append($option);
+})
+
+    }
+
+
+})
+    }
+
+<!--表单验证begin-->
+function checkCourse() {
+    let flag=true;
+    if($("#course>option:selected").val()=='0'){
+        flag=false;
+        alert("没有选择课程");
+    }
+    return flag;
+}
+function checkTeach() {
+    let flag=true;
+    if($("#teach>option:selected").val()=='0'){
+        flag=false;
+        alert("没有选择教练");
+    }
+    return flag;
+}
+$("#teach").blur(checkTeach);
+$("#course").blur(checkCourse);
+<!--表单验证end-->
+
+    <!--购买课程begin-->
+//$("#queryOK")
+function  buyCourse() {
+    let teachOk=checkTeach();
+    let CourseOk=checkCourse();
+    if(teachOk&&CourseOk){
+        // e_id, int v_id, int c_id
+        $.ajax({
+            data:{
+                e_id:$("#teach>option:selected").val(),
+                c_id:$("#course>option:selected").val()
+            },
+            url:"insertCoachinfo.do",
+            dataType:"JSON",
+            success:function (data) {
+              if(data){
+                  alert("购买成功");
+              }else {
+                  alert("购买失败");
+              }
+            }
+        })
+
+
+    }
+    
+}
+
+<!--购买课程end-->
+</script>
+</body>
+</html>

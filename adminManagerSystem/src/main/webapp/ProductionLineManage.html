@@ -35,7 +35,7 @@
             <div class="col-xs-2">
                 <div class="three_two">
                     <a href="#" id="queryOK" class="btn btn-primary content_marright">查询</a>
-                    <a href="#" class="btn btn-primary">重置</a></div>
+                    <a href="#" class="btn btn-primary" id="reset">重置</a></div>
             </div>
         </div>
         <div class="row">
@@ -152,8 +152,13 @@
                         <select id="workid" class="h26 line left">
                             <option value="0">请选择</option>
                         </select>
-                    <li></li>
                     </li>
+                    <li></li>
+                    <li>
+                        <label><span>工资： </span></label>
+                        <input type="text" name="addSalary" maxlength="40">
+                    </li>
+                    <li></li>
                 </ul>
             </div>
             <div class="modal-footer">
@@ -430,6 +435,7 @@
         $firstPage.click(clickFirstPage);
         $upPage.click(clickuppage);
         $endpage.click(endPage);
+        $("#reset").on("click",checkText);
 
     })
     function init() {
@@ -675,6 +681,32 @@ function  checkEmail(){
       }
       return flag;
     }
+    function  checkSalary() {
+
+        let flag=true;
+        if($("[name=addSalary]").val()==""){
+
+            flag=false;
+            $("[name=addSalary]").parent().next("li").text("薪资不能为空").css({"color":"#f00"});
+        }
+
+        return flag;
+    }
+    function  checkSalary() {
+
+        let flag=true;
+        if($("[name=addSalary]").val()==""){
+
+            flag=false;
+            $("[name=addSalary]").parent().next("li").text("薪资不能为空").css({"color":"#f00"});
+        }
+
+        return flag;
+    }
+    $("[name=addSalary]").blur(checkSalary);
+    $("[name=addSalary]").focus(clearTextStyle);
+
+
     $("#workid").blur(checkWorkID);
 
     $("#workid").focus(clearTextStyle);
@@ -700,8 +732,9 @@ function  checkEmail(){
         let  addreesok=checkAddrees();
         let jobok=checkJob();
         let nameok=checkName();
+        let salaryok=checkSalary();
 
-        if(workIDok&&emailok&&phoneok&&addreesok&&jobok&&nameok){
+        if(workIDok&&emailok&&phoneok&&addreesok&&jobok&&nameok&&salaryok){
         $.ajax({
             type:"POST",
             dataType:"JSON",
@@ -712,7 +745,8 @@ function  checkEmail(){
                 addAddrees:$("[name=addAddrees]").val(),
                 addphone:$("[name=addphone]").val(),
                 addemil:$("[name=addemil]").val(),
-                addworkid:$("#workid>option:selected").val()
+                addworkid:$("#workid>option:selected").val(),
+                salary:$("[name=addSalary]").val()
             },
             success:function (data) {
                 if(data.flag){
@@ -957,8 +991,15 @@ $("#executesave").click(function () {
 
     })
 
-})
+});
 
+    <!--清除查询参数-->
+    
+    function checkText() {
+       $("input[name=qid]").val("");
+       $("input[name=qname]").val("");
+       $("#qjoptype>option:eq(0)").attr({"selected":true});
+    }
 </script>
 </body>
 </html>

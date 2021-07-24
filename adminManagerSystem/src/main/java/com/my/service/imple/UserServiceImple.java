@@ -17,6 +17,8 @@ public class UserServiceImple implements UserService {
     private UserinfoDao userinfoDao=new UserinfoDaoImple();
     private AuthorityDao authorityDao=new AuthorityDaoImple();
     private UserstatusDao userstatusDao=new UserstatusDaoImple();
+    private TeachInfoDao teachdao=new TeachInfoDaoImple();
+    private  CourseDao courseDao=new CourseDaoImple();
     @Override
     public byte login(String usernaem,String password,int role) {
         User user=null;
@@ -248,7 +250,7 @@ public class UserServiceImple implements UserService {
     }
 
     @Override
-    public boolean addUser(Employee e, User u) {
+    public boolean addUser(Employee e, User u,double salary) {
         boolean b = true;
         Connection con=null;
 
@@ -256,7 +258,7 @@ public class UserServiceImple implements UserService {
         try {
             con=JDBCutil.getConnection();
             con.setAutoCommit(false);
-            b =  edao.addEmployee(con, e);
+            b =  edao.addEmployee(con, e,salary);
             userdao.managerAdduser(con,u);
             con.commit();
         } catch (SQLException e1) {
@@ -279,4 +281,71 @@ public class UserServiceImple implements UserService {
 
         return b;
     }
+
+    @Override
+    public boolean isOkOldPassword(String userName, String password,int role) {
+        Connection con=null;
+        User data = null;
+        try {
+            con=JDBCutil.getConnection();
+            data = userdao.findUserByUsernameAndPassword(con, userName, password, role);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return data==null;
+    }
+
+    @Override
+    public boolean updatePassword(String newpasswrod, String username, String oldpassword) {
+Connection con=null;
+        boolean flag = false;
+        try {
+            con=JDBCutil.getConnection();
+            flag = userdao.updatePassword(con, newpasswrod, username, oldpassword);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return flag;
+    }
+
+    @Override
+    public List<TeachInfo> findTeachInfoByvipphone(String vphone) {
+        Connection con=null;
+        List<TeachInfo> data = null;
+        try {
+            con=JDBCutil.getConnection();
+            data = teachdao.findTeachInfoByvipphone(con, vphone);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+
+
+
 }

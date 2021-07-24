@@ -6,15 +6,14 @@ import com.my.bean.Page;
 import com.my.bean.QueryEmployee;
 import com.my.dao.BaseDao;
 import com.my.dao.EmployeeDao;
+import com.my.dao.SalaryDao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
+   private SalaryDao salaryDao=new SalaryDaoImple();
     @Override
     public List<Employee> findEmployeeAll(Connection con) {
         return null;
@@ -59,10 +58,29 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
     }
 
     @Override
-    public boolean addEmployee(Connection con, Employee e) throws SQLException {
+    public boolean addEmployee(Connection con, Employee e,double salary) throws SQLException {
+        PreparedStatement pre=null;
         String sql = "INSERT INTO `employee`(`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId`)VALUES(?,?,?,?,?,?,?)";
-        int b = this.update(con, sql,e.getJ_id(),e.getE_name(),e.getAddress(),e.getSex(),e.getPhone(),e.getEmail(),e.getWorkId() );
-        return b > 0;
+     //   int b = this.update(con, sql,e.getJ_id(),e.getE_name(),e.getAddress(),e.getSex(),e.getPhone(),e.getEmail(),e.getWorkId() );
+        pre = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        pre.setInt(1,e.getJ_id());
+        pre.setString(2,e.getE_name());
+        pre.setString(3,e.getAddress());
+        pre.setString(4,e.getSex());
+        pre.setString(5,e.getPhone());
+        pre.setString(6,e.getEmail());
+        pre.setInt(7,e.getWorkId());
+        pre.executeUpdate();
+        ResultSet generatedKeys = pre.getGeneratedKeys();
+        int empKey=0;
+        while (generatedKeys.next()){
+            empKey=generatedKeys.getInt(1);
+        }
+        boolean flag=false;
+if(empKey!=0) {
+    flag= salaryDao.insetSalary(con, empKey, salary);
+}
+        return flag;
     }
 
     @Override
@@ -131,6 +149,13 @@ public class EmployeeDaoImple extends BaseDao<Employee> implements EmployeeDao {
     public Employee findEmployeeByEmail(Connection con, String emil) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
         String sql="SELECT `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`e_status`,`workId`  FROM `employee` WHERE `email`=?";
         Employee  data = this.getInstence(con, sql,emil);
+        return data;
+    }
+
+    @Override
+    public List<Employee> findAllTeach(Connection con) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        String sql="SELECT e_id,e_name FROM employee WHERE e_status=1 AND j_id=2";
+        List<Employee> data = this.getListInstence(con, sql);
         return data;
     }
 

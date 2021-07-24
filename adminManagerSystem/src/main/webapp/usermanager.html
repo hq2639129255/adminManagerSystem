@@ -24,7 +24,7 @@
                 <div class="input-group content_line content_left">
                     <span class="input-group-addon" id="basic-addon3">权限</span>
                     <select  id="qaid" class="form-control line left">
-                        <option>请选择权限</option>
+                        <option value="0">请选择权限</option>
                     </select>
                 </div>
 
@@ -157,7 +157,11 @@
                       </select>
                     </li>
                     <li></li>
-
+                    <li>
+                        <label><span>工资： </span></label>
+                        <input type="text" name="addSalary" maxlength="40">
+                    </li>
+                    <li></li>
                 </ul>
             </div>
             <div class="modal-footer">
@@ -667,6 +671,147 @@ function  checkQx($curentTr) {
     });
 
 <!---->
+
+
+
+
+    <!--表单验证begin-->
+    var phoneReg=/^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+    var emilReg=/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+    function clearTextStyle() {
+        $(this).parent().next("li").text("");
+    }
+    function checkName() {
+        let flag=true;
+        if($("input[name=addname]").val()==""){
+            flag=false;
+            $("input[name=addname]").parent().next("li").text("姓名不能为空").css({"color":"#f00"});
+        }
+        return flag;
+    }
+
+    function  checkJob() {
+        let flag=true;
+        if($("#addjob>option:selected").val()=='0'){
+            flag=false;
+            $("#addjob").parent().next("li").text("请选择职务类型").css({"color":"#f00"});
+        }
+        return flag;
+    }
+    function  checkAddrees() {
+        let flag=true;
+        if($("[name=addAddrees]").val()==""){
+            flag=false;
+            $("[name=addAddrees]").parent().next("li").text("地址不能为空").css({"color":"#f00"});
+        }
+        return flag;
+    }
+    function  checkphone() {
+        let flag=true;
+        if( $("[name=addphone]").val()==""){
+            flag=false;
+            $("[name=addphone]").parent().next("li").text("手机号不能为空").css({"color":"#f00"});
+        }else if(!phoneReg.test($("[name=addphone]").val())){
+            flag=false;
+            $("[name=addphone]").parent().next("li").text("手机号格式错误").css({"color":"#f00"});
+        }else{
+            $.ajax({
+                async:false,
+                url:"isEmployeeByPhone.do",
+                dataJson:"JSON",
+                data:{phone:$("[name=addphone]").val()},
+                success:function (data) {
+                    if(data=='true'){
+                        flag=true;
+                    }else {
+                        flag=false;
+                        $("[name=addphone]").parent().next("li").text("手机号已经存在").css({"color":"#f00"});
+                    }
+                }
+
+            });
+        }
+        return flag;
+    }
+
+    function  checkEmail(){
+        let flag=true;
+        if($("[name=addemil]").val()==""){
+            flag=false;
+            $("[name=addemil]").parent().next("li").text("邮箱不能为空").css({"color":"#f00"});
+        }else if(!emilReg.test($("[name=addemil]").val())){
+            flag=false;
+            $("[name=addemil]").parent().next("li").text("邮箱格式错误").css({"color":"#f00"});
+        }else{
+            $.ajax({
+                async:false,
+                url:"isEmployeeByEmail.do",
+                dataJson:"JSON",
+                data:{Email:$("[name=addemil]").val()},
+                success:function (data) {
+                    if(data=='true'){
+                        flag=true;
+                    }else {
+                        flag=false;
+                        $("[name=addemil]").parent().next("li").text("邮箱号已经存在").css({"color":"#f00"});
+                    }
+                }
+
+            });
+        }
+        return flag;
+    }
+function  checkSalary() {
+
+        let flag=true;
+        if($("[name=addSalary]").val()==""){
+
+            flag=false;
+            $("[name=addSalary]").parent().next("li").text("薪资不能为空").css({"color":"#f00"});
+        }
+
+        return flag;
+}
+    function  checkqx() {
+
+        let flag=true;
+        if($("#addqx>option:selected").val()=="0"){
+
+            flag=false;
+            $("#addqx").parent().next("li").text("请选择权限").css({"color":"#f00"});
+        }
+
+        return flag;
+    }
+
+    $("#addqx").blur(checkqx);
+    $("#addqx").focus(clearTextStyle);
+    $("[name=addSalary]").blur(checkSalary);
+    $("[name=addSalary]").focus(clearTextStyle);
+    $("[name=addemil]").focus(clearTextStyle);
+    $("[name=addemil]").blur(checkEmail);
+    $("[name=addphone]").focus(clearTextStyle);
+    $("[name=addphone]").blur(checkphone);
+    $("[name=addAddrees]").blur(checkAddrees);
+    $("[name=addAddrees]").focus(clearTextStyle);
+
+    $("#addjob").blur(checkJob);
+    $("#addjob").focus(clearTextStyle);
+
+
+    $("input[name=addname]").blur(checkName);
+    $("input[name=addname]").focus(clearTextStyle);
+    <!--表单验证end-->
+
+
+
+
+
+
+
+
+
+
     <!--新增员工资料begin-->
     $("#addsave").click(function () {
         let qxid=getCookie("qxid");
@@ -679,29 +824,42 @@ function  checkQx($curentTr) {
                 alert("权限不足");
                 return false;
             }}
-        $.ajax({
-            type:"POST",
-            dataType:"JSON",
-            url:"addUser.do",
-            data:{addname:$("input[name=addname]").val(),
-                addsex:$("#addsex>option:selected").val(),
-                addjob:$("#addjob>option:selected").val(),
-                addAddrees:$("[name=addAddrees]").val(),
-                addphone:$("[name=addphone]").val(),
-                addemil:$("[ name=addemil]").val(),
-                addqx: $("#addqx>option:selected").val()
-            },
-            success:function (data) {
-                if(data.flag){
-                    alert(data.info);
 
-                }else {
-                    alert(data.info);
+        let emailok=checkEmail();
+        let  phoneok=checkphone();
+        let  addreesok=checkAddrees();
+        let jobok=checkJob();
+        let nameok=checkName();
+        let salaryok= checkSalary();
+        let qxok=checkqx();
+
+        if(qxok&&emailok&&phoneok&&addreesok&&jobok&&nameok&&salaryok) {
+
+            $.ajax({
+                type: "POST",
+                dataType: "JSON",
+                url: "addUser.do",
+                data: {
+                    addname: $("input[name=addname]").val(),
+                    addsex: $("#addsex>option:selected").val(),
+                    addjob: $("#addjob>option:selected").val(),
+                    addAddrees: $("[name=addAddrees]").val(),
+                    addphone: $("[name=addphone]").val(),
+                    addemil: $("[ name=addemil]").val(),
+                    addqx: $("#addqx>option:selected").val(),
+                    addSalary: $("[name=addSalary]").val()
+                },
+                success: function (data) {
+                    if (data.flag) {
+                        alert(data.info);
+
+                    } else {
+                        alert(data.info);
+                    }
                 }
-            }
 
-        })
-
+            })
+        }
     });
     <!--新增员工资料end-->
 

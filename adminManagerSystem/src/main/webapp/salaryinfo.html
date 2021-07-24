@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+       
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+    <div class="right_content">
+     <!--查询条件 begin-->
+         <div id="search_btn"class="content_search_group">
+      <div class="row">
+      <div class="col-xs-10">
+       <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon2">月份</span>
+           <select class="h26 line left" id="qmonth">
+               <option value="0">请选择</option>
+               <option value="1">1月</option>
+               <option value="2">2月</option>
+               <option value="3">3月</option>
+               <option value="4">4月</option>
+               <option value="5">5月</option>
+               <option value="6">6月</option>
+               <option value="7">7月</option>
+               <option value="8">8月</option>
+               <option value="9">9月</option>
+               <option value="10">10月</option>
+               <option value="11">11月</option>
+               <option value="12">12月</option>
+           </select>
+         </div>
+
+         <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon3">姓名</span>
+                    <input id="qname" type="text" class="form-control" placeholder="输入姓名" aria-describedby="basic-addon2">
+         </div>
+
+         <div class="input-group content_line content_left">
+         <span class="input-group-addon" id="Span1">员工号</span>
+             <input id="qempno" type="text" class="form-control" placeholder="输入员工号" aria-describedby="basic-addon2">
+         </div>
+    </div> 
+       <div class="col-xs-2">
+         <div class="three_two">
+         <a href="#" class="btn btn-primary content_marright" id="queryOK">查询</a>
+         <a href="#" class="btn btn-primary">重置</a></div> 
+         </div>           
+    </div>
+    <div class="row">
+    <div class="col-xs-10">
+   <a href="#" class="btn btn-primary content_marright content_btn_add" id="sendSalary" data-backdrop="static">发放上月工资</a>
+    </div> 
+    </div>
+         </div>
+        <!--查询条件 end-->
+
+         <!--数据列表 begin-->
+         <table id="table_list" class="table table-hover table-bordered table-condensed">
+      <thead>
+         <tr>
+                    <th>月份</th>
+                      <th>工号</th>
+                      <th>姓名</th>
+             <th>手机号码</th>
+					  <th>工资</th>
+                        <th>罚款</th>
+                       <th>奖励</th>
+                     <th>实发工资</th>
+             <th>备注</th>
+             <th>发放状态</th>
+                      <th class="w110">操作</th>
+         </tr>
+      </thead>
+      <tbody id="datalist">
+
+      </tbody>
+   </table>
+        <!--数据列表 end-->
+
+        <!--分页 begin-->
+        <div class="pages content_right" >
+            <div class="pages_record">
+                共&nbsp;<b id="pagesun">3</b>&nbsp;页 &nbsp;第&nbsp;<b id="curentpage">1</b>&nbsp;页&nbsp; <b id="rowcount">10</b>&nbsp;条/页&nbsp; &nbsp;共&nbsp;<b id="rowsun">27</b>&nbsp;条记录
+            </div>
+
+            <ul class="pagination">
+                <li id="firstPage"><a href="#" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>
+                <li  id="upPage"><a href="#">上一页<span class="sr-only">(current)</span></a></li>
+                <li id="downpage"><a href="#">下一页</a></li>
+                <li id="endpage"><a href="#" aria-label="Next"><span aria-hidden="true">尾页</span></a></li>
+                <li>
+
+
+                    <select  class="form-control w80 line left"  name="pagecount">
+                        <option   value="5">5</option>
+                        <option selected="selected" value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+
+                </li>
+
+                <li><input type="text" placeholder="输入页数" class="form-control w80"></li>
+                <a href="#">跳转</a>
+                <input type="hidden" name="type" value="SalaryView"/>
+
+            </ul>
+
+        </div>
+        <!--分页 end-->
+    </div> 
+
+
+                  <!-- Modal begin -->
+              <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel1">编辑</h4>
+                                    </div>
+                                    <div class="modal-body p_bottom35">
+                                        <ul>
+                                            <li>
+                                                <label><span>工资： </span></label>
+                                                <input name="salary" type="text" maxlength="40">
+                                            </li>
+                                            <li></li>
+                                            <li>
+                                                <label><span>罚款： </span></label>
+                                                <input value="0" name="payment" type="text" maxlength="40">
+                                            </li>
+                                            <li></li>
+                                            <li>
+                                                <label><span>奖励： </span></label>
+                                                <input value="0" name="award" type="text" maxlength="40">
+                                            </li>
+                                            <li></li>
+                                            <li>
+                                                <label><span>备注： </span></label>
+                                                <textarea name="remark" class="form-control" rows="3" maxlength="200"></textarea>
+                                            </li>
+                                            <li></li>
+                                        </ul>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                                        <button type="button" id="updateSave" class="btn btn-primary btn-sm">保存</button>
+                                    </div>
+                                </div>
+                            </div>
+              </div>
+              <!--Modal end-->
+<script src="js/Date.js"></script>
+    <script>
+        //    添加编辑模态框
+        $('#add').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever') // Extract info from data-* attributes
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this)
+            modal.find('.modal-title').text('' + recipient)
+            modal.find('.modal-body input').val(recipient)
+        });
+
+        var  curentDataPostion;//点击位置
+        <!--分页begin-->
+        let $firstPage=$("#firstPage");
+        let $upPage=$("#upPage");
+        let $downpage=$("#downpage");
+        let $endpage=$("#endpage");
+        $firstPage.hover(activeStyle,notactiveStyle);
+        $upPage.hover(activeStyle,notactiveStyle);
+        $downpage.hover(activeStyle,notactiveStyle);
+        $endpage.hover(activeStyle,notactiveStyle);
+
+        function activeStyle() {
+            $(this).addClass("active");
+
+        }
+        function notactiveStyle() {
+            $(this).removeClass("active");
+
+        }
+        function clickFirstPage() {
+            if($("#curentpage").text()=="1"){
+                $firstPage.addClass("disabled");
+                $upPage.addClass("disabled");
+                return false;
+            }else {
+                $endpage.removeClass("disabled");
+                $downpage.removeClass("disabled");
+                $.ajax({
+                    dataType:"JSON",
+                    type: "GET",
+                    url: "/admin/findPageData.do",
+                    data:{
+                        pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
+                        curentpage:1,
+                        datatype:$("[name=type]").val()},
+                    success: function (data) {
+                        $("#datalist").html("");
+                        initdata(data);
+
+                    }
+                })
+            }
+
+        }
+        function clickuppage() {
+            if($("#curentpage").text()=="1"){
+                $upPage.addClass("disabled");
+                $firstPage.addClass("disabled");
+                return false;
+            }else {
+                $downpage.removeClass("disabled");
+                $endpage.removeClass("disabled");
+                $.ajax({
+                    dataType:"JSON",
+                    type: "GET",
+                    url: "/admin/findPageData.do",
+                    data:{
+                        pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
+                        curentpage:parseInt($("#curentpage").text())-1,
+                        datatype:$("[name=type]").val()},
+                    success: function (data) {
+                        $("#datalist").html("");
+                        initdata(data);
+
+                    }
+                })
+            }
+        }
+
+        function  clickdownpage() {
+            if($("#curentpage").text()==$("#pagesun").text()){
+                $downpage.addClass("disabled");
+                $endpage.addClass("disabled");
+
+            }else {
+                $firstPage.removeClass("disabled");
+                $upPage.removeClass("disabled");
+                $.ajax({
+                    dataType:"JSON",
+                    type: "GET",
+                    url: "/admin/findPageData.do",
+                    data:{
+                        pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
+                        curentpage:parseInt($("#curentpage").text())+1,
+                        datatype:$("[name=type]").val()},
+                    success: function (data) {
+                        $("#datalist").html("");
+                        initdata(data);
+
+                    }
+
+                })}
+
+
+        }
+
+        function endPage() {
+            if($("#curentpage").text()==$("#pagesun").text()){
+                $downpage.addClass("disabled");
+                $endpage.addClass("disabled");
+                return false;
+
+            }else {
+                $firstPage.removeClass("disabled");
+                $upPage.removeClass("disabled");
+                $.ajax({
+                    dataType:"JSON",
+                    type: "GET",
+                    url: "/admin/findPageData.do",
+                    data:{
+                        pagetype:$("[name=type]").val(),
+                        rowconut:$("[name=pagecount]>option:selected").val(),
+                        curentpage:$("#pagesun").text(),
+                        datatype:$("[name=type]").val()},
+                    success: function (data) {
+                        $("#datalist").html("");
+                        initdata(data);
+
+                    }
+
+                })}
+        }
+
+        <!--分页end-->
+
+
+
+
+
+
+<!--初始化页面begin-->
+        $(function () {
+            $downpage.click(clickdownpage);
+            $firstPage.click(clickFirstPage);
+            $upPage.click(clickuppage);
+            $endpage.click(endPage);
+            $("#updateSave").on("click",updateSave);
+            $("#sendSalary").on("click", sendCurentMonthSalary);
+            init();
+        })
+        function  init() {
+            $.ajax({
+                url:"isSendSalary.do",
+                dataType:"JSON",
+                success:function (data) {
+                   if(data){
+                       $("#sendSalary").addClass("disabled");
+                       $("#sendSalary").off("click",sendCurentMonthSalary);
+                   }
+                }
+            })
+
+            $.ajax({
+                dataType:"JSON",
+                data:{pagetype:$("[name=type]").val()},
+                type: "GET",
+                url: "/admin/findPageData.do",
+                success: function (data) {
+
+                    initdata(data);
+
+                }
+
+            })
+
+        }
+
+
+
+        function initdata(data) {
+            let $pagesun=$("#pagesun");
+            let $curentpage=$("#curentpage");
+            let $rowcount=$("#rowcount");
+            let $rowsun=$("#rowsun");
+//{"sa_month":7,"e_id":62,"e_name":"周斌","salary":7999,"payment":0,"award":0,"net_payroll":0,"phone":"18097526222","salaryStatus":"未发放"}
+            $pagesun.text(data.sunPage);
+            $curentpage.text(data.curentPage);
+            $rowcount.text(data.curentrow);
+            $rowsun.text(data.sunrow);
+            $(data.pageData).each(function (i,o) {
+                let  $datatr=$("<tr>"+
+                    "<td>"+new Date(o.sa_month).format("yyyy-MM")+"</td>"+
+                    "<td>"+o.e_id+"</td>"+
+                    "<td>"+o.e_name+"</td>"+
+                    "<td>"+o.phone+"</td>"+
+                    "<td>"+o.salary+"</td>"+
+                    "<td>"+o.payment+"</td>"+
+                    "<td>"+o.award+"</td>"+
+                    "<td>"+o.net_payroll+"</td>"+
+                    "<td>"+(o.remark==null ? "" :o.remark)+"</td>"+
+                    "<td>"+o.salaryStatus+"</td>"+
+                    "</tr>");
+                let $tdupdate=$("<td><a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a></td>");
+              $tdupdate.find("a:first").on("click",modifySalayInfo);
+
+                $datatr.append($tdupdate);
+                $("#datalist").append($datatr);
+            })
+
+        }
+
+        <!--查询begin  -->
+        $("#queryOK").click(function () {
+            //String userName, int aid, String vname
+            $.ajax({
+                dataType:"JSON",
+                type:"POST",
+                url:'showSelectSalaryView.do',
+                data:{qmonth:$("#qmonth>option:selected").val(),
+                qname:$("#qname").val(),
+                    qempno:$("#qempno").val()
+                },
+                success:function (data) {
+                    //{"flag":true,"dataList":[{"sa_month":7,"e_id":62,"e_name":"周斌","salary":7999,"payment":0,"award":0,"net_payroll":0,
+                    $("#datalist").html("");
+                    if(data.flag){
+
+                        $(data.dataList).each(function (i,o) {
+                            let  $datatr=$("<tr>"+
+                                "<td>"+new Date(o.sa_month).format("yyyy-MM")+"</td>"+
+                                "<td>"+o.e_id+"</td>"+
+                                "<td>"+o.e_name+"</td>"+
+                                "<td>"+o.phone+"</td>"+
+                                "<td>"+o.salary+"</td>"+
+                                "<td>"+o.payment+"</td>"+
+                                "<td>"+o.award+"</td>"+
+                                "<td>"+o.net_payroll+"</td>"+
+                                "<td>"+(o.remark==null ? "" :o.remark)+"</td>"+
+                                "<td>"+o.salaryStatus+"</td>"+
+                                "</tr>");
+                            let $tdupdate=$("<td><a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a></td>");
+                            $tdupdate.find("a:first").on("click",modifySalayInfo);
+                            $datatr.append($tdupdate);
+                            $("#datalist").append($datatr);
+                        })
+
+                    }else {
+                        alert(data.info)
+                    }
+
+
+                }
+
+
+            })
+        });
+
+        <!---->
+        <!-- 修改工资信息-->
+        function  modifySalayInfo() {
+            curentPostion=$(this).parent().parent();
+          $("[name=salary]").val(curentPostion.find("td:eq(4)").text());
+            $("[name=payment]").val(curentPostion.find("td:eq(5)").text());
+            $("[name=award]").val(curentPostion.find("td:eq(6)").text());
+            $("[name=remark]").val(curentPostion.find("td:8").text());
+        }
+        <!---->
+
+
+        function updateSave() {
+            $.ajax({
+                url:"updateSalary.do",
+                dataType:"JSON",
+                data:{
+                    salary:$("[name=salary]").val(),
+                    payment:$("[name=payment]").val(),
+                    award:$("[name=award]").val(),
+                    remark:$("[name=remark]").val(),
+                    eid: curentPostion.find("td:eq(1)").text(),
+                    month:curentPostion.find("td:eq(0)").text()+"-01",
+                },
+                success:function (data) {
+                    if(data){
+                        alert("更新成功");
+                    curentPostion.find("td:eq(4)").text($("[name=salary]").val());
+                    curentPostion.find("td:eq(5)").text( $("[name=payment]").val()) ;
+                    curentPostion.find("td:eq(6)").text( $("[name=award]").val());
+                    curentPostion.find("td:eq(7)").text((parseFloat($("[name=salary]").val())-parseFloat($("[name=payment]").val())+parseFloat($("[name=award]").val())));
+                    curentPostion.find("td:eq(8)").text($("[name=remark]").val());
+                    }else {
+                        alert("修改失败");
+                    }
+                }
+
+            })
+
+
+        }
+
+
+   function  sendCurentMonthSalary() {
+
+
+       $.ajax({
+           url:"sendCurentMonthSalary.do",
+           success:function (data) {
+
+            if(data){
+                alert("发放成功");
+                $("#datalist>tr").each(function (i,o) {
+                    $(o).find("td:eq(7)").text((parseFloat( $(o).find("td:eq(4)").text())-parseFloat($(o).find("td:eq(5)").text())+parseFloat($(o).find("td:eq(6)").text())));
+
+                })
+
+            }else {
+                alert("操作失败");
+            }
+           }
+       })
+   }
+</script>
+</body>
+</html>

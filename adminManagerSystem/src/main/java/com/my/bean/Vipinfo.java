@@ -1,6 +1,10 @@
 package com.my.bean;
 
-public class Vipinfo {
+import java.io.Serializable;
+
+public class Vipinfo{
+
+
  private   int  v_id  ;//会员id',
  private   int   card_id ;//卡id
  private  String    e_name ;//'姓名',
