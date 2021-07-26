@@ -48,9 +48,13 @@
 				<li><label>下班卡打卡时间：</label><span id="endcard">暂未打卡</span></li>
 			</ul>
 		</div>
+
 		<script src="js/jquery.min.js"></script>
-	<script src="js/Date.js"></script>
+		<script src="js/Date.js"></script>
+		<script src="js/CookieUtil.js"></script>
+		<script src="js/qxcheck.js"></script>
 	<script>
+        checkEmpqx();
         var starttimestr="";//上班时间
         var endtimestr="";//下班时间
 		var workidMap=new Map();

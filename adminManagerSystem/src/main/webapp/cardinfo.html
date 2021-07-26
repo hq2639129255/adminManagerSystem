@@ -227,6 +227,8 @@
         </div>
     </div>
               <!--Modal end-->
+    <script src="js/qxcheck.js"></script>
+    <script src="js/CookieUtil.js"></script>
 <script src="js/Date.js"></script>
     <script>
         //    添加编辑模态框
@@ -240,6 +242,8 @@
             modal.find('.modal-body input').val(recipient)
         });
 
+        <!-- 检查权限-->
+        checkqx();
 <!--   -->
         var  curentDataPostion;//点击位置
 <!--分页begin-->

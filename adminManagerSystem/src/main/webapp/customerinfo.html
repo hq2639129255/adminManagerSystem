@@ -203,6 +203,8 @@
                             </div>
               </div>
               <!--Modal end-->
+    <script src="js/qxcheck.js"></script>
+    <script src="js/CookieUtil.js"></script>
     <script>
         //    添加编辑模态框
         $('#add').on('show.bs.modal', function (event) {
@@ -214,6 +216,8 @@
             modal.find('.modal-title').text('' + recipient)
             modal.find('.modal-body input').val(recipient)
         });
+        <!-- 检查权限-->
+        checkqx();
 <!--           -->
         <!--分页begin-->
         let $firstPage=$("#firstPage");

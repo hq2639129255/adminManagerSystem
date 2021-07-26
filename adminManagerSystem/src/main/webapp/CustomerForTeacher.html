@@ -10,6 +10,7 @@
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/content/content.js"></script>
     <script src="js/CookieUtil.js"></script>
+    <script src="js/qxcheck.js"></script>
 </head>
 <body style="margin-right:0px;">
 <div class="right_content">
@@ -92,6 +93,7 @@
     </div>
 </div>
 <!--Modal end-->
+
 <script>
     //    添加编辑模态框
     $('#add').on('show.bs.modal', function (event) {
@@ -106,8 +108,8 @@
     <!--           -->
 
     // alert(document.cookie);
-
-
+<!--检查权限-->
+    checkEmpqx();
 
     $(function () {
         alert(getCookie("AutoLogin"));
