@@ -143,13 +143,16 @@
                 $downpage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type:"POST",
                     url: "/admin/findPageData.do",
                     data:{
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:1,
-                        datatype:$("[name=type]").val()},
+                        datatype:$("[name=type]").val(),
+                        e_name:$("#qname").val(),
+                        e_id:$("input[name=e_id]").val(),
+                        qsex:$("#qsex>option:selected").val()},
                     success: function (data) {
                         $("#datalist").html("");
                         initdata(data);
@@ -169,13 +172,16 @@
                 $endpage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type:"POST",
                     url: "/admin/findPageData.do",
                     data:{
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:parseInt($("#curentpage").text())-1,
-                        datatype:$("[name=type]").val()},
+                        datatype:$("[name=type]").val(),
+                        e_name:$("#qname").val(),
+                        e_id:$("input[name=e_id]").val(),
+                        qsex:$("#qsex>option:selected").val()},
                     success: function (data) {
                         $("#datalist").html("");
                         initdata(data);
@@ -195,13 +201,16 @@
                 $upPage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type:"POST",
                     url: "/admin/findPageData.do",
                     data:{
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:parseInt($("#curentpage").text())+1,
-                        datatype:$("[name=type]").val()},
+                        datatype:$("[name=type]").val(),
+                        e_name:$("#qname").val(),
+                        e_id:$("input[name=e_id]").val(),
+                        qsex:$("#qsex>option:selected").val()},
                     success: function (data) {
                         $("#datalist").html("");
                         initdata(data);
@@ -224,13 +233,16 @@
                 $upPage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type:"POST",
                     url: "/admin/findPageData.do",
                     data:{
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:$("#pagesun").text(),
-                        datatype:$("[name=type]").val()},
+                        datatype:$("[name=type]").val(),
+                        e_name:$("#qname").val(),
+                        e_id:$("input[name=e_id]").val(),
+                        qsex:$("#qsex>option:selected").val()},
                     success: function (data) {
                         $("#datalist").html("");
                         initdata(data);
@@ -255,8 +267,11 @@
         })
         function init() {
             $.ajax({
-                data:{pagetype:$("[name=type]").val()},
-                type: "GET",
+                data:{pagetype:$("[name=type]").val(),
+                    e_name:$("#qname").val(),
+                    e_id:$("input[name=e_id]").val(),
+                    qsex:$("#qsex>option:selected").val()},
+                type:"POST",
                 url: "/admin/findPageData.do",
                 success: function (data) {
                     initdata(data);
@@ -311,45 +326,47 @@
 
         $("#queryOK").click(function () {
             $.ajax({
-                dataType:"JSON",
                 type:"POST",
-                url:'showSelectInstructor.do',
+                url:'/admin/findPageData.do',
                 data:{e_name:$("#qname").val(),
                     e_id:$("input[name=e_id]").val(),
-                    qsex:$("#qsex>option:selected").val()
+                    qsex:$("#qsex>option:selected").val(),
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
                 },
                 success:function (data) {
                  //{"flag":true,"dataList":[{"e_id":36,"name":"刘亮","phone":"18099254321","sex":"男","studentcount":1}]
                     $("#datalist").html("");
-                    if(data.flag){
-                        $(data.dataList).each(function (index,obj) {
-                            let  $datatr=$("<tr>"+
-                                "<td>"+obj.e_id+"</td>"+
-                                "<td>"+obj['name']+"</td>"+
-                                "<td>"+obj['sex']+"</td>"+
-                                "<td>"+obj.phone+"</td>"+
-                                "<td>"+obj.studentcount+"</td>"+
-                                "</tr>");
-                            let $tdupdate="<td><a href='customer.html' class='btn btn-primary btn-sm'  data-target='#edit' data-backdrop='static'>详情</a></td>";
-
-                            $datatr.append($tdupdate);
-
-                            $datatr.find("a:first").on("click",function () {
-                                curentDataPostion=$(this).parent().parent();
-                                document.cookie = "id="+curentDataPostion.find("td:first").text();
-                                // alert(document.cookie);
-                                // document.cookie = "id="+"2";
-                                // alert(document.cookie);
-                                // document.cookie = "id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/admin;";//删除cookie
-                                // alert(document.cookie);
-                            })
-                            $("#datalist").append($datatr);
-
-                        })
-
-                    }else {
-                        alert(data.info)
-                    }
+                    initdata(data);
+                    // if(data.flag){
+                    //     $(data.dataList).each(function (index,obj) {
+                    //         let  $datatr=$("<tr>"+
+                    //             "<td>"+obj.e_id+"</td>"+
+                    //             "<td>"+obj['name']+"</td>"+
+                    //             "<td>"+obj['sex']+"</td>"+
+                    //             "<td>"+obj.phone+"</td>"+
+                    //             "<td>"+obj.studentcount+"</td>"+
+                    //             "</tr>");
+                    //         let $tdupdate="<td><a href='customer.html' class='btn btn-primary btn-sm'  data-target='#edit' data-backdrop='static'>详情</a></td>";
+                    //
+                    //         $datatr.append($tdupdate);
+                    //
+                    //         $datatr.find("a:first").on("click",function () {
+                    //             curentDataPostion=$(this).parent().parent();
+                    //             document.cookie = "id="+curentDataPostion.find("td:first").text();
+                    //             // alert(document.cookie);
+                    //             // document.cookie = "id="+"2";
+                    //             // alert(document.cookie);
+                    //             // document.cookie = "id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/admin;";//删除cookie
+                    //             // alert(document.cookie);
+                    //         })
+                    //         $("#datalist").append($datatr);
+                    //
+                    //     })
+                    //
+                    // }else {
+                    //     alert(data.info)
+                    // }
 
 
                 }

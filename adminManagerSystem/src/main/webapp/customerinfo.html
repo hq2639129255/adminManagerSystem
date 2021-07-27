@@ -247,9 +247,12 @@
                 $downpage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type:"POST",
                     url: "/admin/findPageData.do",
                     data:{
+                        phone:$("input[neme=phone]").val(),
+                        vipname:$("input[name=vipname]").val(),
+                        cardtype:$("#cardType>option:selected").val(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:1,
@@ -273,9 +276,12 @@
                 $endpage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type:"POST",
                     url: "/admin/findPageData.do",
                     data:{
+                        phone:$("input[neme=phone]").val(),
+                        vipname:$("input[name=vipname]").val(),
+                        cardtype:$("#cardType>option:selected").val(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:parseInt($("#curentpage").text())-1,
@@ -299,9 +305,12 @@
                 $upPage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type:"POST",
                     url: "/admin/findPageData.do",
                     data:{
+                        phone:$("input[neme=phone]").val(),
+                        vipname:$("input[name=vipname]").val(),
+                        cardtype:$("#cardType>option:selected").val(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:parseInt($("#curentpage").text())+1,
@@ -328,9 +337,12 @@
                 $upPage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type:"POST",
                     url: "/admin/findPageData.do",
                     data:{
+                        phone:$("input[neme=phone]").val(),
+                        vipname:$("input[name=vipname]").val(),
+                        cardtype:$("#cardType>option:selected").val(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:$("#pagesun").text(),
@@ -391,7 +403,10 @@
 
 
             $.ajax({
-                data:{pagetype:$("[name=type]").val()},
+                data:{pagetype:$("[name=type]").val(),
+                    phone:$("input[neme=phone]").val(),
+                    vipname:$("input[name=vipname]").val(),
+                    cardtype:$("#cardType>option:selected").val()},
                 type: "GET",
                 url: "/admin/findPageData.do",
                 success: function (data) {
@@ -456,51 +471,53 @@
 
         $("#queryOK").click(function () {
             $.ajax({
-                dataType:"JSON",
                 type:"POST",
-                url:'showSelectVipinfoview.do',
-                data:{phone:$("input[neme=phone]").val(),
+                url:"/admin/findPageData.do",
+                data:{  pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    phone:$("input[neme=phone]").val(),
                     vipname:$("input[name=vipname]").val(),
                     cardtype:$("#cardType>option:selected").val()
                 },
                 success:function (data) {
   //{"v_id":1,"card_id":1,"e_name":"李靖","address":"湖南省邵阳市隆回县","sex":"男","t_name":"普通卡","phone":"13397552196"}
                     $("#datalist").html("");
-                    if(data.flag){
-                        $(data.dataList).each(function (index,obj) {
-                            let  $datatr=$("<tr>"+
-                                "<td>"+obj.e_name+"</td>"+
-                                "<td>"+obj.card_id+"</td>"+
-                                "<td>"+obj.address+"</td>"+
-                                "<td>"+obj['sex']+"</td>"+
-                                "<td>"+obj.t_name+"</td>"+
-                                "<td>"+obj.phone+"</td>"+
-                                "<td>"+obj['email']+"</td>"+
-                                "</tr>");
-                            let $tdupdate='<td> <a href="#"   name="'+obj.v_id+'"class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">编辑</a></td>';
-                            $datatr.append($tdupdate);
-                            $datatr.find("a:first").on("click",function () {
-
-                                curentDataPostion=$(this).parent().parent();
-                                $("[name=uapdatename]").val(curentDataPostion.find("td:first").text());
-                                $("[name=uapdatephone]").val(curentDataPostion.find("td:eq(5)").text());
-                                $("[name=uapdateAddrees]").val(curentDataPostion.find("td:eq(2)").text());
-                                $("[name=uapdateemil]").val(curentDataPostion.find("td:eq(6)").text());
-                                $("#addsex>option").each(function (i,o) {
-                                    if($(o).text==curentDataPostion.find("td:eq(3)").text()){
-                                        $(o).attr({"selected":true});
-                                    }
-
-                                })
-
-                            })
-                            $("#datalist").append($datatr);
-
-                        })
-
-                    }else {
-                        alert(data.info)
-                    }
+                    initdata(data);
+                    // if(data.flag){
+                    //     $(data.dataList).each(function (index,obj) {
+                    //         let  $datatr=$("<tr>"+
+                    //             "<td>"+obj.e_name+"</td>"+
+                    //             "<td>"+obj.card_id+"</td>"+
+                    //             "<td>"+obj.address+"</td>"+
+                    //             "<td>"+obj['sex']+"</td>"+
+                    //             "<td>"+obj.t_name+"</td>"+
+                    //             "<td>"+obj.phone+"</td>"+
+                    //             "<td>"+obj['email']+"</td>"+
+                    //             "</tr>");
+                    //         let $tdupdate='<td> <a href="#"   name="'+obj.v_id+'"class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">编辑</a></td>';
+                    //         $datatr.append($tdupdate);
+                    //         $datatr.find("a:first").on("click",function () {
+                    //
+                    //             curentDataPostion=$(this).parent().parent();
+                    //             $("[name=uapdatename]").val(curentDataPostion.find("td:first").text());
+                    //             $("[name=uapdatephone]").val(curentDataPostion.find("td:eq(5)").text());
+                    //             $("[name=uapdateAddrees]").val(curentDataPostion.find("td:eq(2)").text());
+                    //             $("[name=uapdateemil]").val(curentDataPostion.find("td:eq(6)").text());
+                    //             $("#addsex>option").each(function (i,o) {
+                    //                 if($(o).text==curentDataPostion.find("td:eq(3)").text()){
+                    //                     $(o).attr({"selected":true});
+                    //                 }
+                    //
+                    //             })
+                    //
+                    //         })
+                    //         $("#datalist").append($datatr);
+                    //
+                    //     })
+                    //
+                    // }else {
+                    //     alert(data.info)
+                    // }
 
 
                 }

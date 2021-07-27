@@ -45,27 +45,138 @@ public class VipinfoviewDaoImple extends BaseDao<Vipinfoview> implements Vipinfo
     }
 
     @Override
-    public List<Vipinfoview> findVipinfoviewByParameter(Connection con, String phone, String type, String name) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        List<Vipinfoview> datalist = new ArrayList<Vipinfoview>();
+    public Page<Vipinfoview> findVipinfoviewByParameter(Connection con, String phone, String type, String name, int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        Page page = new Page();
+        List<Vipinfoview> data=null;
         if (phone==null && type==null && name== null) {
-            String sql ="SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view";
-            datalist= this.getListInstence(con,sql);
+
+            page=findVipinfoviewByPagesize(con,offset,rowcount);
+
+
+//            String sql ="SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view";
+//            datalist= this.getListInstence(con,sql);
         } else if (phone != null) {
-            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view WHERE phone LIKE CONCAT('%',?,'%')";
-            datalist = this.getListInstence(con,sql,phone);
+            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view WHERE phone LIKE CONCAT('%',?,'%') LIMIT ?,?";
+            try {
+                String sqlsun = "  SELECT COUNT(1) AS sun  FROM   vipinfo_view WHERE phone LIKE CONCAT('%',?,'%')";
+                Long rowsun = (Long) this.getValue(con,sqlsun,phone);
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                data = this.getListInstence(con, sql,phone,offset, rowcount);
+                if(data!=null){
+                    page.setCurentrow(data.size());
+                }else {
+                    page.setCurentrow(0);
+                }
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+//            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view WHERE phone LIKE CONCAT('%',?,'%')";
+//            datalist = this.getListInstence(con,sql,phone);
         }  else if (phone == null && type != null && name != null) {
-            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view WHERE  t_name=? AND e_name=?";
-            datalist = this.getListInstence(con,sql,type,name);
+            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view WHERE  t_name=? AND e_name=?  LIMIT ?,?";
+
+            try {
+                String sqlsun = "  SELECT COUNT(1) AS sun  FROM   vipinfo_view WHERE  t_name=? AND e_name=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun,type,name);
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                data = this.getListInstence(con, sql,type,name, offset, rowcount);
+                if(data!=null){
+                    page.setCurentrow(data.size());
+                }else {
+                    page.setCurentrow(0);
+                }
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view WHERE  t_name=? AND e_name=?";
+//            datalist = this.getListInstence(con,sql,type,name);
         }else if (phone==null && type == null && name != null) {
-            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view WHERE  e_name=?";
-            datalist = this.getListInstence(con,sql,name);
+            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view WHERE  e_name=? LIMIT ?,?";
+
+            try {
+                String sqlsun = "  SELECT COUNT(1) AS sun  FROM   vipinfo_view WHERE  e_name=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun,name);
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                data = this.getListInstence(con, sql,name, offset, rowcount);
+                if(data!=null){
+                    page.setCurentrow(data.size());
+                }else {
+                    page.setCurentrow(0);
+                }
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+//            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email FROM vipinfo_view WHERE  e_name=?";
+//            datalist = this.getListInstence(con,sql,name);
         }else {
-            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email  FROM vipinfo_view WHERE  t_name=?";
-            datalist = this.getListInstence(con,sql,type);
+            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email  FROM vipinfo_view WHERE  t_name=? LIMIT ?,?";
+
+            try {
+                String sqlsun = "  SELECT COUNT(1) AS sun  FROM   vipinfo_view WHERE  t_name=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun,type);
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                data = this.getListInstence(con, sql,type, offset, rowcount);
+                if(data!=null){
+                    page.setCurentrow(data.size());
+                }else {
+                    page.setCurentrow(0);
+                }
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+
+//            String sql = "SELECT v_id ,card_id,e_name,address,sex,t_name,phone,email  FROM vipinfo_view WHERE  t_name=?";
+//            datalist = this.getListInstence(con,sql,type);
         }
 
 
-        return datalist;
+        return page;
     }
 
     /**

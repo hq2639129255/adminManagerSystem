@@ -12,6 +12,6 @@ public interface FacilityService {
     boolean addFacility(Facility f);
     boolean updateFacility(Facility f);
     boolean deleteFacilityByid(int id);
-    List<Facility> showFacilityByParameter(QueryObj queryObj);
+    Page<Facility> showFacilityByParameter(QueryObj queryObj, int offset, int rowcount);
 
 }

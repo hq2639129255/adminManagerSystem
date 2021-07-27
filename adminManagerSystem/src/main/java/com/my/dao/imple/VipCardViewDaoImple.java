@@ -147,38 +147,123 @@ String sql="SELECT  * FROM vipmanager_v ";
     }
 
     @Override
-    public List<VipCardView> findVipCardViewByParameter(Connection con, VipCardView vipCardView ) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        List<VipCardView> datalist = new ArrayList<VipCardView>();
+    public Page<VipCardView> findVipCardViewByParameter(Connection con, VipCardView vipCardView, int offset, int rowcount ) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        Page page = new Page();
+        List<VipCardView> data = new ArrayList<VipCardView>();
         if (vipCardView.getCid()== -1 && vipCardView.getE_name() == null && vipCardView.getT_name() == null) {
-            String sql = "SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v`";
-            ResultSet re = this.getListResultSet(con, sql);
-            datalist = this.parserResult(re);
+
+            page= findVipCardViewByPagesize( con, offset,  rowcount);
+
+
+//            String sql = "SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v`";
+//            ResultSet re = this.getListResultSet(con, sql);
+//            datalist = this.parserResult(re);
         } else if (vipCardView.getCid() != -1) {
-            String sql = " SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE cid=?";
-            ResultSet re = this.getListResultSet(con, sql, vipCardView.getCid());
-            datalist = this.parserResult(re);
+            String sql = " SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE cid=? LIMIT ?,?";
+
+            try {
+                String sqlsun = "  SELECT COUNT(1) AS sun  FROM   vipmanager_v WHERE cid=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun,vipCardView.getCid());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                ResultSet re = this.getListResultSet(con, sql,vipCardView.getCid(), offset, rowcount);
+                data= this.parserResult(re);
+                if(data!=null){
+                    page.setCurentrow(data.size());
+                }else {
+                    page.setCurentrow(0);
+                }
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+       //     String sql = " SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE cid=?";
+//            ResultSet re = this.getListResultSet(con, sql, vipCardView.getCid());
+//            datalist = this.parserResult(re);
         }  else if (vipCardView.getCid() == -1 && vipCardView.getE_name() != null && vipCardView.getT_name() != null) {
-            String sql = "SELECT cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE t_name=? AND e_name=?";
-            ResultSet re = this.getListResultSet(con, sql, vipCardView.getT_name(), vipCardView.getE_name());
-            datalist = this.parserResult(re);
+            String sql = "SELECT cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE t_name=? AND e_name=? LIMIT ?,?";
+
+
+            try {
+                String sqlsun = "  SELECT COUNT(1) AS sun  FROM   vipmanager_v WHERE t_name=? AND e_name=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun,vipCardView.getT_name(), vipCardView.getE_name());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                ResultSet re = this.getListResultSet(con, sql,vipCardView.getT_name(), vipCardView.getE_name(), offset, rowcount);
+                data= this.parserResult(re);
+                if(data!=null){
+                    page.setCurentrow(data.size());
+                }else {
+                    page.setCurentrow(0);
+                }
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+//            String sql = "SELECT cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE t_name=? AND e_name=?";
+//            ResultSet re = this.getListResultSet(con, sql, vipCardView.getT_name(), vipCardView.getE_name());
+//            datalist = this.parserResult(re);
         }else if (vipCardView.getCid() == -1 && vipCardView.getE_name() == null && vipCardView.getT_name() != null) {
-            String sql = "SELECT cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE t_name=?";
-            ResultSet re = this.getListResultSet(con, sql,vipCardView.getT_name());
-            datalist = this.parserResult(re);
+
+            String sql = "SELECT cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE t_name=? LIMIT ?,?";
+            try {
+                String sqlsun = "  SELECT COUNT(1) AS sun  FROM   vipmanager_v WHERE t_name=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun,vipCardView.getT_name());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                ResultSet re = this.getListResultSet(con, sql,vipCardView.getT_name(), offset, rowcount);
+                data= this.parserResult(re);
+                if(data!=null){
+                    page.setCurentrow(data.size());
+                }else {
+                    page.setCurentrow(0);
+                }
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+//            String sql = "SELECT cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE t_name=?";
+//            ResultSet re = this.getListResultSet(con, sql,vipCardView.getT_name());
+//            datalist = this.parserResult(re);
         }else {
-            String sql = "SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE e_name LIKE CONCAT('%',?,'%');";
-            ResultSet re = this.getListResultSet(con, sql, vipCardView.getE_name());
-            datalist = this.parserResult(re);
+            String sql = "SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE e_name LIKE CONCAT('%',?,'%') LIMIT ?,?";
+
+            try {
+                String sqlsun = "  SELECT COUNT(1) AS sun  FROM   vipmanager_v WHERE e_name LIKE CONCAT('%',?,'%')";
+                Long rowsun = (Long) this.getValue(con, sqlsun,vipCardView.getE_name());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                ResultSet re = this.getListResultSet(con, sql,vipCardView.getE_name(), offset, rowcount);
+                data= this.parserResult(re);
+                if(data!=null){
+                    page.setCurentrow(data.size());
+                }else {
+                    page.setCurentrow(0);
+                }
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+//
+//            String sql = "SELECT  cid,t_name,e_name,serviceendtime   FROM `vipmanager_v` WHERE e_name LIKE CONCAT('%',?,'%');";
+//            ResultSet re = this.getListResultSet(con, sql, vipCardView.getE_name());
+//            datalist = this.parserResult(re);
         }
 
 
-        return datalist;
-
-
-
-
-
-
+        return page;
 
     }
 

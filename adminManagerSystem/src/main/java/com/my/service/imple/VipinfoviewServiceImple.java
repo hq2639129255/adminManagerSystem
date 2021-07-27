@@ -46,12 +46,12 @@ public class VipinfoviewServiceImple implements VipinfoviewService {
     }
 
     @Override
-    public List<Vipinfoview> findVipinfoviewByParameter(String phone, String type, String name) {
+    public Page<Vipinfoview> findVipinfoviewByParameter(String phone, String type, String name,int offset, int rowcount) {
         Connection con=null;
-        List<Vipinfoview> datalist = null;
+        Page<Vipinfoview> datalist = null;
         try {
             con=JDBCutil.getConnection();
-            datalist = dao.findVipinfoviewByParameter(con,phone,type,name);
+            datalist = dao.findVipinfoviewByParameter(con,phone,type,name, offset,  rowcount);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {

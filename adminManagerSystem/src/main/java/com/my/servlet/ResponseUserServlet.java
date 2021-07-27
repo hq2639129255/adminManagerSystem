@@ -135,6 +135,7 @@ response.addCookie(cookie);
     }
     //分页查询
     protected void findPageData(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("utf-8");
         String rowconut=request.getParameter("rowconut");
         String curentpage=request.getParameter("curentpage");
         String datatype=request.getParameter("pagetype");
@@ -147,29 +148,119 @@ response.addCookie(cookie);
 
         int pageoffset=(Integer.parseInt(curentpage)-1)*Integer.parseInt(rowconut);
         if("Facility".equals(datatype)){
+            String id=request.getParameter("qid");
+            if("".equals(id)||id==null){
+                id=Integer.toString(-1);
+            }
+            String name=request.getParameter("qname");
+            String date=request.getParameter("qdate");
+            if("".equals(name)||name==null){
+                name=null;
+            }
+            if("".equals(date)||date==null){
+                date=null;
+            };
+            QueryObj queryObj=new QueryObj();
+            queryObj.setFacilityid(Integer.parseInt(id));
+            queryObj.setFacilityname(name);
+            queryObj.setFacilitydate(date);
+            //findFacilityByParameter
         FacilityService service=new FacilityServiceImple();
-        Page<Facility> data = service.showCurrentFacility(pageoffset, Integer.parseInt(rowconut));
+            Page<Facility> data = service.showFacilityByParameter(queryObj,pageoffset, Integer.parseInt(rowconut));
+       // Page<Facility> data = service.showCurrentFacility(pageoffset, Integer.parseInt(rowconut));
         Gson gson=new Gson();
         response.getWriter().write(gson.toJson(data));
         }
         else if("VipCardView".equals(datatype)){
+            String id=request.getParameter("qid");
+            if("".equals(id)||id==null){
+                id=Integer.toString(-1);
+            }
+            String name=request.getParameter("qname");
+            String type =request.getParameter("qtype");
+            if("".equals(name)||name==null){
+                name=null;
+            }
+            if("请选择卡类型".equals(type)||"".equals(type)|| type ==null){
+                type =null;
+            };
+            VipCardView vipCardView=new VipCardView();
+            vipCardView.setCid(Integer.parseInt(id));
+            vipCardView.setE_name(name);
+            vipCardView.setT_name(type);
+
+
             VipCardViewService service=new VipCardViewServiceImple();
-            Page<VipCardView> data = service.showCurrentVipCardView(pageoffset, Integer.parseInt(rowconut));
+            Page<VipCardView> data = service.showCurrentVipCardByParameter(vipCardView,pageoffset, Integer.parseInt(rowconut));
+
             Gson gson=new Gson();
             response.getWriter().write(gson.toJson(data));
         }else if("Employee".equals(datatype)){
+            String id=request.getParameter("qid");
+            if("".equals(id)||id==null){
+                id=Integer.toString(-1);
+            }
+            String name=request.getParameter("qname");
+            String type =request.getParameter("qtype");
+            QueryEmployee qe=new QueryEmployee();
+            if("".equals(name)||name==null){
+                name=null;
+            }
+            qe.setEid(Integer.parseInt(id));
+            qe.setEname(name);
+            if("".equals(type)||type==null){
+                type="0";
+            }
+            qe.setJobid(Integer.parseInt(type));
             EmployeeService service=new EmployeeServiceImple();
-            Page<Employee> data = service.showCurrentEmployee(pageoffset, Integer.parseInt(rowconut));
+            Page<Employee> data = service.showEmployeeParameter(qe,pageoffset, Integer.parseInt(rowconut));
             Gson gson=new Gson();
             response.getWriter().write(gson.toJson(data));
         }else if("Vipinfoview".equals(datatype)){
+                    String phone=request.getParameter("phone");
+        if("".equals(phone)||phone==null){
+            phone=null;
+        }
+        String vipname=request.getParameter("vipname");
+        String cardtype=request.getParameter("cardtype");
+        if("".equals(vipname)||vipname==null){
+            vipname=null;
+        }
+        if("".equals(cardtype)||"0".equals(cardtype)||cardtype==null){
+            cardtype=null;
+        };
             VipinfoviewService service=new VipinfoviewServiceImple();
-            Page<Vipinfoview> data = service.showCurrentVipinfoview(pageoffset, Integer.parseInt(rowconut));
+            Page<Vipinfoview> data = service.findVipinfoviewByParameter(phone,cardtype,vipname,pageoffset, Integer.parseInt(rowconut));
             Gson gson=new Gson();
             response.getWriter().write(gson.toJson(data));
         }else if("Instructor".equals(datatype)){
+                 String e_name =request.getParameter("e_name");
+    if("".equals(e_name)|| e_name ==null){
+        e_name =null;
+    }
+    String e_id=request.getParameter("e_id");
+    String qsex=request.getParameter("qsex");
+    if("".equals(e_id)||e_id==null){
+        e_id=null;
+    }
+    if("".equals(qsex)||"0".equals(qsex)||qsex==null){
+        qsex=null;
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
             EmployeeService service=new EmployeeServiceImple();
-            Page<Instructor> data = service.showAllInstructorinfo(pageoffset, Integer.parseInt(rowconut));
+            Page<Instructor> data =   service.findInstructorByParameter(e_id,e_name,qsex,pageoffset, Integer.parseInt(rowconut));
             Gson gson=new Gson();
             response.getWriter().write(gson.toJson(data));
         }else if("Userinfo".equals(datatype)){
@@ -261,35 +352,35 @@ else{
     }
 
     protected void showSelectFacility(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       String id=request.getParameter("qid");
-       if("".equals(id)||id==null){
-           id=Integer.toString(-1);
-       }
-       String name=request.getParameter("qname");
-       String date=request.getParameter("qdate");
-       if("".equals(name)||name==null){
-           name=null;
-       }
-       if("".equals(date)||date==null){
-           date=null;
-       };
-        QueryObj queryObj=new QueryObj();
-        queryObj.setFacilityid(Integer.parseInt(id));
-        queryObj.setFacilityname(name);
-        queryObj.setFacilitydate(date);
-        FacilityService service=new FacilityServiceImple();
-        List<Facility> data = service.showFacilityByParameter(queryObj);
-        Gson gson=new Gson();
-        ReturnPath<Facility> returnPath=new ReturnPath<Facility>();
-        if(data.size()==0){
-            returnPath.setFlag(false);
-            returnPath.setInfo("没有查询到符合条件的数据");
-        }else {
-            returnPath.setFlag(true);
-            returnPath.setDataList(data);
-
-        }
-        response.getWriter().write(gson.toJson(returnPath));
+//       String id=request.getParameter("qid");
+//       if("".equals(id)||id==null){
+//           id=Integer.toString(-1);
+//       }
+//       String name=request.getParameter("qname");
+//       String date=request.getParameter("qdate");
+//       if("".equals(name)||name==null){
+//           name=null;
+//       }
+//       if("".equals(date)||date==null){
+//           date=null;
+//       };
+//        QueryObj queryObj=new QueryObj();
+//        queryObj.setFacilityid(Integer.parseInt(id));
+//        queryObj.setFacilityname(name);
+//        queryObj.setFacilitydate(date);
+//        FacilityService service=new FacilityServiceImple();
+//        List<Facility> data = service.showFacilityByParameter(queryObj);
+//        Gson gson=new Gson();
+//        ReturnPath<Facility> returnPath=new ReturnPath<Facility>();
+//        if(data.size()==0){
+//            returnPath.setFlag(false);
+//            returnPath.setInfo("没有查询到符合条件的数据");
+//        }else {
+//            returnPath.setFlag(true);
+//            returnPath.setDataList(data);
+//
+//        }
+//        response.getWriter().write(gson.toJson(returnPath));
     }
 
  /*==========================会员卡管理begin================================*/
@@ -378,35 +469,35 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
     }
     //查询会员卡信息
     protected void showSelectVipcard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String id=request.getParameter("qid");
-        if("".equals(id)||id==null){
-            id=Integer.toString(-1);
-        }
-        String name=request.getParameter("qname");
-        String type =request.getParameter("qtype");
-        if("".equals(name)||name==null){
-            name=null;
-        }
-        if("".equals(type)|| type ==null){
-            type =null;
-        };
-        VipCardView vipCardView=new VipCardView();
-        vipCardView.setCid(Integer.parseInt(id));
-        vipCardView.setE_name(name);
-        vipCardView.setT_name(type);
-        VipCardViewService service=new VipCardViewServiceImple ();
-        List<VipCardView> data = service.showFacilityByParameter(vipCardView);
-        Gson gson=new Gson();
-        ReturnPath<VipCardView> returnPath=new ReturnPath<VipCardView>();
-        if(data.size()==0){
-            returnPath.setFlag(false);
-            returnPath.setInfo("没有查询到符合条件的数据");
-        }else {
-            returnPath.setFlag(true);
-            returnPath.setDataList(data);
-
-        }
-        response.getWriter().write(gson.toJson(returnPath));
+//        String id=request.getParameter("qid");
+//        if("".equals(id)||id==null){
+//            id=Integer.toString(-1);
+//        }
+//        String name=request.getParameter("qname");
+//        String type =request.getParameter("qtype");
+//        if("".equals(name)||name==null){
+//            name=null;
+//        }
+//        if("".equals(type)|| type ==null){
+//            type =null;
+//        };
+//        VipCardView vipCardView=new VipCardView();
+//        vipCardView.setCid(Integer.parseInt(id));
+//        vipCardView.setE_name(name);
+//        vipCardView.setT_name(type);
+//        VipCardViewService service=new VipCardViewServiceImple ();
+//        List<VipCardView> data = service.showFacilityByParameter(vipCardView);
+//        Gson gson=new Gson();
+//        ReturnPath<VipCardView> returnPath=new ReturnPath<VipCardView>();
+//        if(data.size()==0){
+//            returnPath.setFlag(false);
+//            returnPath.setInfo("没有查询到符合条件的数据");
+//        }else {
+//            returnPath.setFlag(true);
+//            returnPath.setDataList(data);
+//
+//        }
+//        response.getWriter().write(gson.toJson(returnPath));
     }
     protected void buyservice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
          SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -486,36 +577,36 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
 
 
         protected void showEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            String id=request.getParameter("qid");
-            if("".equals(id)||id==null){
-                id=Integer.toString(-1);
-            }
-            String name=request.getParameter("qname");
-            String type =request.getParameter("qtype");
-            QueryEmployee qe=new QueryEmployee();
-            if("".equals(name)||name==null){
-                name=null;
-            }
-
-
-            qe.setEid(Integer.parseInt(id));
-            qe.setEname(name);
-            qe.setJobid(Integer.parseInt(type));
-
-
-            EmployeeService service=new EmployeeServiceImple ();
-            List<Employee> data = service.showEmployeeParameter(qe);
-            Gson gson=new Gson();
-            ReturnPath<Employee> returnPath=new ReturnPath<Employee>();
-            if(data==null){
-                returnPath.setFlag(false);
-                returnPath.setInfo("没有查询到符合条件的数据");
-            }else {
-                returnPath.setFlag(true);
-                returnPath.setDataList(data);
-
-            }
-            response.getWriter().write(gson.toJson(returnPath));
+//            String id=request.getParameter("qid");
+//            if("".equals(id)||id==null){
+//                id=Integer.toString(-1);
+//            }
+//            String name=request.getParameter("qname");
+//            String type =request.getParameter("qtype");
+//            QueryEmployee qe=new QueryEmployee();
+//            if("".equals(name)||name==null){
+//                name=null;
+//            }
+//
+//
+//            qe.setEid(Integer.parseInt(id));
+//            qe.setEname(name);
+//            qe.setJobid(Integer.parseInt(type));
+//
+//
+//            EmployeeService service=new EmployeeServiceImple ();
+//            List<Employee> data = service.showEmployeeParameter(qe);
+//            Gson gson=new Gson();
+//            ReturnPath<Employee> returnPath=new ReturnPath<Employee>();
+//            if(data==null){
+//                returnPath.setFlag(false);
+//                returnPath.setInfo("没有查询到符合条件的数据");
+//            }else {
+//                returnPath.setFlag(true);
+//                returnPath.setDataList(data);
+//
+//            }
+//            response.getWriter().write(gson.toJson(returnPath));
         }
     protected void  insertEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -607,34 +698,34 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
     }
 
     protected void showSelectVipinfoview(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String phone=request.getParameter("phone");
-        if("".equals(phone)||phone==null){
-            phone=null;
-        }
-        String vipname=request.getParameter("vipname");
-        String cardtype=request.getParameter("cardtype");
-        if("".equals(vipname)||vipname==null){
-            vipname=null;
-        }
-        if("".equals(cardtype)||"0".equals(cardtype)||cardtype==null){
-            cardtype=null;
-        };
-        System.out.println( phone);
-        System.out.println( vipname);
-        System.out.println(cardtype);
-        VipinfoviewService service=new VipinfoviewServiceImple();
-        List<Vipinfoview> data = service.findVipinfoviewByParameter(phone,cardtype,vipname);
-        Gson gson=new Gson();
-        ReturnPath<Vipinfoview> returnPath=new ReturnPath<Vipinfoview>();
-        if(data==null){
-            returnPath.setFlag(false);
-            returnPath.setInfo("没有查询到符合条件的数据");
-        } else {
-            returnPath.setFlag(true);
-            returnPath.setDataList(data);
-
-        }
-        response.getWriter().write(gson.toJson(returnPath));
+//        String phone=request.getParameter("phone");
+//        if("".equals(phone)||phone==null){
+//            phone=null;
+//        }
+//        String vipname=request.getParameter("vipname");
+//        String cardtype=request.getParameter("cardtype");
+//        if("".equals(vipname)||vipname==null){
+//            vipname=null;
+//        }
+//        if("".equals(cardtype)||"0".equals(cardtype)||cardtype==null){
+//            cardtype=null;
+//        };
+//        System.out.println( phone);
+//        System.out.println( vipname);
+//        System.out.println(cardtype);
+//        VipinfoviewService service=new VipinfoviewServiceImple();
+//        List<Vipinfoview> data = service.findVipinfoviewByParameter(phone,cardtype,vipname);
+//        Gson gson=new Gson();
+//        ReturnPath<Vipinfoview> returnPath=new ReturnPath<Vipinfoview>();
+//        if(data==null){
+//            returnPath.setFlag(false);
+//            returnPath.setInfo("没有查询到符合条件的数据");
+//        } else {
+//            returnPath.setFlag(true);
+//            returnPath.setDataList(data);
+//
+//        }
+//        response.getWriter().write(gson.toJson(returnPath));
     }
     protected void  insertVipinfoview(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name=request.getParameter("addname");
@@ -713,36 +804,36 @@ protected void initCardType(HttpServletRequest request, HttpServletResponse resp
 //    System.out.println( gson.toJson(data));
 //}
 protected void showSelectInstructor(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-     String e_name =request.getParameter("e_name");
-    if("".equals(e_name)|| e_name ==null){
-        e_name =null;
-    }
-    String e_id=request.getParameter("e_id");
-    String qsex=request.getParameter("qsex");
-    if("".equals(e_id)||e_id==null){
-        e_id=null;
-    }
-    if("".equals(qsex)||"0".equals(qsex)||qsex==null){
-        qsex=null;
-    };
-    System.out.println("name:"+e_name);
-    System.out.println("id:"+ e_id);
-    System.out.println("qsex:"+qsex);
-    EmployeeService service=new EmployeeServiceImple();
-    List<Instructor> data = service.findInstructorByParameter(e_id,e_name,qsex);
-    Gson gson=new Gson();
-    ReturnPath<Instructor> returnPath=new ReturnPath<Instructor>();
-    if(data!=null){
-    if(data.size()!=0) {
-        returnPath.setFlag(true);
-        returnPath.setDataList(data);
-
-    }
-    }else {
-        returnPath.setFlag(false);
-        returnPath.setInfo("没有查询到符合条件的数据");
-    }
-    response.getWriter().write(gson.toJson(returnPath));
+//     String e_name =request.getParameter("e_name");
+//    if("".equals(e_name)|| e_name ==null){
+//        e_name =null;
+//    }
+//    String e_id=request.getParameter("e_id");
+//    String qsex=request.getParameter("qsex");
+//    if("".equals(e_id)||e_id==null){
+//        e_id=null;
+//    }
+//    if("".equals(qsex)||"0".equals(qsex)||qsex==null){
+//        qsex=null;
+//    };
+//    System.out.println("name:"+e_name);
+//    System.out.println("id:"+ e_id);
+//    System.out.println("qsex:"+qsex);
+//    EmployeeService service=new EmployeeServiceImple();
+//    List<Instructor> data = service.findInstructorByParameter(e_id,e_name,qsex);
+//    Gson gson=new Gson();
+//    ReturnPath<Instructor> returnPath=new ReturnPath<Instructor>();
+//    if(data!=null){
+//    if(data.size()!=0) {
+//        returnPath.setFlag(true);
+//        returnPath.setDataList(data);
+//
+//    }
+//    }else {
+//        returnPath.setFlag(false);
+//        returnPath.setInfo("没有查询到符合条件的数据");
+//    }
+//    response.getWriter().write(gson.toJson(returnPath));
 }
     protected void showSelectStudentinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id =request.getParameter("id");
@@ -1475,15 +1566,14 @@ response.getWriter().write(gson.toJson(returnPath));
     }
     protected void   shoeCurentUserinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 
-                    HttpSession session = request.getSession();
-            Vipinfo u=( Vipinfo)     session.getAttribute("userinfo");
-
-        VipCardView  vipCardView =new VipCardView();
-        vipCardView.setCid(u.getCard_id());
-        VipCardViewService service=new VipCardViewServiceImple ();
-        List<VipCardView> data = service.showFacilityByParameter(vipCardView);
-        Gson gson=new Gson();
-        response.getWriter().write(gson.toJson(data));
+//                    HttpSession session = request.getSession();
+//            Vipinfo u=( Vipinfo)     session.getAttribute("userinfo");
+//        VipCardView  vipCardView =new VipCardView();
+//        vipCardView.setCid(u.getCard_id());
+//        VipCardViewService service=new VipCardViewServiceImple ();
+//        List<VipCardView> data = service.showFacilityByParameter(vipCardView);
+//        Gson gson=new Gson();
+//        response.getWriter().write(gson.toJson(data));
     }
 
     protected void   shoeCurentUserRenew(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {

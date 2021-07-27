@@ -10,7 +10,7 @@ public interface EmployeeDao {
     List<Employee> findEmployeeAll(Connection con);
     Page<Employee> findEmployeeByPagesize(Connection con, int offset, int rowcount);
     boolean addEmployee(Connection con,Employee e,double salary) throws SQLException;
-    List<Employee> findEmployeeByParameter(Connection con, QueryEmployee q) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+    Page<Employee> findEmployeeByParameter(Connection con, QueryEmployee q,int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 boolean updateEmployee(Connection con,Employee e) throws SQLException;
     List<Employee> findEmployeebyId(Connection con,int id) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 String findPhoneByid(Connection con,int id) throws SQLException;

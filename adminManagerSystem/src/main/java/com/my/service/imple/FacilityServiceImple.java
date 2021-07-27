@@ -94,12 +94,12 @@ public class FacilityServiceImple implements FacilityService {
     }
 
     @Override
-    public List<Facility> showFacilityByParameter(QueryObj queryObj) {
+    public  Page<Facility> showFacilityByParameter(QueryObj queryObj, int offset, int rowcount) {
         Connection con=null;
-        List<Facility> datalist = null;
+        Page<Facility> datalist=null;
         try {
             con=JDBCutil.getConnection();
-            datalist = dao.findFacilityByParameter(con,queryObj);
+            datalist = dao.findFacilityByParameter(con,queryObj,  offset, rowcount);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
@@ -115,6 +115,6 @@ public class FacilityServiceImple implements FacilityService {
                 e.printStackTrace();
             }
         }
-        return datalist;
+        return  datalist;
     }
 }

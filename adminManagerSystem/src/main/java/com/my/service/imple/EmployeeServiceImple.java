@@ -151,13 +151,12 @@ private CheckinginDao checkinginDao=new  CheckinginDaoImple();
     }
 
     @Override
-    public List<Employee> showEmployeeParameter(QueryEmployee e) {
+    public Page<Employee> showEmployeeParameter(QueryEmployee e,int offset, int rowcount) {
         Connection con=null;
-        List<Employee> datalist = null;
-
+        Page<Employee> datalist=null;
         try {
             con=JDBCutil.getConnection();
-            datalist=dao.findEmployeeByParameter(con,e);
+            datalist=dao.findEmployeeByParameter(con,e,offset,rowcount);
         } catch (SQLException e1) {
             e1.printStackTrace();
         } catch (NoSuchFieldException e1) {
@@ -287,12 +286,12 @@ private CheckinginDao checkinginDao=new  CheckinginDaoImple();
     }
 
     @Override
-    public List<Instructor> findInstructorByParameter(String e_id, String e_name, String sex) {
+    public  Page<Instructor> findInstructorByParameter(String e_id, String e_name, String sex,int offset, int rowcount) {
         Connection con=null;
-        List<Instructor> datalist = null;
+        Page<Instructor> datalist = null;
         try {
             con=JDBCutil.getConnection();
-            datalist = instructorDao.findInstructorByParameter(con,e_id,e_name,sex);
+            datalist = instructorDao.findInstructorByParameter(con,e_id,e_name,sex, offset, rowcount);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {

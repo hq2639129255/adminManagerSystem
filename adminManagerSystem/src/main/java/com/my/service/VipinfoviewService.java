@@ -6,8 +6,9 @@ import java.sql.Connection;
 import java.util.List;
 
 public interface VipinfoviewService {
+
     Page<Vipinfoview> showCurrentVipinfoview(int offset, int rowcount);
-    List<Vipinfoview> findVipinfoviewByParameter(String  phone, String type, String name);
+    Page<Vipinfoview> findVipinfoviewByParameter(String  phone, String type, String name,int offset, int rowcount);
     boolean addviminfo( Vipinfo vip, int type);
     Boolean updatevipinfobyid(Vipinfo vip);
     Vipinfo getCurentVipinfo(String phone);

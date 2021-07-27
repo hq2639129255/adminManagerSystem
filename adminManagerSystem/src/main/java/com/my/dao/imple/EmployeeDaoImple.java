@@ -84,29 +84,145 @@ if(empKey!=0) {
     }
 
     @Override
-    public List<Employee> findEmployeeByParameter(Connection con, QueryEmployee q) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        List<Employee> datalist = new ArrayList<Employee>();
+    public Page<Employee> findEmployeeByParameter(Connection con, QueryEmployee q,int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        Page page = new Page();
+        List<Employee> data = new ArrayList<Employee>();
         if (q.getEid() == -1 && q.getJobid()==0 && q.getEname() == null) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee` where  `e_status`=1";
-
-            datalist= this.getListInstence(con,sql);
-
+            page= findEmployeeByPagesize( con, offset, rowcount);
 
         } else if (q.getEid() != -1) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `e_id`=? and `e_status`=1";
-            datalist= this.getListInstence(con,sql,q.getEid());
-        }  else if (q.getEid() == -1 && q.getJobid() !=0 && q.getEname() != null) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `j_id`=? AND `e_name`=? and `e_status`=1";
-            datalist =   this.getListInstence(con,sql,q.getJobid(),q.getEname());
+            String sql ="SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `e_id`=? and `e_status`=1 LIMIT ?,?";
+            try {
+                String sqlsun = "SELECT COUNT(1) AS sun  FROM   `employee` where `e_status`=1 and `e_id`=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun,q.getEid());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
 
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                PreparedStatement pre = con.prepareStatement(sql);
+                pre.setInt(1, q.getEid());
+                pre.setInt(2, offset);
+                pre.setInt(3, rowcount);
+                ResultSet re = pre.executeQuery();
+                while (re.next()) {
+                    Employee e = new Employee();
+                    e.setE_id(re.getInt("e_id"));
+                    e.setJ_id(re.getInt("j_id"));
+                    e.setE_name(re.getString("e_name"));
+                    e.setAddress(re.getString("address"));
+                    e.setSex(re.getString("sex"));
+                    e.setPhone(re.getString("phone"));
+                    e.setEmail(re.getString("email"));
+                    e.setWorkId(re.getInt("workId"));
+                    data.add(e);
+                }
+                page.setCurentrow(data.size());
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }  else if (q.getEid() == -1 && q.getJobid() !=0 && q.getEname() != null) {
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `j_id`=? AND `e_name`=? and `e_status`=1 LIMIT ?,?";
+
+            try {
+                String sqlsun = "SELECT COUNT(1) AS sun  FROM   `employee` where `e_status`=1 AND `j_id`=? AND `e_name`=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun,q.getJobid(),q.getEname());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                PreparedStatement pre = con.prepareStatement(sql);
+
+                pre.setInt(1, q.getJobid());
+                pre.setString(2,  q.getEname());
+                pre.setInt(3, offset);
+                pre.setInt(4, rowcount);
+                ResultSet re = pre.executeQuery();
+                while (re.next()) {
+                    Employee e = new Employee();
+                    e.setE_id(re.getInt("e_id"));
+                    e.setJ_id(re.getInt("j_id"));
+                    e.setE_name(re.getString("e_name"));
+                    e.setAddress(re.getString("address"));
+                    e.setSex(re.getString("sex"));
+                    e.setPhone(re.getString("phone"));
+                    e.setEmail(re.getString("email"));
+                    e.setWorkId(re.getInt("workId"));
+                    data.add(e);
+                }
+                page.setCurentrow(data.size());
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }else if (q.getEid() == -1&& q.getJobid() ==0 && q.getEname() != null) {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `e_name`=? and `e_status`=1";
-            datalist= this.getListInstence(con,sql,q.getEname());
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `e_name`=? and `e_status`=1 LIMIT ?,?";
+
+            try {
+                String sqlsun = "SELECT COUNT(1) AS sun  FROM   `employee` where `e_status`=1 and `e_name`=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun,q.getEname());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                PreparedStatement pre = con.prepareStatement(sql);
+
+                pre.setString(1,q.getEname());
+                pre.setInt(2, offset);
+                pre.setInt(3, rowcount);
+                ResultSet re = pre.executeQuery();
+                while (re.next()) {
+                    Employee e = new Employee();
+                    e.setE_id(re.getInt("e_id"));
+                    e.setJ_id(re.getInt("j_id"));
+                    e.setE_name(re.getString("e_name"));
+                    e.setAddress(re.getString("address"));
+                    e.setSex(re.getString("sex"));
+                    e.setPhone(re.getString("phone"));
+                    e.setEmail(re.getString("email"));
+                    e.setWorkId(re.getInt("workId"));
+                    data.add(e);
+                }
+                page.setCurentrow(data.size());
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }else {
-            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `j_id`=? and `e_status`=1";
-            datalist = this.getListInstence(con, sql, q.getJobid());
+            String sql = "SELECT  `e_id`,`j_id`,`e_name`,`address`,`sex`,`phone`,`email`,`workId` FROM `employee`  WHERE `j_id`=? and `e_status`=1 LIMIT ?,?";
+
+            try {
+                String sqlsun = "SELECT COUNT(1) AS sun  FROM   `employee` where `e_status`=1 and `j_id`=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun, q.getJobid());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                PreparedStatement pre = con.prepareStatement(sql);
+                pre.setInt(1,q.getJobid());
+                pre.setInt(2, offset);
+                pre.setInt(3, rowcount);
+                ResultSet re = pre.executeQuery();
+                while (re.next()) {
+                    Employee e = new Employee();
+                    e.setE_id(re.getInt("e_id"));
+                    e.setJ_id(re.getInt("j_id"));
+                    e.setE_name(re.getString("e_name"));
+                    e.setAddress(re.getString("address"));
+                    e.setSex(re.getString("sex"));
+                    e.setPhone(re.getString("phone"));
+                    e.setEmail(re.getString("email"));
+                    e.setWorkId(re.getInt("workId"));
+                    data.add(e);
+                }
+                page.setCurentrow(data.size());
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
-        return   datalist;
+        return   page;
     }
 
     @Override

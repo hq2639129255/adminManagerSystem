@@ -15,14 +15,19 @@ public interface EmployeeService {
      */
     List<SalaryView> findAllSalaryView();
     List<Jobtype> initJobtypeList();
+
+
     Page<Employee> showCurrentEmployee(int offset, int rowcount);
+
+
+
     boolean addEmployee(Employee e,User user,double salary);
-    List<Employee> showEmployeeParameter(QueryEmployee e);
+    Page<Employee> showEmployeeParameter(QueryEmployee e,int offset, int rowcount);
     boolean updateEmployee(Employee e);
     List<Employee> showSelectEmployeey(int id);
     boolean deleteEmployeeByid(int eid,int sid);
     Page<Instructor> showAllInstructorinfo(int offset, int rowcount);
-    List<Instructor> findInstructorByParameter(String e_id, String e_name, String sex);
+    Page<Instructor> findInstructorByParameter(String e_id, String e_name, String sex,int offset, int rowcount);
     List<Studentinfo> findStudentBye_id( int id);
     List<Studentinfo> selectStudentinfoByParameter(String  phone,String name,String sex,int e_id);
    boolean replaceCoach(int newe_id,int olde_id,int v_id);

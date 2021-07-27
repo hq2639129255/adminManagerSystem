@@ -333,6 +333,9 @@
                 type: "GET",
                 url: "/admin/findPageData.do",
                 data:{
+                    qid:$("input[name=qid]").val(),
+                    qname:$("input[name=qname]").val(),
+                    qtype:$("#qjoptype>option:selected").val(),
                     pagetype:$("[name=type]").val(),
                     rowconut:$("[name=pagecount]>option:selected").val(),
                     curentpage:1,
@@ -359,6 +362,9 @@
                 type: "GET",
                 url: "/admin/findPageData.do",
                 data:{
+                    qid:$("input[name=qid]").val(),
+                    qname:$("input[name=qname]").val(),
+                    qtype:$("#qjoptype>option:selected").val(),
                     pagetype:$("[name=type]").val(),
                     rowconut:$("[name=pagecount]>option:selected").val(),
                     curentpage:parseInt($("#curentpage").text())-1,
@@ -385,6 +391,9 @@
                 type: "GET",
                 url: "/admin/findPageData.do",
                 data:{
+                    qid:$("input[name=qid]").val(),
+                    qname:$("input[name=qname]").val(),
+                    qtype:$("#qjoptype>option:selected").val(),
                     pagetype:$("[name=type]").val(),
                     rowconut:$("[name=pagecount]>option:selected").val(),
                     curentpage:parseInt($("#curentpage").text())+1,
@@ -414,6 +423,9 @@
                 type: "GET",
                 url: "/admin/findPageData.do",
                 data:{
+                    qid:$("input[name=qid]").val(),
+                    qname:$("input[name=qname]").val(),
+                    qtype:$("#qjoptype>option:selected").val(),
                     pagetype:$("[name=type]").val(),
                     rowconut:$("[name=pagecount]>option:selected").val(),
                     curentpage:$("#pagesun").text(),
@@ -491,7 +503,12 @@ $(data).each(function (i,o) {
         });
 
         $.ajax({
-            data:{pagetype:$("[name=type]").val()},
+            data:{
+                qid:$("input[name=qid]").val(),
+                qname:$("input[name=qname]").val(),
+                qtype:$("#qjoptype>option:selected").val(),
+                pagetype:$("[name=type]").val(),
+            },
             type: "GET",
             url: "/admin/findPageData.do",
             success: function (data) {
@@ -773,71 +790,76 @@ function  checkEmail(){
     $("#queryOK").click(function () {
         $.ajax({
             type:"POST",
-            url:'showEmployee.do',
-            dataType:"JSON",
-            data:{qid:$("input[name=qid]").val(),
+            url:'/admin/findPageData.do',
+            data:{
+                rowconut:$("[name=pagecount]>option:selected").val(),
+                pagetype:$("[name=type]").val(),
+                qid:$("input[name=qid]").val(),
                 qname:$("input[name=qname]").val(),
                 qtype:$("#qjoptype>option:selected").val()
             },
             success:function (data) {
-                if(data.flag){
-                    $("#datalist").html("");
-                    $(data.dataList).each(function (index,obj) {
-                        let  $datatr=$("<tr>"+
-                            "<td>"+obj.e_id+"</td>"+
-                            "<td>"+obj.e_name+"</td>"+
-                            "<td>"+ workidMap.get(parseInt(+obj.workId))+"</td>"+
-                            "<td>"+joptypeMap.get(parseInt(obj.j_id))+"</td>"+
-                            "<td>"+obj.address+"</td>"+
-                            "<td>"+obj.sex+"</td>"+
-                            "<td>"+obj.phone+"</td>"+
-                            "<td>"+obj.email+"</td>"+
-                            "</tr>");
-                        $tdupdate=$('<td> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">编辑</a> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#del" data-backdrop="static">删除</a> </td>');
-                        $datatr.append($tdupdate);
-                        $datatr.find("a:first").on("click",function () {
-                            curentDataPostion=$(this).parent().parent();
-                            $("[name=updateid]").val(curentDataPostion.find("td:first").text());
-                            $("[name=updatename]").val(curentDataPostion.find("td:eq(1)").text());
-                            $("[name=updatAddrees]").val(curentDataPostion.find("td:eq(4)").text());
-                            $("[name=updatphone]").val(curentDataPostion.find("td:eq(6)").text());
-                            $("[name=updatemil]").val(curentDataPostion.find("td:eq(7)").text());
-                        })
-                        $datatr.find("a:eq(1)").on("click",function () {
-                            curentDataPostion=$(this).parent().parent();
+                $("#datalist").html("");
+                initdata(data);
 
-                            $.ajax({
-                                dataType:"JSON",
-                                data:{id:curentDataPostion.find("td:first").text()},
-                                type: "GET",
-                                url: "/admin/initteach.do",
-                                success: function (data) {
-                                    $("#seletTeach>option:eq(0)").siblings().remove();
-                                    $(data).each(function (index,obj) {
-                                        console.log(obj.e_name);
-                                        let $option=$("<option>"+obj.e_id+"&nbsp;"+obj.e_name+"</option>");
-                                        $option.attr({value:obj.e_id});
-                                        $("#seletTeach").append( $option);
-                                    })
-
-                                }
-
-                            })
-
-                        })
-
-                        $("#datalist").append($datatr);
-
-
-
-
-
-
-                    })
-
-                }else {
-                    alert(data.info)
-                }
+                // if(data.flag){
+                //     $("#datalist").html("");
+                //     $(data.dataList).each(function (index,obj) {
+                //         let  $datatr=$("<tr>"+
+                //             "<td>"+obj.e_id+"</td>"+
+                //             "<td>"+obj.e_name+"</td>"+
+                //             "<td>"+ workidMap.get(parseInt(+obj.workId))+"</td>"+
+                //             "<td>"+joptypeMap.get(parseInt(obj.j_id))+"</td>"+
+                //             "<td>"+obj.address+"</td>"+
+                //             "<td>"+obj.sex+"</td>"+
+                //             "<td>"+obj.phone+"</td>"+
+                //             "<td>"+obj.email+"</td>"+
+                //             "</tr>");
+                //         $tdupdate=$('<td> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">编辑</a> <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#del" data-backdrop="static">删除</a> </td>');
+                //         $datatr.append($tdupdate);
+                //         $datatr.find("a:first").on("click",function () {
+                //             curentDataPostion=$(this).parent().parent();
+                //             $("[name=updateid]").val(curentDataPostion.find("td:first").text());
+                //             $("[name=updatename]").val(curentDataPostion.find("td:eq(1)").text());
+                //             $("[name=updatAddrees]").val(curentDataPostion.find("td:eq(4)").text());
+                //             $("[name=updatphone]").val(curentDataPostion.find("td:eq(6)").text());
+                //             $("[name=updatemil]").val(curentDataPostion.find("td:eq(7)").text());
+                //         })
+                //         $datatr.find("a:eq(1)").on("click",function () {
+                //             curentDataPostion=$(this).parent().parent();
+                //
+                //             $.ajax({
+                //                 dataType:"JSON",
+                //                 data:{id:curentDataPostion.find("td:first").text()},
+                //                 type: "GET",
+                //                 url: "/admin/initteach.do",
+                //                 success: function (data) {
+                //                     $("#seletTeach>option:eq(0)").siblings().remove();
+                //                     $(data).each(function (index,obj) {
+                //                         console.log(obj.e_name);
+                //                         let $option=$("<option>"+obj.e_id+"&nbsp;"+obj.e_name+"</option>");
+                //                         $option.attr({value:obj.e_id});
+                //                         $("#seletTeach").append( $option);
+                //                     })
+                //
+                //                 }
+                //
+                //             })
+                //
+                //         })
+                //
+                //         $("#datalist").append($datatr);
+                //
+                //
+                //
+                //
+                //
+                //
+                //     })
+                //
+                // }else {
+                //     alert(data.info)
+                // }
 
 
             }

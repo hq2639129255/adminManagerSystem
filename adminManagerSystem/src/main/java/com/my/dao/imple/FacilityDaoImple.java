@@ -82,42 +82,164 @@ public class FacilityDaoImple extends BaseDao<Facility> implements FacilityDao {
     }
 
     @Override
-    public List<Facility> findFacilityByParameter(Connection con, QueryObj queryObj) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        List<Facility> datalist = new ArrayList<Facility>();
+    public Page<Facility> findFacilityByParameter(Connection con, QueryObj queryObj, int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        Page page = new Page();
+        List<Facility> data = new ArrayList<Facility>();
+
         if (queryObj.getFacilityid() == -1 && queryObj.getFacilityname() == null && queryObj.getFacilitydate() == null) {
-            String sql = "SELECT `f_id` as id,`f_name`,`remark`,`buyTime` FROM `facility`";
+            String sql = "SELECT `f_id`,`f_name`,`remark`,`buyTime` FROM `facility` LIMIT ?,?";
 
-            ResultSet re = this.getListResultSet(con, sql);
+            try {
+                String sqlsun = "  SELECT COUNT(1) AS sun  FROM   `facility`";
+                Long rowsun = (Long) this.getValue(con, sqlsun);
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
 
-            datalist = this.parserResult(re);
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                PreparedStatement pre = con.prepareStatement(sql);
+                pre.setInt(1, offset);
+                pre.setInt(2, rowcount);
+                ResultSet re = pre.executeQuery();
+                while (re.next()) {
+                    Facility f = new Facility();
+                    f.setId(re.getInt("f_id"));
+                    f.setF_name(re.getString("f_name"));
+                    f.setRemark(re.getString("remark"));
+                    f.setBuyTime(simple.format(re.getDate("buyTime")));
+                    data.add(f);
+                }
+                page.setCurentrow(data.size());
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         } else if (queryObj.getFacilityid() != -1) {
-            String sql = "SELECT `f_id` as id,`f_name`,`remark`,`buyTime` FROM `facility` WHERE `f_id`=?";
-            ResultSet re = this.getListResultSet(con, sql, queryObj.getFacilityid());
-            datalist = this.parserResult(re);
-        }  else if (queryObj.getFacilityid() == -1 && queryObj.getFacilityname() != null && queryObj.getFacilitydate() != null) {
-            String sql = "SELECT `f_id`,`f_name`,`remark`,`buyTime` FROM `facility` WHERE DATE(`buyTime`)=STR_TO_DATE(?, '%Y-%m-%d') AND `f_name`=?";
-            ResultSet re = this.getListResultSet(con, sql, queryObj.getFacilityname(), queryObj.getFacilitydate());
-            datalist = this.parserResult(re);
-        }else if (queryObj.getFacilityid() == -1 && queryObj.getFacilityname() == null && queryObj.getFacilitydate() != null) {
-            String sql = "SELECT `f_id` as id,`f_name`,`remark`,`buyTime` FROM `facility`  WHERE  DATE(`buyTime`)=STR_TO_DATE(?, '%Y-%m-%d')";
-            ResultSet re = this.getListResultSet(con, sql, queryObj.getFacilitydate());
-            datalist = this.parserResult(re);
-        }else {
-            String sql = "SELECT `f_id` as id,`f_name`,`remark`,`buyTime` FROM `facility`  WHERE  `f_name`=?";
-            ResultSet re = this.getListResultSet(con, sql, queryObj.getFacilityname());
-            datalist = this.parserResult(re);
+            String sql = "SELECT `f_id`,`f_name`,`remark`,`buyTime` FROM `facility` WHERE `f_id`=? LIMIT ?,?";
+
+            try {
+                String sqlsun = "  SELECT COUNT(1) AS sun  FROM   `facility` WHERE `f_id`=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun, queryObj.getFacilityid());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                PreparedStatement pre = con.prepareStatement(sql);
+                pre.setInt(1, queryObj.getFacilityid());
+                pre.setInt(2, offset);
+                pre.setInt(3, rowcount);
+                ResultSet re = pre.executeQuery();
+                while (re.next()) {
+                    Facility f = new Facility();
+                    f.setId(re.getInt("f_id"));
+                    f.setF_name(re.getString("f_name"));
+                    f.setRemark(re.getString("remark"));
+                    f.setBuyTime(simple.format(re.getDate("buyTime")));
+                    data.add(f);
+                }
+                page.setCurentrow(data.size());
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else if (queryObj.getFacilityid() == -1 && queryObj.getFacilityname() != null && queryObj.getFacilitydate() != null) {
+            String sql = "SELECT `f_id`,`f_name`,`remark`,`buyTime` FROM `facility` WHERE DATE(`buyTime`)=STR_TO_DATE(?, '%Y-%m-%d') AND `f_name`=? LIMIT ?,?";
+            try {
+                String sqlsun = "SELECT COUNT(1) AS sun  FROM   `facility` where DATE(`buyTime`)=STR_TO_DATE(?, '%Y-%m-%d') AND `f_name`=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun, queryObj.getFacilityname(), queryObj.getFacilitydate());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                PreparedStatement pre = con.prepareStatement(sql);
+                pre.setString(1, queryObj.getFacilitydate());
+                pre.setString(2, queryObj.getFacilityname());
+                pre.setInt(3, offset);
+                pre.setInt(4, rowcount);
+                ResultSet re = pre.executeQuery();
+                while (re.next()) {
+                    Facility f = new Facility();
+                    f.setId(re.getInt("f_id"));
+                    f.setF_name(re.getString("f_name"));
+                    f.setRemark(re.getString("remark"));
+                    f.setBuyTime(simple.format(re.getDate("buyTime")));
+                    data.add(f);
+                }
+                page.setCurentrow(data.size());
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        } else if (queryObj.getFacilityid() == -1 && queryObj.getFacilityname() == null && queryObj.getFacilitydate() != null) {
+
+            String sql = "SELECT `f_id`,`f_name`,`remark`,`buyTime` FROM `facility`  WHERE  DATE(`buyTime`)=STR_TO_DATE(?, '%Y-%m-%d') LIMIT ?,?";
+
+
+            try {
+                String sqlsun = "SELECT COUNT(1) AS sun  FROM   `facility` WHERE  DATE(`buyTime`)=STR_TO_DATE(?, '%Y-%m-%d')";
+                Long rowsun = (Long) this.getValue(con, sqlsun, queryObj.getFacilitydate());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                PreparedStatement pre = con.prepareStatement(sql);
+
+                pre.setString(1, queryObj.getFacilitydate());
+                pre.setInt(2, offset);
+                pre.setInt(3, rowcount);
+                ResultSet re = pre.executeQuery();
+                while (re.next()) {
+                    Facility f = new Facility();
+                    f.setId(re.getInt("f_id"));
+                    f.setF_name(re.getString("f_name"));
+                    f.setRemark(re.getString("remark"));
+                    f.setBuyTime(simple.format(re.getDate("buyTime")));
+                    data.add(f);
+                }
+                page.setCurentrow(data.size());
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            String sql = "SELECT `f_id`,`f_name`,`remark`,`buyTime` FROM `facility`  WHERE  `f_name`=? LIMIT ?,?";
+            try {
+                String sqlsun = "SELECT COUNT(1) AS sun  FROM   `facility` WHERE `f_name`=?";
+                Long rowsun = (Long) this.getValue(con, sqlsun, queryObj.getFacilityname());
+                page.setSunrow(Integer.parseInt(rowsun.toString()));
+                page.setCurentPage((offset / rowcount) + 1);
+                page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+                PreparedStatement pre = con.prepareStatement(sql);
+                pre.setString(1, queryObj.getFacilityname());
+                pre.setInt(2, offset);
+                pre.setInt(3, rowcount);
+                ResultSet re = pre.executeQuery();
+                while (re.next()) {
+                    Facility f = new Facility();
+                    f.setId(re.getInt("f_id"));
+                    f.setF_name(re.getString("f_name"));
+                    f.setRemark(re.getString("remark"));
+                    f.setBuyTime(simple.format(re.getDate("buyTime")));
+                    data.add(f);
+                }
+                page.setCurentrow(data.size());
+                page.setPageData(data);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
 
+        return page;
 
-        return datalist;
-    }
-
-    public List<Facility> parserResult(ResultSet re) {
+}
+    public List<Facility> parserResult (ResultSet re){
         List<Facility> data = new ArrayList<>();
         try {
             while (re.next()) {
                 Facility f = new Facility();
-                f.setId(re.getInt("id"));
+                f.setId(re.getInt("f_id"));
                 f.setF_name(re.getString("f_name"));
                 f.setRemark(re.getString("remark"));
                 f.setBuyTime(simple.format(re.getDate("buyTime")));
@@ -130,7 +252,7 @@ public class FacilityDaoImple extends BaseDao<Facility> implements FacilityDao {
                 re.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }finally{
+            } finally {
                 try {
                     re.close();
                 } catch (SQLException e) {
@@ -140,4 +262,5 @@ public class FacilityDaoImple extends BaseDao<Facility> implements FacilityDao {
         }
         return data;
     }
+
 }

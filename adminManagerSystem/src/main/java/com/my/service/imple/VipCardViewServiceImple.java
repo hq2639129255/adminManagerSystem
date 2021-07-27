@@ -147,13 +147,13 @@ public class VipCardViewServiceImple implements VipCardViewService {
     }
 
     @Override
-    public List<VipCardView> showFacilityByParameter(VipCardView vipCardView) {
-        List<VipCardView> data = null;
+    public Page<VipCardView> showCurrentVipCardByParameter(VipCardView vipCardView,int offset, int rowcount) {
+        Page<VipCardView> data = null;
         Connection con=null;
         try {
           con=JDBCutil.getConnection();
             List<VipCardView> datalist = null;
-            data = dao.findVipCardViewByParameter(con, vipCardView);
+            data = dao.findVipCardViewByParameter(con, vipCardView, offset,  rowcount);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {

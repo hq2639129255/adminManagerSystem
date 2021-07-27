@@ -11,6 +11,6 @@ public interface VipCardViewDao {
     boolean insert(Connection con, int cardtype, Vipinfo vipinfo);
     Page<VipCardView> findVipCardViewByPagesize(Connection con,int offset, int rowcount) throws IllegalAccessException, NoSuchFieldException, InstantiationException;
     boolean updateCardType(Connection con,int type, int id) throws SQLException;
-    public List<VipCardView> findVipCardViewByParameter(Connection con, VipCardView vipCardView) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+    public  Page<VipCardView> findVipCardViewByParameter(Connection con, VipCardView vipCardView, int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 
         }

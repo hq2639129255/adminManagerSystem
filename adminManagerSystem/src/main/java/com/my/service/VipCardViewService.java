@@ -12,7 +12,7 @@ public interface VipCardViewService {
     boolean addcard(int cardtype,Vipinfo vip);
     Page<VipCardView>  showCurrentVipCardView(int offset, int rowcount);
     boolean updatecardinfo(VipCardView v);
-    List<VipCardView> showFacilityByParameter(VipCardView vipCardView);
+    Page<VipCardView> showCurrentVipCardByParameter(VipCardView vipCardView,int offset, int rowcount);
     List<Setmeal> initSetmeal();
     boolean buyservice(boolean flag, int daycount,int id);
 

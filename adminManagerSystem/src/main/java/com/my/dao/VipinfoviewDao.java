@@ -12,7 +12,7 @@ import java.util.List;
 public interface VipinfoviewDao {
     List<Vipinfoview> findVipinfoviewAll(Connection con);
     Page<Vipinfoview> findVipinfoviewByPagesize(Connection con, int offset, int rowcount) throws IllegalAccessException, NoSuchFieldException, InstantiationException;
-    public List<Vipinfoview> findVipinfoviewByParameter(Connection con,String  phone,String type,String name) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+    public Page<Vipinfoview> findVipinfoviewByParameter(Connection con,String  phone,String type,String name, int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 
     /**
      *

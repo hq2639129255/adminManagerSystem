@@ -72,30 +72,136 @@ if(empl!=null) {
     }
 
     @Override
-    public List<Instructor> findInstructorByParameter(Connection con, String e_id, String e_name, String sex) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
-        List<Instructor> datalist = new ArrayList<Instructor>();
+    public  Page<Instructor>  findInstructorByParameter(Connection con, String e_id, String e_name, String sex,int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        Page<Instructor> page = new Page<Instructor>();
+        List<Instructor> data = new ArrayList<Instructor>();
         if (e_id==null && e_name==null && sex== null) {
-            String sql ="SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1";
-            datalist= this.getListInstence(con, sql);
-            datalist=this.findStudentcount(con,datalist);
+
+            page=   findInstructorByPagesize( con,  offset,  rowcount);
+
+
+//            String sql ="SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1";
+//            datalist= this.getListInstence(con, sql);
+//            datalist=this.findStudentcount(con,datalist);
         } else if (e_id != null) {
-            String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and `e_id`=?";
-            datalist = this.getListInstence(con,sql,e_id);
-            datalist=this.findStudentcount(con,datalist);
+            String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and `e_id`=? LIMIT ?,?";
+
+            String sqlsun = "SELECT COUNT(1) AS sun  FROM    `employee` WHERE `j_id`=2 and  `e_status`=1 and `e_id`=?";
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,e_id);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            data  = this.getListInstence(con, sql,e_id, offset, rowcount);
+            data=this.findStudentcount(con,data);
+            if(data!=null){
+                page.setCurentrow(data.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(data);
+
+
+
+
+
+
+
+
+
+
+  //          String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and `e_id`=?";
+//            datalist = this.getListInstence(con,sql,e_id);
+//            datalist=this.findStudentcount(con,datalist);
         }  else if (e_id == null && e_name != null && sex != null) {
-            String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and  `e_name`=? and `sex`=?";
-            datalist = this.getListInstence(con,sql,e_name,sex);
-            datalist=this.findStudentcount(con,datalist);
+
+          String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and  `e_name`=? and `sex`=? LIMIT ?,?";
+
+            String sqlsun = "  SELECT COUNT(1) AS sun  FROM    `employee` WHERE `j_id`=2 and  `e_status`=1 and  `e_name`=? and `sex`=?";
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,e_name,sex);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            data  = this.getListInstence(con, sql,e_name,sex, offset, rowcount);
+            data=this.findStudentcount(con,data);
+            if(data!=null){
+                page.setCurentrow(data.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(data);
+
+
+
+
+
+
+
+//            String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and  `e_name`=? and `sex`=?";
+//            datalist = this.getListInstence(con,sql,e_name,sex);
+//            datalist=this.findStudentcount(con,datalist);
         }else if (e_id==null && e_name == null && sex != null) {
-            String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and  `sex`=?";
-            datalist = this.getListInstence(con,sql,sex);
-            datalist=this.findStudentcount(con,datalist);
+            String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and  `sex`=? LIMIT ?,?";
+
+            String sqlsun = "  SELECT COUNT(1) AS sun  FROM    `employee` WHERE `j_id`=2 and  `e_status`=1 and  `sex`=?";
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,sex);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            data  = this.getListInstence(con, sql,sex, offset, rowcount);
+            data=this.findStudentcount(con,data);
+            if(data!=null){
+                page.setCurentrow(data.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(data);
+
+
+
+
+
+
+
+
+//            String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and  `sex`=?";
+//            datalist = this.getListInstence(con,sql,sex);
+//            datalist=this.findStudentcount(con,datalist);
         }else {
-            String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and  `e_name`=?";
-            datalist = this.getListInstence(con,sql,e_name);
+
+            String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and  `e_name`=?  LIMIT ?,?";
+            String sqlsun = "  SELECT COUNT(1) AS sun  FROM    `employee` WHERE `j_id`=2 and  `e_status`=1 and  `e_name`=?";
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,e_name);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            data  = this.getListInstence(con, sql,e_name, offset, rowcount);
+            data=this.findStudentcount(con,data);
+            if(data!=null){
+                page.setCurentrow(data.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(data);
+
+
+
+
+
+
+//
+//            String sql = "SELECT `e_id`,`e_name` as name,`phone`,`sex` FROM `employee` WHERE `j_id`=2 and  `e_status`=1 and  `e_name`=?";
+//            datalist = this.getListInstence(con,sql,e_name);
         }
 
 
-        return datalist;
+        return page;
     }
 }

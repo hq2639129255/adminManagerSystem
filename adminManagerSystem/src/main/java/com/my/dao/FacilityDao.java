@@ -14,5 +14,5 @@ public interface FacilityDao {
     boolean addFacility(Connection con,Facility f) throws SQLException;
     boolean updateFacilityByid(Connection con,Facility f) throws SQLException;
     boolean deleteFacilityByit(Connection con,int id) throws SQLException;
-    List<Facility>findFacilityByParameter(Connection con,QueryObj queryObj) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+    Page<Facility> findFacilityByParameter(Connection con,QueryObj queryObj,int offset,int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 }

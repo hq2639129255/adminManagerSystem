@@ -29,7 +29,7 @@
          <div class="input-group content_line content_left">
          <span class="input-group-addon" id="Span1">卡类型</span>
          <select  name="qtype" class="form-control line left">
-                    <option>请选择卡类型</option>
+                    <option value="0">请选择卡类型</option>
                 </select>
          </div>
     </div> 
@@ -137,7 +137,7 @@
                                             <li>
                                                 <label><span>卡类型： </span></label>
                                                 <select id="cardType"  class="h26 line left" name="addcardtype">
-                                                    <option value="0">请选择</option>
+                                                    <option>请选择</option>
                                                 </select>
                                             </li>
                                              <li></li>
@@ -272,10 +272,12 @@
                 $endpage.removeClass("disabled");
                 $downpage.removeClass("disabled");
                 $.ajax({
-
-                    type: "GET",
+                    type: "POST",
                     url: "/admin/findPageData.do",
                     data:{
+                        qid:$("input[neme=qid]").val(),
+                        qname:$("input[name=qname]").val(),
+                        qtype:$("select[name=qtype]>option:selected").text(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:1,
@@ -299,9 +301,12 @@
                 $endpage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type: "POST",
                     url: "/admin/findPageData.do",
                     data:{
+                        qid:$("input[neme=qid]").val(),
+                        qname:$("input[name=qname]").val(),
+                        qtype:$("select[name=qtype]>option:selected").text(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:parseInt($("#curentpage").text())-1,
@@ -325,9 +330,12 @@
                 $upPage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type: "POST",
                     url: "/admin/findPageData.do",
                     data:{
+                        qid:$("input[neme=qid]").val(),
+                        qname:$("input[name=qname]").val(),
+                        qtype:$("select[name=qtype]>option:selected").text(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:parseInt($("#curentpage").text())+1,
@@ -354,9 +362,12 @@
                 $upPage.removeClass("disabled");
                 $.ajax({
 
-                    type: "GET",
+                    type: "POST",
                     url: "/admin/findPageData.do",
                     data:{
+                        qid:$("input[neme=qid]").val(),
+                        qname:$("input[name=qname]").val(),
+                        qtype:$("select[name=qtype]>option:selected").text(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:$("#pagesun").text(),
@@ -424,8 +435,11 @@
             });
 
             $.ajax({
-                data:{pagetype:$("[name=type]").val()},
-                type: "GET",
+                data:{pagetype:$("[name=type]").val(),
+                    qid:$("input[neme=qid]").val(),
+                    qname:$("input[name=qname]").val(),
+                    qtype:$("select[name=qtype]>option:selected").text()},
+                type: "POST",
                 url: "/admin/findPageData.do",
                 success: function (data) {
                    initdata(data);
@@ -662,49 +676,53 @@
 
         $("#queryOK").click(function () {
             $.ajax({
-                dataType:"JSON",
-                type:"POST",
-                url:'showSelectVipcard.do',
-                data:{qid:$("input[neme=qid]").val(),
+              type:"POST",
+                url:'/admin/findPageData.do',
+                data:{
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    qid:$("input[neme=qid]").val(),
                     qname:$("input[name=qname]").val(),
                     qtype:$("select[name=qtype]>option:selected").text()
                 },
                 success:function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
                     //{"flag":true,"dataList":[{"cid":8,"t_name":"普通卡","e_name":"黄超","serviceendtime":"2021-08-06 12:00:00"}]
-                    if(data.flag){
-                        $("#datalist").html("");
-                        $(data.dataList).each(function (index,obj) {
-                            let  $datatr=$("<tr>"+
-                                "<td>"+obj.cid+"</td>"+
-                                "<td>"+obj.t_name+"</td>"+
-                                "<td>"+obj.e_name+"</td>"+
-                                "<td>"+obj.serviceendtime+"</td>"+
-                                "</tr>");
-                            let $tdupdate="<td><a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a>"+
-                                "<a href='#'  data-toggle='modal'  data-target='#buyservice' data-backdrop='static' class='btn btn-primary btn-sm'>续费</a></td>";
-                            $datatr.append($tdupdate);
-                            $datatr.find("a:first").on("click",function () {
-                                curentDataPostion=$(this).parent().parent();
-                                $("[name=enditvipcard]").val(curentDataPostion.find("td:first").text());
-                                $("[name=editname]").val(curentDataPostion.find("td:eq(2)").text());
-                            })
-                            $datatr.find("a:eq(1)").on("click",function () {
-                                curentDataPostion=$(this).parent().parent();
-                                $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
-                                $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
-                            })
-                            $("#datalist").append($datatr);
-
-
-
-
-
-
-                        })
-
-                    }else {
-                        alert(data.info)
-                    }
+                    // if(data.flag){
+                    //     $("#datalist").html("");
+                    //     $(data.dataList).each(function (index,obj) {
+                    //         let  $datatr=$("<tr>"+
+                    //             "<td>"+obj.cid+"</td>"+
+                    //             "<td>"+obj.t_name+"</td>"+
+                    //             "<td>"+obj.e_name+"</td>"+
+                    //             "<td>"+obj.serviceendtime+"</td>"+
+                    //             "</tr>");
+                    //         let $tdupdate="<td><a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a>"+
+                    //             "<a href='#'  data-toggle='modal'  data-target='#buyservice' data-backdrop='static' class='btn btn-primary btn-sm'>续费</a></td>";
+                    //         $datatr.append($tdupdate);
+                    //         $datatr.find("a:first").on("click",function () {
+                    //             curentDataPostion=$(this).parent().parent();
+                    //             $("[name=enditvipcard]").val(curentDataPostion.find("td:first").text());
+                    //             $("[name=editname]").val(curentDataPostion.find("td:eq(2)").text());
+                    //         })
+                    //         $datatr.find("a:eq(1)").on("click",function () {
+                    //             curentDataPostion=$(this).parent().parent();
+                    //             $("[name=xfvipcard]").val(curentDataPostion.find("td:first").text());
+                    //             $("[name=xfname]").val(curentDataPostion.find("td:eq(2)").text());
+                    //         })
+                    //         $("#datalist").append($datatr);
+                    //
+                    //
+                    //
+                    //
+                    //
+                    //
+                    //     })
+                    //
+                    // }else {
+                    //     alert(data.info)
+                    // }
 
 
                 }
