@@ -40,7 +40,7 @@
             <div class="col-xs-2">
                 <div class="three_two">
                     <a href="#" class="btn btn-primary content_marright" id="queryOK">查询</a>
-                    <a href="#" class="btn btn-primary">重置</a></div>
+                    <a href="#" class="btn btn-danger">重置</a></div>
             </div>
         </div>
         <!--<div class="row">-->
@@ -181,7 +181,7 @@
                 "<td>"+datainfo.dataList[key].vipsex+"</td>"+
                 "<td>"+datainfo.dataList[key].vipphone+"</td>"+
                 "</tr>");
-            let $tdupdate='<td> <a href="#" name="'+datainfo.dataList[key].v_id+'" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">更换教练</a> </td>';
+            let $tdupdate='<td> <a href="#" name="'+datainfo.dataList[key].v_id+'" class="btn btn-success btn-sm" data-toggle="modal" data-target="#edit" data-backdrop="static">更换教练</a> </td>';
 
             $datatr.append($tdupdate);
             $datatr.find("a:first").on("click",function () {

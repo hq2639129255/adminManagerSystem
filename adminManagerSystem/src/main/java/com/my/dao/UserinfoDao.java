@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserinfoDao {
     List<Userinfo> selectAllUserinfo(Connection con) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
     public Page<Userinfo>  findUserinfoByPagesize(Connection con, int offset, int rowcount) throws SQLException, IllegalAccessException, NoSuchFieldException, InstantiationException;
-    List<Userinfo>findUserinfoByParameter(Connection con,String userName,int aid,String vname) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+    public Page<Userinfo> findUserinfoByParameter(Connection con,String userName,int aid,String vname, int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 
 
 

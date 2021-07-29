@@ -11,6 +11,6 @@ public interface CallCardInfoDao {
     List<CallCardInfo> findAllCallCardInfo(Connection con,int month) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
     List<CallCardInfo> findAllCallCardInfoAction(Connection con, int month, int eid) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
     Page<CallCardInfo> findCallCardInfoByPagesize(Connection con, int offset,int rowcount);
-    List<CallCardInfo> findCallCardInfoByparameter(Connection con,String empON, String name,int month) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+    Page<CallCardInfo> findCallCardInfoByparameter(Connection con,String empON, String name,int month, int offset,int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 
 }

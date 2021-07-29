@@ -249,37 +249,122 @@ response.addCookie(cookie);
 
 
 
-
-
-
-
-
-
-
-
-
-
             EmployeeService service=new EmployeeServiceImple();
             Page<Instructor> data =   service.findInstructorByParameter(e_id,e_name,qsex,pageoffset, Integer.parseInt(rowconut));
             Gson gson=new Gson();
             response.getWriter().write(gson.toJson(data));
         }else if("Userinfo".equals(datatype)){
+
+            String userName=request.getParameter("userName");
+            String vname=request.getParameter("vname");
+            String aid=request.getParameter("aid");
+            if("".equals(userName)||userName==null){
+                userName=null;
+            }
+
+            if("".equals(vname)||vname==null){
+                vname=null;
+            }
+            if("".equals(aid)||aid==null){
+                aid="0";
+            };
+
+
+
           UserService service=new UserServiceImple();
-            Page<Userinfo> data = service.showCrentUserinfo(pageoffset, Integer.parseInt(rowconut));
+            Page<Userinfo> data = service.findUserinfoByParameter(userName,Integer.parseInt(aid),vname,pageoffset, Integer.parseInt(rowconut));
             Gson gson=new Gson();
             response.getWriter().write(gson.toJson(data));
         }else if("CallCardInfo".equals(datatype)){
+            String empOn=request.getParameter("empON");
+        String name=request.getParameter("name");
+        String month=request.getParameter("month");
+        if("".equals(empOn)||empOn==null){
+            empOn=null;
+        }
+        if("".equals(name)||name==null){
+            name=null;
+        }
+        if("0".equals(month)||month==null){
+            month="0";
+        }
+
+
             EmployeeService service=new EmployeeServiceImple();
-            Page<CallCardInfo> data = service.findCallCardInfoByPagesize(pageoffset, Integer.parseInt(rowconut));
+            Page<CallCardInfo> data = service.findCallCardInfoByparameter(empOn,name,Integer.parseInt(month),pageoffset, Integer.parseInt(rowconut));
             Gson gson=new Gson();
             System.out.println(gson.toJson(data));
             response.getWriter().write(gson.toJson(data));
         }else if("SalaryView".equals(datatype)){
+       String month=request.getParameter("qmonth");
+        if("0".equals(month)){
+            month=null;
+        }else {
+            month=Calendar.getInstance().get(Calendar.YEAR)+"-"+month+"-"+1;
+        }
+        System.out.println(month);
+        String name=request.getParameter("qname");
+        String empno=request.getParameter("qempno");
+        if("".equals(name)||name==null){
+            name=null;
+        }
+        if("".equals(empno)||empno==null){
+            empno="0";
+        };
+
             EmployeeService service=new EmployeeServiceImple();
-            Page<SalaryView> data = service.findSalaryViewByPagesize(pageoffset, Integer.parseInt(rowconut));
+            Page<SalaryView> data = service.findSalaryViewByParameter(month,name,Integer.parseInt(empno),pageoffset, Integer.parseInt(rowconut));
             Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
             response.getWriter().write(gson.toJson(data));
 
+        }else if("Course".equals(datatype)){
+
+            String c_id=request.getParameter("qid");
+            String cname=request.getParameter("cname");
+            String pirce=request.getParameter("pirce");
+            if("".equals(c_id)||c_id==null){
+                c_id="0";
+            }
+
+            if("".equals(cname)||cname==null){
+                cname=null;
+            }
+
+            if("".equals(pirce)||pirce==null){
+                pirce="-1";
+            }
+
+
+                    VipUserService service=new VipUserServiceImple();
+            Page<Course> data = service.findCourseByParameter(Integer.parseInt(c_id), cname, Integer.parseInt(pirce), pageoffset, Integer.parseInt(rowconut));
+
+            Gson gson=new Gson();
+            response.getWriter().write(gson.toJson(data));
+
+        }else if("Serviceinfo".equals(datatype)){
+
+String cardid=request.getParameter("qid");
+String cname=request.getParameter("cname");
+String servicetype=request.getParameter("servicetype");
+if ("".equals(cardid)||cardid==null){
+    cardid="-1";
+}
+if("".equals(cname)||cname==null){
+    cname=null;
+}
+if("0".equals(servicetype)|| servicetype==null){
+    servicetype=null;
+}
+
+            Serviceinfo serviceinfo=new Serviceinfo();
+serviceinfo.setCard_id(Integer.parseInt(cardid));
+serviceinfo.setE_name(cname);
+serviceinfo.setNeme(servicetype);
+            VipUserService service=new VipUserServiceImple();
+            Page<Serviceinfo> data = service.findPageByParameter(serviceinfo, pageoffset, Integer.parseInt(rowconut));
+
+            Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+            response.getWriter().write(gson.toJson(data));
         }
 
     }
@@ -1140,38 +1225,38 @@ response.getWriter().write(gson.toJson(returnPath));
 
 
     protected void findUserinfoByParameter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userName=request.getParameter("userName");
-        String vname=request.getParameter("vname");
-        String aid=request.getParameter("aid");
-        if("".equals(userName)||userName==null){
-            userName=null;
-        }
-
-        if("".equals(vname)||vname==null){
-            vname=null;
-        }
-        if("".equals(aid)||aid==null){
-            aid="0";
-        };
-
-        System.out.println("userName"+userName);
-
-        System.out.println("vname"+vname);
-        System.out.println("aid"+aid);
-
-        UserService service=new UserServiceImple();
-        List<Userinfo> data = service.findUserinfoByParameter(userName, Integer.parseInt(aid), vname);
-        Gson gson=new Gson();
-        ReturnPath<Userinfo> returnPath=new ReturnPath<Userinfo>();
-        if(data==null){
-            returnPath.setFlag(false);
-            returnPath.setInfo("没有查询到符合条件的数据");
-        }else {
-            returnPath.setFlag(true);
-            returnPath.setDataList(data);
-
-        }
-        response.getWriter().write(gson.toJson(returnPath));
+//        String userName=request.getParameter("userName");
+//        String vname=request.getParameter("vname");
+//        String aid=request.getParameter("aid");
+//        if("".equals(userName)||userName==null){
+//            userName=null;
+//        }
+//
+//        if("".equals(vname)||vname==null){
+//            vname=null;
+//        }
+//        if("".equals(aid)||aid==null){
+//            aid="0";
+//        };
+//
+//        System.out.println("userName"+userName);
+//
+//        System.out.println("vname"+vname);
+//        System.out.println("aid"+aid);
+//
+//        UserService service=new UserServiceImple();
+//        List<Userinfo> data = service.findUserinfoByParameter(userName, Integer.parseInt(aid), vname);
+//        Gson gson=new Gson();
+//        ReturnPath<Userinfo> returnPath=new ReturnPath<Userinfo>();
+//        if(data==null){
+//            returnPath.setFlag(false);
+//            returnPath.setInfo("没有查询到符合条件的数据");
+//        }else {
+//            returnPath.setFlag(true);
+//            returnPath.setDataList(data);
+//
+//        }
+//        response.getWriter().write(gson.toJson(returnPath));
     }
 
 
@@ -1477,36 +1562,36 @@ response.getWriter().write(gson.toJson(data));
 
 
     protected void  findCallCardInfoByparameter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-        String empOn=request.getParameter("empON");
-        String name=request.getParameter("name");
-        String month=request.getParameter("month");
-        if("".equals(empOn)||empOn==null){
-            empOn=null;
-        }
-        if("".equals(name)||name==null){
-            name=null;
-        }
-        if("0".equals(month)||month==null){
-            month="0";
-        }
-
-
-        System.out.println(empOn);
-        System.out.println(name);
-        System.out.println(month);
-        EmployeeService service=new EmployeeServiceImple();
-        List<CallCardInfo> data = service.findCallCardInfoByparameter(empOn, name, Integer.parseInt(month));
-Gson gson=new Gson();
-ReturnPath<CallCardInfo> returnPath=new ReturnPath<CallCardInfo>();
-if(data==null){
-    returnPath.setFlag(false);
-    returnPath.setInfo("未查询到数据");
-}else {
-    returnPath.setFlag(true);
-    returnPath.setDataList(data);
-
-}
-response.getWriter().write(gson.toJson(returnPath));
+//        String empOn=request.getParameter("empON");
+//        String name=request.getParameter("name");
+//        String month=request.getParameter("month");
+//        if("".equals(empOn)||empOn==null){
+//            empOn=null;
+//        }
+//        if("".equals(name)||name==null){
+//            name=null;
+//        }
+//        if("0".equals(month)||month==null){
+//            month="0";
+//        }
+//
+//
+//        System.out.println(empOn);
+//        System.out.println(name);
+//        System.out.println(month);
+//        EmployeeService service=new EmployeeServiceImple();
+//        List<CallCardInfo> data = service.findCallCardInfoByparameter(empOn, name, Integer.parseInt(month));
+//Gson gson=new Gson();
+//ReturnPath<CallCardInfo> returnPath=new ReturnPath<CallCardInfo>();
+//if(data==null){
+//    returnPath.setFlag(false);
+//    returnPath.setInfo("未查询到数据");
+//}else {
+//    returnPath.setFlag(true);
+//    returnPath.setDataList(data);
+//
+//}
+//response.getWriter().write(gson.toJson(returnPath));
     }
 
     protected void  findStudentByPhone(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -1566,14 +1651,15 @@ response.getWriter().write(gson.toJson(returnPath));
     }
     protected void   shoeCurentUserinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 
-//                    HttpSession session = request.getSession();
-//            Vipinfo u=( Vipinfo)     session.getAttribute("userinfo");
-//        VipCardView  vipCardView =new VipCardView();
-//        vipCardView.setCid(u.getCard_id());
-//        VipCardViewService service=new VipCardViewServiceImple ();
-//        List<VipCardView> data = service.showFacilityByParameter(vipCardView);
-//        Gson gson=new Gson();
-//        response.getWriter().write(gson.toJson(data));
+                    HttpSession session = request.getSession();
+            Vipinfo u=( Vipinfo)     session.getAttribute("userinfo");
+        VipCardView  vipCardView =new VipCardView();
+        vipCardView.setCid(u.getCard_id());
+        VipCardViewService service=new VipCardViewServiceImple ();
+      //  List<VipCardView> data = service.showFacilityByParameter(vipCardView);
+        Page<VipCardView> data = service.showCurrentVipCardByParameter(vipCardView, 0, 1);
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(data));
     }
 
     protected void   shoeCurentUserRenew(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -1673,35 +1759,35 @@ String c_id=request.getParameter("c_id");
     }
 
     protected void showSelectSalaryView(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       request.setCharacterEncoding("utf-8");
-        String month=request.getParameter("qmonth");
-        if("0".equals(month)){
-            month=null;
-        }else {
-            month=Calendar.getInstance().get(Calendar.YEAR)+"-"+month+"-"+1;
-        }
-        System.out.println(month);
-        String name=request.getParameter("qname");
-        String empno=request.getParameter("qempno");
-        if("".equals(name)||name==null){
-            name=null;
-        }
-        if("".equals(empno)||empno==null){
-            empno="0";
-        };
-       EmployeeService service=new EmployeeServiceImple();
-        List<SalaryView> data = service.findSalaryViewByParameter(month, name, Integer.parseInt(empno));
-        Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-        ReturnPath<SalaryView> returnPath=new ReturnPath<SalaryView>();
-        if(data==null){
-            returnPath.setFlag(false);
-            returnPath.setInfo("没有查询到符合条件的数据");
-        } else {
-            returnPath.setFlag(true);
-            returnPath.setDataList(data);
-
-        }
-        response.getWriter().write(gson.toJson(returnPath));
+//       request.setCharacterEncoding("utf-8");
+//        String month=request.getParameter("qmonth");
+//        if("0".equals(month)){
+//            month=null;
+//        }else {
+//            month=Calendar.getInstance().get(Calendar.YEAR)+"-"+month+"-"+1;
+//        }
+//        System.out.println(month);
+//        String name=request.getParameter("qname");
+//        String empno=request.getParameter("qempno");
+//        if("".equals(name)||name==null){
+//            name=null;
+//        }
+//        if("".equals(empno)||empno==null){
+//            empno="0";
+//        };
+//       EmployeeService service=new EmployeeServiceImple();
+//        List<SalaryView> data = service.findSalaryViewByParameter(month, name, Integer.parseInt(empno));
+//        Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+//        ReturnPath<SalaryView> returnPath=new ReturnPath<SalaryView>();
+//        if(data==null){
+//            returnPath.setFlag(false);
+//            returnPath.setInfo("没有查询到符合条件的数据");
+//        } else {
+//            returnPath.setFlag(true);
+//            returnPath.setDataList(data);
+//
+//        }
+//        response.getWriter().write(gson.toJson(returnPath));
     }
 
     protected void  updateSalary(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -1772,8 +1858,96 @@ String c_id=request.getParameter("c_id");
         Gson gson=new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         response.getWriter().write(gson.toJson(returnPath));
     }
+    protected void  CourseByParameter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 
 
+//
+//        String c_id=request.getParameter("qid");
+//        String cname=request.getParameter("cname");
+//        String pirce=request.getParameter("pirce");
+//        if("".equals(c_id)||c_id==null){
+//            c_id="0";
+//        }
+//
+//        if("".equals(cname)||cname==null){
+//            cname=null;
+//        }
+//
+//if("".equals(pirce)||pirce==null){
+//            pirce="-1";
+//}
+//
+//        VipUserService service=new VipUserServiceImple();
+//        data= service.findCourseByParameter(c_id,cname,pirce);
+//        Gson gson=new Gson();
+//        response.getWriter().write(gson.toJson(new Boolean(flag)));
+    }
+
+
+
+
+
+    protected void   insertCourse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+String cname=request.getParameter("cname");
+String pric=request.getParameter("price");
+        System.out.println(cname);
+        System.out.println(pric);
+
+
+        VipUserService service=new VipUserServiceImple();
+        boolean flag = service.insertCourse(cname, Double.parseDouble(pric));
+        ReturnPath returninfo=new ReturnPath();
+        returninfo.setFlag(flag);
+if(flag){
+   returninfo.setInfo("新增成功");
+}else {
+    returninfo.setInfo("新增失败");
+}
+Gson gson=new Gson();
+response.getWriter().write(gson.toJson(returninfo));
+    }
+
+
+
+
+
+
+    protected void   updateCourse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+     String id=request.getParameter("id");
+        String cname=request.getParameter("cname");
+        String pric=request.getParameter("price");
+        Course course=new Course();
+        course.setCName(cname);
+        course.setId(Integer.parseInt(id));
+        course.setPrice(Integer.parseInt(pric));
+        VipUserService service=new VipUserServiceImple();
+        boolean flag = service.updateCourse(course);
+        ReturnPath returninfo=new ReturnPath();
+        returninfo.setFlag(flag);
+        if(flag){
+            returninfo.setInfo("更新成功");
+        }else {
+            returninfo.setInfo("更新失败");
+        }
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(returninfo));
+    }
+    protected void   deleteCourse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+        String id=request.getParameter("id");
+
+
+        VipUserService service=new VipUserServiceImple();
+        boolean flag = service.deleteCourse(Integer.parseInt(id));
+        ReturnPath returninfo=new ReturnPath();
+        returninfo.setFlag(flag);
+        if(flag){
+            returninfo.setInfo("删除成功");
+        }else {
+            returninfo.setInfo("删除失败");
+        }
+        Gson gson=new Gson();
+        response.getWriter().write(gson.toJson(returninfo));
+    }
 
 
 }

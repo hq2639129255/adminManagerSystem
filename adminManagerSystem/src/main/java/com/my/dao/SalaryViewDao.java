@@ -11,7 +11,7 @@ import java.util.List;
 public interface SalaryViewDao {
     List<SalaryView> findAllSalaryView(Connection con) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
     Page<SalaryView> findUserinfoByPagesize(Connection con, int offset, int rowcount) throws SQLException, IllegalAccessException, NoSuchFieldException, InstantiationException;
-    List<SalaryView>findSalaryViewByParameter(Connection con, String month,String  name,int  empno) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
+    Page<SalaryView> findSalaryViewByParameter(Connection con, String month,String  name,int  empno, int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
     List<SalaryView> findAllSalaryViewByMonth(Connection con,String month) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
     List<SalaryView> findSalaryBye_id(Connection con,int eid) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException;
 }

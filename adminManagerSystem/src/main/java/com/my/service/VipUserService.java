@@ -34,5 +34,11 @@ public interface VipUserService {
      * @return
      */
     boolean insertCoachinfo(int e_id, int v_id, int c_id);
+    Page<Course> findCourseByParameter( int c_id, String cname, int pirce, int offset, int rowcount);
+
+    boolean insertCourse(String cname,double prie);
+    boolean updateCourse( Course course);
+    boolean deleteCourse(int id);
+    Page<Serviceinfo>  findPageByParameter(Serviceinfo serviceinfo, int offset, int rowcount);
 
 }

@@ -598,14 +598,14 @@ Connection con=null;
         }
         return data;
     }
-
+  //  findCallCardInfoByparameter(Connection con,String empON, String name,int month, int offset, int rowcount)
     @Override
-    public List<CallCardInfo> findCallCardInfoByparameter( String empON, String name, int month) {
+    public  Page<CallCardInfo> findCallCardInfoByparameter( String empON, String name, int month, int offset, int rowcount) {
         Connection con=null;
-        List<CallCardInfo> data = null;
+        Page<CallCardInfo> data = null;
         try {
             con=JDBCutil.getConnection();
-            data = callCardInfoDao.findCallCardInfoByparameter(con, empON, name, month);
+            data = callCardInfoDao.findCallCardInfoByparameter(con, empON, name, month,  offset,  rowcount);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
@@ -796,12 +796,12 @@ Connection con=null;
     }
 
     @Override
-    public List<SalaryView> findSalaryViewByParameter(String month, String name, int empno) {
+    public Page<SalaryView> findSalaryViewByParameter(String month, String name, int empno,int offset, int rowcount) {
       Connection  con=null;
-        List<SalaryView> data = null;
+        Page<SalaryView> data = null;
         try {
             con=JDBCutil.getConnection();
-            data = salaryViewDao.findSalaryViewByParameter(con, month, name, empno);
+            data = salaryViewDao.findSalaryViewByParameter(con, month, name, empno, offset, rowcount);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {

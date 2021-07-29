@@ -48,30 +48,123 @@ public class SalaryViewDaoImple  extends BaseDao<SalaryView> implements SalaryVi
     }
 
     @Override
-    public List<SalaryView> findSalaryViewByParameter(Connection con, String  month, String name, int empno) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+    public Page<SalaryView> findSalaryViewByParameter(Connection con, String  month, String name, int empno, int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        Page<SalaryView> page = new Page<SalaryView>();
         List<SalaryView> datalist = new ArrayList<SalaryView>();
         if (month==null && empno==0 && name== null) {
-            datalist=findAllSalaryView(con);
+
+            page=findUserinfoByPagesize( con,  offset, rowcount) ;
 
 
         } else if (empno!=0 &&month!=null ) {
-            String sql = "SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_id=? AND CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?))";
-            datalist= this.getListInstence(con,sql,empno,month,month);
+            String sql = "SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_id=? AND CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?)) LIMIT ?,?";
+            String sqlsun = "SELECT COUNT(1) FROM salary_view WHERE e_id=? AND CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?))";
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,empno,month,month);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            datalist  = this.getListInstence(con, sql,empno,month,month, offset, rowcount);
+            if(datalist!=null){
+                page.setCurentrow(datalist.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(datalist);
+        //    String sql = "SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_id=? AND CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?))";
+      //      datalist= this.getListInstence(con,sql,empno,month,month);
         }  else if (empno!=0) {
-            String sql = " SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_id=?";
-            datalist =   this.getListInstence(con,sql,empno);
+            String sql = " SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_id=? LIMIT ?,?";
+
+            String sqlsun = "SELECT COUNT(1) FROM salary_view WHERE e_id=?";
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,empno);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            datalist  = this.getListInstence(con, sql,empno, offset, rowcount);
+            if(datalist!=null){
+                page.setCurentrow(datalist.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(datalist);
+
+//            String sql = " SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_id=?";
+//            datalist =   this.getListInstence(con,sql,empno);
 
         }else if (name!=null &&month!=null) {
-            String sql = "SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_name=? AND  CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?))";
-            datalist= this.getListInstence(con,sql,name,month,month);
+            String sql = "SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_name=? AND  CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?)) LIMIT ?,?";
+
+
+            String sqlsun = "SELECT COUNT(1) FROM salary_view  WHERE e_name=? AND  CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?))";
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,name,month,month);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            datalist  = this.getListInstence(con, sql,name,month,month, offset, rowcount);
+            if(datalist!=null){
+                page.setCurentrow(datalist.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(datalist);
+
+
+//            String sql = "SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_name=? AND  CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?))";
+//            datalist= this.getListInstence(con,sql,name,month,month);
         }else if(name!=null) {
-            String sql = "SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_name=?";
-            datalist = this.getListInstence(con, sql,name);
+            String sql = "SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_name=? LIMIT ?,?";
+            String sqlsun = "SELECT COUNT(1) FROM salary_view WHERE e_name=?";
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,name);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            datalist  = this.getListInstence(con, sql,name, offset, rowcount);
+            if(datalist!=null){
+                page.setCurentrow(datalist.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(datalist);
+
+
+
+
+
+
+//            String sql = "SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE e_name=?";
+//            datalist = this.getListInstence(con, sql,name);
         }else if(month!=null) {
-            String sql = " SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?))";
-            datalist = this.getListInstence(con, sql,month,month);
+            String sql = " SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?)) LIMIT ?,?";
+
+            String sqlsun = "SELECT COUNT(1) FROM salary_view WHERE CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?))";
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,month,month);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            datalist  = this.getListInstence(con, sql,month,month, offset, rowcount);
+            if(datalist!=null){
+                page.setCurentrow(datalist.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(datalist);
+
+
+
+//            String sql = " SELECT sa_month,e_id,e_name,salary,payment,award,net_payroll,phone,remark,salaryStatus FROM salary_view WHERE CONCAT(YEAR(sa_month),'-',MONTH(sa_month))=CONCAT(YEAR(?),'-',MONTH(?))";
+//            datalist = this.getListInstence(con, sql,month,month);
         }
-        return   datalist;
+        return    page;
     }
 
     /**

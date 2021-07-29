@@ -225,12 +225,12 @@ public class UserServiceImple implements UserService {
     }
 
     @Override
-    public List<Userinfo> findUserinfoByParameter(String userName, int aid, String vname) {
+    public Page<Userinfo> findUserinfoByParameter(String userName, int aid, String vname,int offset, int rowcount) {
     Connection con=null;
-        List<Userinfo> data=null;
+        Page<Userinfo> data=null;
         try {
             con=JDBCutil.getConnection();
-            data= userinfoDao.findUserinfoByParameter(con, userName, aid, vname);
+            data= userinfoDao.findUserinfoByParameter(con, userName, aid, vname,offset, rowcount);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {

@@ -64,7 +64,7 @@
                 "<td>" + datalist[key].endTime + "</td>" +
                 "<td>" + datalist[key].count + "</td>" +
                 "</tr>");
-            let $tdupdate =$("<td><a href='Appointment.html' class='btn btn-primary btn-sm'  data-target='#edit' data-backdrop='static'>详情</a></td>");
+            let $tdupdate =$("<td><a href='Appointment.html' class='btn btn-success btn-sm'  data-target='#edit' data-backdrop='static'>详情</a></td>");
             $datatr.append($tdupdate);
             $tdupdate.find("a:first").click(function () {
                 document.cookie = "Timeid="+$(this).parent().parent().find("td:first").attr("name");

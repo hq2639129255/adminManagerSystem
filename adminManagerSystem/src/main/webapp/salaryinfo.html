@@ -15,48 +15,54 @@
      <!--查询条件 begin-->
          <div id="search_btn"class="content_search_group">
       <div class="row">
-      <div class="col-xs-10">
-       <div class="input-group content_line content_left">
-                    <span class="input-group-addon" id="basic-addon2">月份</span>
-           <select class="h26 line left" id="qmonth">
-               <option value="0">请选择</option>
-               <option value="1">1月</option>
-               <option value="2">2月</option>
-               <option value="3">3月</option>
-               <option value="4">4月</option>
-               <option value="5">5月</option>
-               <option value="6">6月</option>
-               <option value="7">7月</option>
-               <option value="8">8月</option>
-               <option value="9">9月</option>
-               <option value="10">10月</option>
-               <option value="11">11月</option>
-               <option value="12">12月</option>
-           </select>
-         </div>
+      <div class="col-xs-7">
+          <div class="input-group content_line content_left">
+              <span class="input-group-addon" id="basic-addon2">月份</span>
+              <select  class="form-control line left" id="qmonth">
+                      <option value="0">请选择</option>
+                      <option value="1">1月</option>
+                      <option value="2">2月</option>
+                      <option value="3">3月</option>
+                      <option value="4">4月</option>
+                      <option value="5">5月</option>
+                      <option value="6">6月</option>
+                      <option value="7">7月</option>
+                      <option value="8">8月</option>
+                      <option value="9">9月</option>
+                      <option value="10">10月</option>
+                      <option value="11">11月</option>
+                      <option value="12">12月</option>
+              </select>
+          </div>
+
 
          <div class="input-group content_line content_left">
                     <span class="input-group-addon" id="basic-addon3">姓名</span>
                     <input id="qname" type="text" class="form-control" placeholder="输入姓名" aria-describedby="basic-addon2">
          </div>
 
+
          <div class="input-group content_line content_left">
          <span class="input-group-addon" id="Span1">员工号</span>
              <input id="qempno" type="text" class="form-control" placeholder="输入员工号" aria-describedby="basic-addon2">
          </div>
-    </div> 
-       <div class="col-xs-2">
-         <div class="three_two">
-         <a href="#" class="btn btn-primary content_marright" id="queryOK">查询</a>
-         <a href="#" class="btn btn-primary">重置</a></div> 
-         </div>           
     </div>
-    <div class="row">
-    <div class="col-xs-10">
-   <a href="#" class="btn btn-primary content_marright content_btn_add" id="sendSalary" data-backdrop="static">发放上月工资</a>
-    </div> 
+          <div class="col-xs-5">
+              <div class="three_two">
+                  <a href="#" class="btn btn-primary content_marright" id="queryOK">查询</a>
+                  <a href="#" class="btn btn-danger" id="reset">重置</a>
+                  <a href="#" class="btn btn-success content_marright content_btn_add" id="sendSalary" data-backdrop="static">发放上月工资</a>
+              </div>
+          </div>
     </div>
+
+
          </div>
+
+
+
+
+
         <!--查询条件 end-->
 
          <!--数据列表 begin-->
@@ -73,7 +79,7 @@
                      <th>实发工资</th>
              <th>备注</th>
              <th>发放状态</th>
-                      <th class="w110">操作</th>
+                      <th>操作</th>
          </tr>
       </thead>
       <tbody id="datalist">
@@ -105,8 +111,8 @@
 
                 </li>
 
-                <li><input type="text" placeholder="输入页数" class="form-control w80"></li>
-                <a href="#">跳转</a>
+                <li><input type="text" id="inputpage" placeholder="输入页数" class="form-control w80"></li>
+                <a href="#" id="goto">跳转</a>
                 <input type="hidden" name="type" value="SalaryView"/>
 
             </ul>
@@ -204,6 +210,9 @@
                     type: "GET",
                     url: "/admin/findPageData.do",
                     data:{
+                        qmonth:$("#qmonth>option:selected").val(),
+                        qname:$("#qname").val(),
+                        qempno:checkqempno(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:1,
@@ -230,6 +239,9 @@
                     type: "GET",
                     url: "/admin/findPageData.do",
                     data:{
+                        qmonth:$("#qmonth>option:selected").val(),
+                        qname:$("#qname").val(),
+                        qempno:checkqempno(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:parseInt($("#curentpage").text())-1,
@@ -256,6 +268,9 @@
                     type: "GET",
                     url: "/admin/findPageData.do",
                     data:{
+                        qmonth:$("#qmonth>option:selected").val(),
+                        qname:$("#qname").val(),
+                        qempno:checkqempno(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:parseInt($("#curentpage").text())+1,
@@ -285,6 +300,9 @@
                     type: "GET",
                     url: "/admin/findPageData.do",
                     data:{
+                        qmonth:$("#qmonth>option:selected").val(),
+                        qname:$("#qname").val(),
+                        qempno:checkqempno(),
                         pagetype:$("[name=type]").val(),
                         rowconut:$("[name=pagecount]>option:selected").val(),
                         curentpage:$("#pagesun").text(),
@@ -307,6 +325,7 @@
 
 <!--初始化页面begin-->
         $(function () {
+            $("#reset").on("click",clearQueryText);
             $downpage.click(clickdownpage);
             $firstPage.click(clickFirstPage);
             $upPage.click(clickuppage);
@@ -314,6 +333,8 @@
             $("#updateSave").on("click",updateSave);
             $("#sendSalary").on("click", sendCurentMonthSalary);
             init();
+            $("#goto").on("click",gotoPage);
+
         })
         function  init() {
             $.ajax({
@@ -329,7 +350,10 @@
 
             $.ajax({
                 dataType:"JSON",
-                data:{pagetype:$("[name=type]").val()},
+                data:{qmonth:$("#qmonth>option:selected").val(),
+                    qname:$("#qname").val(),
+                    qempno:checkqempno(),
+                    pagetype:$("[name=type]").val()},
                 type: "GET",
                 url: "/admin/findPageData.do",
                 success: function (data) {
@@ -382,38 +406,41 @@
             $.ajax({
                 dataType:"JSON",
                 type:"POST",
-                url:'showSelectSalaryView.do',
-                data:{qmonth:$("#qmonth>option:selected").val(),
+                url:'/admin/findPageData.do',
+                data:{   pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    qmonth:$("#qmonth>option:selected").val(),
                 qname:$("#qname").val(),
-                    qempno:$("#qempno").val()
+                    qempno:checkqempno()
                 },
                 success:function (data) {
                     //{"flag":true,"dataList":[{"sa_month":7,"e_id":62,"e_name":"周斌","salary":7999,"payment":0,"award":0,"net_payroll":0,
                     $("#datalist").html("");
-                    if(data.flag){
-
-                        $(data.dataList).each(function (i,o) {
-                            let  $datatr=$("<tr>"+
-                                "<td>"+new Date(o.sa_month).format("yyyy-MM")+"</td>"+
-                                "<td>"+o.e_id+"</td>"+
-                                "<td>"+o.e_name+"</td>"+
-                                "<td>"+o.phone+"</td>"+
-                                "<td>"+o.salary+"</td>"+
-                                "<td>"+o.payment+"</td>"+
-                                "<td>"+o.award+"</td>"+
-                                "<td>"+o.net_payroll+"</td>"+
-                                "<td>"+(o.remark==null ? "" :o.remark)+"</td>"+
-                                "<td>"+o.salaryStatus+"</td>"+
-                                "</tr>");
-                            let $tdupdate=$("<td><a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a></td>");
-                            $tdupdate.find("a:first").on("click",modifySalayInfo);
-                            $datatr.append($tdupdate);
-                            $("#datalist").append($datatr);
-                        })
-
-                    }else {
-                        alert(data.info)
-                    }
+                    initdata(data);
+                    // if(data.flag){
+                    //
+                    //     $(data.dataList).each(function (i,o) {
+                    //         let  $datatr=$("<tr>"+
+                    //             "<td>"+new Date(o.sa_month).format("yyyy-MM")+"</td>"+
+                    //             "<td>"+o.e_id+"</td>"+
+                    //             "<td>"+o.e_name+"</td>"+
+                    //             "<td>"+o.phone+"</td>"+
+                    //             "<td>"+o.salary+"</td>"+
+                    //             "<td>"+o.payment+"</td>"+
+                    //             "<td>"+o.award+"</td>"+
+                    //             "<td>"+o.net_payroll+"</td>"+
+                    //             "<td>"+(o.remark==null ? "" :o.remark)+"</td>"+
+                    //             "<td>"+o.salaryStatus+"</td>"+
+                    //             "</tr>");
+                    //         let $tdupdate=$("<td><a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a></td>");
+                    //         $tdupdate.find("a:first").on("click",modifySalayInfo);
+                    //         $datatr.append($tdupdate);
+                    //         $("#datalist").append($datatr);
+                    //     })
+                    //
+                    // }else {
+                    //     alert(data.info)
+                    // }
 
 
                 }
@@ -485,6 +512,62 @@
            }
        })
    }
+
+
+   function clearQueryText() {
+       $("#qname").val("");
+       $("#qempno").val("");
+       $("#qmonth>option:eq(0)").attr({"selected":true});
+   }
+
+
+<!-- 检查查询参数-->
+        function checkqempno() {
+            if(isNaN($("#qempno").val())){
+                $("#qempno").val("1")
+                return 1;
+            }
+            return $("#qempno").val();
+
+        }
+
+
+
+
+   <!-- 跳转-->
+        function gotoPage() {
+            let inputPage=$("#inputpage").val();
+            if(isNaN(inputPage)||parseInt(inputPage)<=0){
+                $("#inputpage").val("1");
+                inputPage=1;
+            }else if(parseInt(inputPage)>parseInt($("#pagesun").text())){
+                $("#inputpage").val($("#pagesun").text());
+                inputPage=$("#pagesun").text();
+            }
+
+            $.ajax({
+                dataType:"JSON",
+                type:"POST",
+                url: "/admin/findPageData.do",
+                data:{
+                    qmonth:$("#qmonth>option:selected").val(),
+                    qname:$("#qname").val(),
+                    qempno:$("#qempno").val(),
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:inputPage,
+                    datatype:$("[name=type]").val()},
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+            })
+
+
+        }
+
+
 </script>
 </body>
 </html>

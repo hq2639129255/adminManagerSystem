@@ -19,7 +19,8 @@ public interface UserService {
     boolean resetPassword(String UserName);
     boolean lockUserCode(String UserName);
     boolean unLockUserCode(String UserName);
- List<Userinfo>   findUserinfoByParameter(String userName, int aid, String vname);
+
+    Page<Userinfo>   findUserinfoByParameter(String userName, int aid, String vname,int offset, int rowcount);
 boolean addUser(Employee e,User u,double salary);
 
     /**

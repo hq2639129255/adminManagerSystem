@@ -98,7 +98,7 @@ List<CallCardInfo> findAllCallCardInfo(int month);
      * @param month
      * @return
      */
- List<CallCardInfo>   findCallCardInfoByparameter(String empON, String name,int month);
+    Page<CallCardInfo>   findCallCardInfoByparameter(String empON, String name,int month,int offset, int rowcount);
 
     /**
      * 显示教练名下学员信息
@@ -136,7 +136,7 @@ Employee findEmployeeByPhone(String phone);
      */
 
 
-List<SalaryView> findSalaryViewByParameter( String month, String name, int empno);
+    Page<SalaryView> findSalaryViewByParameter( String month, String name, int empno,int offset, int rowcount);
 
     /**
      * 更新工资信息

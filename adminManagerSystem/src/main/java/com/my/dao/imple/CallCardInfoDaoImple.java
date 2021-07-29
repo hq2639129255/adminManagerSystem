@@ -103,14 +103,25 @@ public class CallCardInfoDaoImple extends BaseDao<CallCardInfo> implements CallC
         System.out.println(page);
         return page;
     }
-    public List<CallCardInfo> findCallCardInfoByparameter(Connection con,String empON, String name,int month) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+    public Page<CallCardInfo> findCallCardInfoByparameter(Connection con,String empON, String name,int month, int offset, int rowcount) throws SQLException, NoSuchFieldException, InstantiationException, IllegalAccessException {
+        Page<CallCardInfo> page = new Page<CallCardInfo>();
         List<CallCardInfo> datalist = new ArrayList<CallCardInfo>();
         if (empON==null && name==null && month==0) {
-            datalist=findAllCallCardInfo(con,month);
+
+            page= findCallCardInfoByPagesize( con,offset, rowcount);
+
+
+
+
+
         }else if(empON!=null&& month!=0){
+
+
+
+
             String sql =" SELECT  e_id AS eid,`workId` AS wid,e_name AS `name` ,phone  FROM  `employee` a\n" +
-                    "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3  AND e_id=?";
-            datalist= this.getListInstence(con,sql,empON);
+                    "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3  AND e_id=? LIMIT ?,?";
+            datalist= this.getListInstence(con,sql,empON,offset, rowcount);
 
 if(datalist!=null){
             Iterator<CallCardInfo> it=datalist.iterator();
@@ -133,12 +144,31 @@ if(datalist!=null){
                 }
                 System.out.println(call.toString());
             }
+
+    String sqlsun="SELECT  COUNT(1)  FROM  `employee` a\n" +
+            "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3 and e_id=?";
+
+
+    Long rowsun = (Long) this.getValue(con, sqlsun,empON);
+    page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+    page.setCurentPage((offset / rowcount) + 1);
+    page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+    if(datalist!=null){
+        page.setCurentrow(datalist.size());
+    }else {
+        page.setCurentrow(0);
+    }
+    page.setPageData(datalist);
+
+
+
 }
 
         } else if (empON!=null) {
             String sql =" SELECT  e_id AS eid,`workId` AS wid,e_name AS `name` ,phone  FROM  `employee` a\n" +
-                    "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3  AND e_id=?";
-            datalist= this.getListInstence(con,sql,empON);
+                    "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3  AND e_id=? LIMIT ?,?";
+            datalist= this.getListInstence(con,sql,empON,offset, rowcount);
             if(datalist!=null){
 
             Iterator<CallCardInfo> it=datalist.iterator();
@@ -156,16 +186,36 @@ if(datalist!=null){
 
                     }
 
+
                 }else{
                     call.setStatus("异常");
                 }
                 System.out.println(call.toString());
             }}
+            String sqlsun="SELECT  COUNT(1)  FROM  `employee` a\n" +
+                    "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3 AND e_id=?";
+
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,empON);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            if(datalist!=null){
+                page.setCurentrow(datalist.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(datalist);
+
+
+
+
 
         }  else if (empON==null && name!=null && month!=0) {
             String sql ="SELECT  e_id AS eid,`workId` AS wid,e_name AS `name` ,phone  FROM  `employee` a"+
-           " INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3  AND  e_name=?";
-            datalist =this.getListInstence(con,sql,name);
+           " INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3  AND  e_name=?  LIMIT ?,?";
+            datalist =this.getListInstence(con,sql,name,offset, rowcount);
             if(datalist!=null) {
                 Iterator<CallCardInfo> it = datalist.iterator();
                 while (it.hasNext()) {
@@ -188,10 +238,27 @@ if(datalist!=null){
                     System.out.println(call.toString());
                 }
             }
+            String sqlsun="SELECT  COUNT(1)  FROM  `employee` a\n" +
+                    "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3 AND e_name=?";
+
+
+            Long rowsun = (Long) this.getValue(con, sqlsun,name);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            if(datalist!=null){
+                page.setCurentrow(datalist.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(datalist);
+
+
         }else if (empON==null && name!=null&&month==0) {
             String sql ="SELECT  e_id AS eid,`workId` AS wid,e_name AS `name` ,phone  FROM  `employee` a"+
-            " INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3  AND  e_name=?";
-            datalist= this.getListInstence(con,sql,name);
+            " INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3  AND  e_name=? LIMIT ?,?";
+            datalist= this.getListInstence(con,sql,name,offset, rowcount);
             Iterator<CallCardInfo> it=datalist.iterator();
             if(datalist!=null) {
                 while (it.hasNext()) {
@@ -214,10 +281,33 @@ if(datalist!=null){
                     System.out.println(call.toString());
                 }
             }
+            String sqlsun="SELECT  COUNT(1)  FROM  `employee` a\n" +
+                    "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3";
+
+
+            Long rowsun = (Long) this.getValue(con, sqlsun);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            if(datalist!=null){
+                page.setCurentrow(datalist.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(datalist);
+
+
+
+
+
+
+
+
         }else {
             String sql ="SELECT  e_id AS eid,`workId` AS wid,e_name AS `name` ,phone  FROM  `employee` a\n" +
-            "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3";
-            datalist = this.getListInstence(con, sql);
+            "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3 LIMIT ?,?";
+            datalist = this.getListInstence(con, sql,offset, rowcount);
             Iterator<CallCardInfo> it=datalist.iterator();
             if(datalist!=null) {
                 while (it.hasNext()) {
@@ -240,7 +330,23 @@ if(datalist!=null){
                     System.out.println(call.toString());
                 }
             }
+            String sqlsun="SELECT  COUNT(1)  FROM  `employee` a\n" +
+                    "INNER JOIN `user` b ON a.phone=b.`username`  WHERE a_id=3";
+
+
+            Long rowsun = (Long) this.getValue(con, sqlsun);
+            page.setSunrow(Integer.parseInt(rowsun.toString()));
+
+            page.setCurentPage((offset / rowcount) + 1);
+            page.setSunPage((int) Math.ceil((rowsun + 0.01) / rowcount));
+            if(datalist!=null){
+                page.setCurentrow(datalist.size());
+            }else {
+                page.setCurentrow(0);
+            }
+            page.setPageData(datalist);
+
         }
-        return   datalist;
+        return    page;
     }
 }

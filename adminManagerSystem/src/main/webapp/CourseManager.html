@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>生产线管理-列表</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/content/content.css" rel="stylesheet" />
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/content/content.js"></script>
+</head>
+<body style="margin-right:0px;">
+<div class="right_content">
+    <!--查询条件 begin-->
+    <div id="search_btn"class="content_search_group">
+        <div class="row">
+            <div class="col-xs-7">
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon2">课程号</span>
+                    <input type="text" neme="qid" class="form-control content_search_text" placeholder="输入课程号" aria-describedby="basic-addon2">
+                </div>
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon3">课程名</span>
+                    <input type="text" name="qname" class="form-control" placeholder="输入课程名称" aria-describedby="basic-addon2">
+                </div>
+                <div class="input-group content_line content_left">
+                    <span class="input-group-addon" id="basic-addon1">价格</span>
+                    <input type="text" name="qprice" class="form-control" placeholder="输入课程价格" aria-describedby="basic-addon2">
+                </div>
+            </div>
+            <div class="col-xs-5">
+                <div class="three_two">
+                    <a href="#"  id="queryOK" class="btn btn-primary">查询</a>
+                    <a href="#" class="btn btn-danger" id="reset" >重置</a>
+                    <a href="#" class="btn btn-success" data-toggle="modal" data-target="#add1"
+                       data-backdrop="static">新增</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <!--查询条件 end-->
+
+    <!--数据列表 begin-->
+    <table id="table_list" class="table table-hover table-bordered table-condensed">
+        <thead>
+        <tr>
+            <th>课程号</th>
+            <th>课程名</th>
+            <th>价格</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="datalist">
+
+        </tbody>
+    </table>
+    <!--数据列表 end-->
+
+
+    <!--分页 begin-->
+    <div class="pages content_right" >
+        <div class="pages_record">
+            共&nbsp;<b id="pagesun">3</b>&nbsp;页 &nbsp;第&nbsp;<b id="curentpage">1</b>&nbsp;页&nbsp; <b id="rowcount">10</b>&nbsp;条/页&nbsp; &nbsp;共&nbsp;<b id="rowsun">27</b>&nbsp;条记录
+        </div>
+
+        <ul class="pagination">
+            <li id="firstPage"><a href="#" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>
+            <li  id="upPage"><a href="#">上一页<span class="sr-only">(current)</span></a></li>
+            <li id="downpage"><a href="#">下一页</a></li>
+            <li id="endpage"><a href="#" aria-label="Next"><span aria-hidden="true">尾页</span></a></li>
+            <li>
+
+
+                <select  class="form-control w80 line left"  name="pagecount">
+                    <option   value="5">5</option>
+                    <option selected="selected" value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+
+            </li>
+
+            <li><input type="text" id="inputpage" placeholder="输入页数" class="form-control w80"></li>
+            <a href="#" id="goto">跳转</a>
+            <input type="hidden" name="type" value="Course"/>
+
+        </ul>
+
+    </div>
+    <!--分页 end-->
+
+</div>
+
+
+<!-- Modal begin -->
+<!--添加-->
+<div class="modal fade" id="add1" tabindex="-1" role="dialog" aria-labelledby="add11">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addCard">新增</h4>
+            </div>
+            <div class="modal-body p_bottom35">
+                <ul>
+                    <li>
+                        <label><span>课程名： </span></label>
+                        <input type="text" name="addCname" maxlength="40">
+                    </li>
+                    <li></li>
+
+                    <li>
+                        <label><span>价格： </span></label>
+                        <input type="text" maxlength="40" name="addprice">
+                    </li>
+                    <li></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                <button type="button" id="saveCard" class="btn btn-primary btn-sm">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel1">编辑</h4>
+            </div>
+            <div class="modal-body p_bottom35">
+                <ul>
+                    <li>
+                        <label><span>课程号： </span></label>
+                        <input type="text" disabled="disabled" name="editCon" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>课程名称： </span></label>
+                        <input type="text" name="editname" maxlength="40">
+                    </li>
+                    <li></li>
+                    <li>
+                        <label><span>课程价格： </span></label>
+                        <input type="text" name="editprie" maxlength="40">
+                    </li>
+
+                    <li></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+                <button type="button" id="updatasave" class="btn btn-primary btn-sm">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal end-->
+<script src="js/qxcheck.js"></script>
+<script src="js/CookieUtil.js"></script>
+<script src="js/Date.js"></script>
+<script>
+    //    添加编辑模态框
+    $('#add').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var recipient = button.data('whatever') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-title').text('' + recipient)
+        modal.find('.modal-body input').val(recipient)
+    });
+
+    <!-- 检查权限-->
+    checkqx();
+    <!--   -->
+    var  curentDataPostion;//点击位置
+    <!--分页begin-->
+    let $firstPage=$("#firstPage");
+    let $upPage=$("#upPage");
+    let $downpage=$("#downpage");
+    let $endpage=$("#endpage");
+    $firstPage.hover(activeStyle,notactiveStyle);
+    $upPage.hover(activeStyle,notactiveStyle);
+    $downpage.hover(activeStyle,notactiveStyle);
+    $endpage.hover(activeStyle,notactiveStyle);
+
+    function activeStyle() {
+        $(this).addClass("active");
+
+    }
+    function notactiveStyle() {
+        $(this).removeClass("active");
+
+    }
+    function clickFirstPage() {
+        if($("#curentpage").text()=="1"){
+            $firstPage.addClass("disabled");
+            return false;
+        }else {
+            $endpage.removeClass("disabled");
+            $downpage.removeClass("disabled");
+            $.ajax({
+                type: "POST",
+                url: "/admin/findPageData.do",
+                data:{
+                    qid: checkQid(),
+                    cname: $("[name=qname]").val(),
+                    pirce: checkqprice(),
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:1,
+             },
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+            })
+        }
+
+    }
+    function clickuppage() {
+        if($("#curentpage").text()=="1"){
+            $upPage.addClass("disabled");
+            $firstPage.addClass("disabled");
+            return false;
+        }else {
+            $downpage.removeClass("disabled");
+            $endpage.removeClass("disabled");
+            $.ajax({
+
+                type: "POST",
+                url: "/admin/findPageData.do",
+                data:{
+                    qid:checkQid(),
+                    cname: $("[name=qname]").val(),
+                    pirce: $("[name=qprice]").val(),
+                    pagetype:checkqprice(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:parseInt($("#curentpage").text())-1,
+                },
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+            })
+        }
+    }
+
+    function  clickdownpage() {
+        if($("#curentpage").text()==$("#pagesun").text()){
+            $downpage.addClass("disabled");
+            $endpage.addClass("disabled");
+
+        }else {
+            $firstPage.removeClass("disabled");
+            $upPage.removeClass("disabled");
+            $.ajax({
+
+                type: "POST",
+                url: "/admin/findPageData.do",
+                data:{
+                    qid: checkQid(),
+                    cname: $("[name=qname]").val(),
+                    pirce: checkqprice(),
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:parseInt($("#curentpage").text())+1,
+                },
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+
+            })}
+
+
+    }
+
+    function endPage() {
+        if($("#curentpage").text()==$("#pagesun").text()){
+            $downpage.addClass("disabled");
+            $endpage.addClass("disabled");
+            return false;
+
+        }else {
+            $firstPage.removeClass("disabled");
+            $upPage.removeClass("disabled");
+            $.ajax({
+
+                type: "POST",
+                url: "/admin/findPageData.do",
+                data:{
+                    qid:checkQid(),
+                    cname: $("[name=qname]").val(),
+                    pirce: checkqprice(),
+                    pagetype:$("[name=type]").val(),
+                    rowconut:$("[name=pagecount]>option:selected").val(),
+                    curentpage:$("#pagesun").text(),
+                },
+                success: function (data) {
+                    $("#datalist").html("");
+                    initdata(data);
+
+                }
+
+            })}
+    }
+
+    <!--分页end-->
+
+
+    <!--初始化页面数据begin-->
+
+    $(function () {
+        init();
+        $("#goto").on("click",gotoPage);
+        $("#reset").on("click",clearQueryText);
+        $downpage.click(clickdownpage);
+        $firstPage.click(clickFirstPage);
+        $upPage.click(clickuppage);
+        $endpage.click(endPage);
+    })
+    function init() {
+
+
+
+
+
+
+
+        $.ajax({
+            data:{pagetype:$("[name=type]").val(),
+                qid:checkQid(),
+                cname: $("[name=qname]").val(),
+                pirce: checkqprice()},
+            type: "POST",
+            url: "/admin/findPageData.do",
+            success: function (data) {
+                initdata(data);
+
+            }
+
+        })
+
+    }
+
+    function  initdata(data) {
+        let $pagesun=$("#pagesun");
+        let $curentpage=$("#curentpage");
+        let $rowcount=$("#rowcount");
+        let $rowsun=$("#rowsun");
+
+        let datalist= JSON.parse(data);
+
+        $pagesun.text(datalist.sunPage);
+        $curentpage.text(datalist.curentPage);
+        $rowcount.text(datalist.curentrow);
+        $rowsun.text(datalist.sunrow);
+
+        for(let key in datalist.pageData ){
+            let  $datatr=$("<tr>"+
+                "<td>"+datalist.pageData[key].id+"</td>"+
+                "<td>"+datalist.pageData[key].cName+"</td>"+
+                "<td>"+datalist.pageData[key].price+"</td>"+
+                "</tr>");
+            let $tdupdate="<td><a href='#' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#edit' data-backdrop='static'>编辑</a>&nbsp;&nbsp;"+
+                "<a href='#' class='btn btn-danger btn-sm'   data-backdrop='static'>删除</a></td>";
+            $datatr.append($tdupdate);
+            $datatr.find("a:first").on("click",function () {
+                curentDataPostion=$(this).parent().parent();
+                $("[name=editCon]").val( curentDataPostion.find("td:eq(0)").text());
+                $("[name=editname]").val(curentDataPostion.find("td:eq(1)").text());
+                $("[name=editprie]").val(curentDataPostion.find("td:eq(2)").text())
+            })
+            $datatr.find("a:eq(1)").on("click",function () {
+                curentDataPostion=$(this).parent().parent();
+           if(confirm("是否删除这条记录？")){
+               $.ajax({
+                   type:"POST",
+                   url:"deleteCourse.do",
+                   data:{
+                       id:curentDataPostion.find("td:eq(0)").text(),
+                   },
+                   dataType:"JSON",
+                   success:function (data) {
+                       alert(data.info);
+                       curentDataPostion.remove();
+                   }
+
+
+
+               })
+
+           }
+            })
+
+
+            $("#datalist").append($datatr);
+        }
+
+
+
+
+    }
+
+
+    <!--初始化页面数据end-->
+    <!--新增表单验证begin-->
+
+    function checkCname() {
+        let flag=true;
+        if($("[name=addCname]").val()==""){
+            flag=false;
+            $("[name=addCname]").parent().next("li").text("课程名不能为空").css({"color":"#f00"});
+        }
+        return flag;
+    }
+
+    function checkPrice() {
+        let flag=true;
+        if(  $("input[name=addprice]").val()==""){
+            flag=false;
+            $("input[name=addprice]").parent().next("li").text("课程价格不能为空").css({"color":"#f00"});
+        }else if(isNaN( $("input[name=addprice]").val())){
+            flag=false;
+            $("input[name=addprice]").parent().next("li").text("课程价格不是数字").css({"color":"#f00"});
+        }else if(parseFloat($("input[name=addprice]").val())<0){
+            flag=false;
+            $("input[name=addprice]").parent().next("li").text("价格不能是负数").css({"color":"#f00"});
+        }
+        return flag;
+    }
+
+
+function clearTextStyle() {
+    $(this).parent().next("li").text("");
+}
+
+    $("[name=addCname]").focus(clearTextStyle);
+    $("[name=addCname]").blur(checkCname);
+    $("input[name=addprice]").focus(clearTextStyle);
+    $("input[name=addprice]").blur(checkPrice);
+    <!--新增表单验证end-->
+    <!--新增begin -->
+    $("#saveCard").click(function () {
+        let cnameOk=checkCname();
+        let priceOk=checkPrice();
+
+
+
+
+        if( cnameOk&&priceOk){
+            $.ajax({
+                type:"POST",
+                url:"insertCourse.do",
+                data:{
+                    cname:  $("[name=addCname]").val(),
+                    price:   $("input[name=addprice]").val()
+                },
+                dataType:"JSON",
+                success:function (data) {
+                    alert(data.info);
+                }
+
+
+
+            })
+        }
+    });
+
+    <!--新增end-->
+    <!-- 修改begin-->
+    function  checkEditname() {
+        let flag=true;
+        if($("[name=editname]").val()==""){
+            flag=false;
+            $("[name=editname]").parent().next("li").text("课程名称不能为空").css({"color":"#f00"});
+        }
+        return flag;
+    }
+
+    $("[name=editname]").blur(checkEditname);
+    $("[name=editname]").focus(clearTextStyle);
+    function checkEditPrice() {
+        let flag=true;
+        if( $("[name=editprie]").val()==""){
+            flag=false;
+            $("[name=editprie]").parent().next("li").text("课程价格不能为空").css({"color":"#f00"});
+        }else if(isNaN($("[name=editprie]").val())){
+            flag=false;
+            $("[name=editprie]").parent().next("li").text("课程价格不是数字").css({"color":"#f00"});
+        }else if(parseFloat($("[name=editprie]").val())<0){
+            flag=false;
+            $("[name=editprie]").parent().next("li").text("价格不能是负数").css({"color":"#f00"});
+        }
+        return flag;
+    }
+
+    $("[name=editprie]").blur(checkEditPrice);
+    $("[name=editprie]").focus(clearTextStyle);
+
+    $("#updatasave").click(function () {
+        let $trdata = curentDataPostion;
+         let prieok = checkEditPrice();
+         let nameok=checkEditname();
+        if(prieok&&nameok){
+            $.ajax({
+                dataType: "JSON",
+                type: "POST",
+                url: "updateCourse.do",
+                data: {
+                    id: $("[name=editCon]").val(),
+                    cname:$("[name=editname]").val(),
+                    price: $("[name=editprie]").val()
+                },
+                success: function (data) {
+                    if (data.flag) {
+                        alert(data.info);
+                        $trdata.find("td:eq(1)").text($("[name=editname]").val());
+                        $trdata.find("td:eq(2)").text($("[name=editprie]").val());
+                    } else {
+                        alert(data.info);
+
+                    }
+                    curentDataPostion = null;
+                }
+            })
+        }
+    });
+
+
+
+    <!-- 修改end -->
+    <!--查询begin  -->
+
+    $("#queryOK").click(function () {
+        $.ajax({
+            type:"POST",
+            url:'/admin/findPageData.do',
+            data:{
+                pagetype:$("[name=type]").val(),
+                rowconut:$("[name=pagecount]>option:selected").val(),
+                qid: checkQid(),
+                cname: $("[name=qname]").val(),
+                pirce: checkqprice()
+            },
+            success:function (data) {
+                $("#datalist").html("");
+                initdata(data);
+            }
+        })
+    })
+
+
+    <!-- 清除查询参数-->
+    function clearQueryText() {
+        $("[neme=qid]").val("");
+        $("[name=qname]").val("");
+        $("[name=qprice]").val("");
+    }
+<!-- 检查查询参数-->
+    function checkQid() {
+        if(isNaN($("[neme=qid]").val())){
+            $("[neme=qid]").val("1")
+            return 1;
+        }
+        return $("[neme=qid]").val();
+
+    }
+
+
+    function checkqprice() {
+        if(isNaN($("[name=qprice]").val())){
+            if(parseInt($("[name=qprice]").val())<0){
+                return 0;
+            }
+            $("[name=qprice]").val("0")
+            return 0;
+        }
+        return $("[name=qprice]").val();
+    }
+
+<!-- 跳转-->
+
+
+    function gotoPage() {
+        let inputPage=$("#inputpage").val();
+        if(isNaN(inputPage)||parseInt(inputPage)<=0){
+            $("#inputpage").val("1");
+            inputPage=1;
+        }else if(parseInt(inputPage)>parseInt($("#pagesun").text())){
+            $("#inputpage").val($("#pagesun").text());
+            inputPage=$("#pagesun").text();
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/findPageData.do",
+            data:{
+                qid:checkQid(),
+                cname: $("[name=qname]").val(),
+                pirce: checkqprice(),
+                pagetype:$("[name=type]").val(),
+                rowconut:$("[name=pagecount]>option:selected").val(),
+                curentpage:inputPage,
+            },
+            success: function (data) {
+                $("#datalist").html("");
+                initdata(data);
+
+            }
+        })
+
+
+    }
+</script>
+</body>
+</html>

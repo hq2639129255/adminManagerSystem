@@ -90,8 +90,8 @@
                 </select>
             </li>
 
-            <li><input type="text" placeholder="输入页数" class="form-control w80"></li>
-            <a href="#">跳转</a>
+            <li><input type="text" id="inputpage" placeholder="输入页数" class="form-control w80"></li>
+            <a href="#" id="goto">跳转</a>
             <input type="hidden" name="type" value="Facility"/>
 
         </ul>
@@ -227,6 +227,7 @@
         $upPage.click(clickuppage);
         $endpage.click(endPage);
         $("#reset").on("click", clearQueryText);
+        $("#goto").on("click",gotoPage);
     })
 
     function clickFirstPage() {
@@ -244,7 +245,7 @@
                     pagetype: $("[name=type]").val(),
                     rowconut: $("[name=pagecount]>option:selected").val(),
                     curentpage: 1,
-                    qid: $("input[name=qid]").val(),
+                    qid: checkFacilityID(),
                     qname: $("input[name=qname]").val(),
                     qdate: $("input[name=qdate]").val()
                 },
@@ -276,7 +277,7 @@
                     pagetype: $("[name=type]").val(),
                     rowconut: $("[name=pagecount]>option:selected").val(),
                     curentpage: parseInt($("#curentpage").text()) - 1,
-                    qid: $("input[name=qid]").val(),
+                    qid:checkFacilityID(),
                     qname: $("input[name=qname]").val(),
                     qdate: $("input[name=qdate]").val()
                 },
@@ -305,7 +306,7 @@
                     pagetype: $("[name=type]").val(),
                     rowconut: $("[name=pagecount]>option:selected").val(),
                     curentpage: parseInt($("#curentpage").text()) + 1,
-                    qid: $("input[name=qid]").val(),
+                    qid:checkFacilityID(),
                     qname: $("input[name=qname]").val(),
                     qdate: $("input[name=qdate]").val()
                 },
@@ -338,7 +339,7 @@
                     pagetype: $("[name=type]").val(),
                     rowconut: $("[name=pagecount]>option:selected").val(),
                     curentpage: $("#pagesun").text(),
-                    qid: $("input[name=qid]").val(),
+                    qid:checkFacilityID(),
                     qname: $("input[name=qname]").val(),
                     qdate: $("input[name=qdate]").val()
                 },
@@ -358,7 +359,7 @@
         $.ajax({
             data: {
                 pagetype: $("[name=type]").val(),
-                qid: $("input[name=qid]").val(),
+                qid:checkFacilityID(),
                 qname: $("input[name=qname]").val(),
                 qdate: $("input[name=qdate]").val()
             },
@@ -577,7 +578,7 @@
             data: {
                 rowconut: $("[name=pagecount]>option:selected").val(),
                 pagetype: $("[name=type]").val(),
-                qid: $("input[name=qid]").val(),
+                qid: checkFacilityID(),
                 qname: $("input[name=qname]").val(),
                 qdate: $("input[name=qdate]").val()
             },
@@ -641,12 +642,89 @@
 
         })
     });
+<!--检查查询参数-->
+
+    function checkFacilityID() {
+        if(isNaN($("[name=qid]").val())){
+            $("[name=qid]").val("1")
+            return 1;
+        }
+        return $("[name=qid]").val();
+    }
+
+
 
     <!--清除查询参数-->
     function clearQueryText() {
         $("input[name=qid]").val("");
         $("input[name=qname]").val("");
         $("input[name=qdate]").val("");
+    }
+
+
+    function gotoPage() {
+        let inputPage=$("#inputpage").val();
+        if(isNaN(inputPage)||parseInt(inputPage)<=0){
+            $("#inputpage").val("1");
+            inputPage=1;
+        }else if(parseInt(inputPage)>parseInt($("#pagesun").text())){
+            $("#inputpage").val($("#pagesun").text());
+            inputPage=$("#pagesun").text();
+        }
+
+        $.ajax({
+            type:"POST",
+            url: "/admin/findPageData.do",
+            data: {
+                pagetype: $("[name=type]").val(),
+                rowconut: $("[name=pagecount]>option:selected").val(),
+                curentpage:inputPage,
+                qid: checkFacilityID(),
+                qname: $("input[name=qname]").val(),
+                qdate: $("input[name=qdate]").val()
+            },
+
+            success: function (data) {
+                $("#datalist").html("");
+                initdata(data);
+
+            }
+        })
+
+
+    }
+
+
+    function gotoPage() {
+        let inputPage=$("#inputpage").val();
+        if(isNaN(inputPage)||parseInt(inputPage)<=0){
+            $("#inputpage").val("1");
+            inputPage=1;
+        }else if(parseInt(inputPage)>parseInt($("#pagesun").text())){
+            $("#inputpage").val($("#pagesun").text());
+            inputPage=$("#pagesun").text();
+        }
+
+        $.ajax({
+            type:"POST",
+            url: "/admin/findPageData.do",
+            data: {
+                pagetype: $("[name=type]").val(),
+                rowconut: $("[name=pagecount]>option:selected").val(),
+                curentpage:inputPage,
+                qid: $("input[name=qid]").val(),
+                qname: $("input[name=qname]").val(),
+                qdate: $("input[name=qdate]").val()
+            },
+
+            success: function (data) {
+                $("#datalist").html("");
+                initdata(data);
+
+            }
+        })
+
+
     }
 
 </script>

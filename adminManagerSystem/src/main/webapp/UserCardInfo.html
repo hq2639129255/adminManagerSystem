@@ -37,7 +37,6 @@
         </tr>
         </thead>
         <tbody id="renewdatalist">
-
         </tbody>
     </table>
     <!--数据列表 end-->
@@ -80,7 +79,8 @@ $(function () {
             url:"shoeCurentUserinfo.do",
             dataType:"JSON",
             success:function (data) {
-                $(data).each(function (i,o) {
+                //{"sunPage":2,"sunrow":1,"curentPage":1,"curentrow":1,"pageData":[{"cid":1,"t_name":"普通卡","e_name":"李林峰","serviceendtime":"2032-09-23 12:00:00"}]}
+                $(data.pageData).each(function (i,o) {
                     let $curentTr=$("<tr>\n" +
                         "<td>"+o.cid+"</td>\n" +
                         "<td>"+o.t_name+"</td>\n" +

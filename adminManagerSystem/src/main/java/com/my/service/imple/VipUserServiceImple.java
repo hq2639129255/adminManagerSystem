@@ -19,6 +19,7 @@ public class VipUserServiceImple implements VipUserService {
    private CourseDao courseDao=new CourseDaoImple();
   private  EmployeeDao employeeDao=new EmployeeDaoImple();
   private CoachDao coachDao=new CoachDaoImple();
+  private  ServiceinfoDao serviceinfoDao=new ServiceinfoDaoImple();
 
     @Override
     public List<UserAppointmentInfo> showAppointment() {
@@ -215,5 +216,113 @@ public class VipUserServiceImple implements VipUserService {
         }
 
         return flag;
+    }
+
+    @Override
+    public Page<Course> findCourseByParameter(int c_id, String cname, int pirce, int offset, int rowcount) {
+       Connection con=null;
+        Page<Course> data=null;
+        try {
+            con=JDBCutil.getConnection();
+            data = courseDao.findCourseByParameter(con, c_id, cname, pirce, offset, rowcount);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return  data;
+    }
+
+    @Override
+    public boolean insertCourse(String cname, double prie) {
+        Connection con=null;
+        boolean flag = false;
+        try {
+            con=JDBCutil.getConnection();
+            flag = courseDao.insertCourse(con, cname, prie);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return flag ;
+    }
+
+    @Override
+    public boolean updateCourse(Course course) {
+        Connection con=null;
+        boolean flag = false;
+        try {
+            con=JDBCutil.getConnection();
+            flag = courseDao.updateCourse(con, course);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return flag;
+    }
+
+    @Override
+    public boolean deleteCourse(int id) {
+        Connection con=null;
+        boolean falg = false;
+        try {
+            con=JDBCutil.getConnection();
+            falg = courseDao.deleteCourseByid(con, id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return falg;
+    }
+
+    @Override
+    public Page<Serviceinfo> findPageByParameter(Serviceinfo serviceinfo, int offset, int rowcount) {
+        Connection con=null;
+        Page<Serviceinfo> data = null;
+        try {
+            con=JDBCutil.getConnection();
+            data = serviceinfoDao.findPageByParameter(con, serviceinfo, offset, rowcount);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return data;
     }
 }
